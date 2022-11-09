@@ -25,6 +25,8 @@
 		47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175DB5291BA48D0036D9E6 /* LoadingRoute.swift */; };
 		47175DB9291BCB9C0036D9E6 /* AnimatedTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175DB8291BCB9C0036D9E6 /* AnimatedTransition.swift */; };
 		47175DBB291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175DBA291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift */; };
+		472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */; };
+		472C9AA6291BE14500FBEB55 /* OnboardingSlide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */; };
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
@@ -61,6 +63,8 @@
 		47175DB5291BA48D0036D9E6 /* LoadingRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingRoute.swift; sourceTree = "<group>"; };
 		47175DB8291BCB9C0036D9E6 /* AnimatedTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedTransition.swift; sourceTree = "<group>"; };
 		47175DBA291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadeAnimatedTransitioning.swift; sourceTree = "<group>"; };
+		472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCollectionViewCell.swift; sourceTree = "<group>"; };
+		472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSlide.swift; sourceTree = "<group>"; };
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -179,6 +183,7 @@
 				47175DB3291BA3E70036D9E6 /* LoadingViewModel.swift */,
 				47175DA3291B9CFE0036D9E6 /* LoginViewModel.swift */,
 				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
+				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -186,6 +191,7 @@
 		47ECB3FD291916AD007DE862 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -344,10 +350,12 @@
 				47175DA8291B9D4F0036D9E6 /* OnboardingRoute.swift in Sources */,
 				47175DAE291B9F230036D9E6 /* OnboardingViewController.swift in Sources */,
 				478361142918F19E001A6552 /* Transition.swift in Sources */,
+				472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */,
 				478361112918F11A001A6552 /* Router.swift in Sources */,
 				47175DBB291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift in Sources */,
 				47175D9C291B91220036D9E6 /* DefaultRouter.swift in Sources */,
 				4704DE292918EF7300B43157 /* AppDelegate.swift in Sources */,
+				472C9AA6291BE14500FBEB55 /* OnboardingSlide.swift in Sources */,
 				47175DA4291B9CFE0036D9E6 /* LoginViewModel.swift in Sources */,
 				47175DAC291B9D7C0036D9E6 /* LoginRoute.swift in Sources */,
 				47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */,

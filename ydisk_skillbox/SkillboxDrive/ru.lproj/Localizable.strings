@@ -12,6 +12,7 @@
 "Log in" = "Войти";
 "Log out" = "Выйти";
 "Loging out" = "Выход";
+"Get started" = "Приступить";
 
 "Occupied" = "Занято";
 "Left" = "Свободно";
@@ -33,7 +34,7 @@
 
 "All files in one place" = "Теперь все ваши документы в одном месте";
 "Offline access" = "Доступ к файлам без интернета";
-"Share your files with friends" = "Делитесь вашими файлами с друзьями";
+"Share your files with others" = "Делитесь вашими файлами с другими";
 
 "This image will be deleted" = "Данное изображение будет удалено";
 "Delete the image" = "Удалить изображение";

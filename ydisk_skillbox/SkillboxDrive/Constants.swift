@@ -8,6 +8,9 @@
 import UIKit
 
 enum Constants {
+    
+    static var loadingDelay = 1.0
+    
     enum Colors {
         static var white: UIColor? {
             UIColor(named: "white")
@@ -17,6 +20,9 @@ enum Constants {
         }
         static var details: UIColor? {
             UIColor(named: "details")
+        }
+        static var onboardingDot: UIColor? {
+            UIColor(named: "onboardingDot")
         }
         static var accent1: UIColor? {
             UIColor(named: "accent1")
@@ -31,16 +37,16 @@ enum Constants {
             UIFont(name: "Graphik-Bold", size: 26)
         }
         static var header2: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 16)
+            UIFont(name: "Graphik-Medium", size: 17)
         }
         static var mainBody: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 14)
+            UIFont(name: "Graphik-Medium", size: 15)
         }
         static var small: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 14)
+            UIFont(name: "Graphik-Medium", size: 13)
         }
         static var button: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 14)
+            UIFont(name: "Graphik-Medium", size: 16)
         }
     }
     
@@ -49,6 +55,7 @@ enum Constants {
         static let no = Bundle.main.localizedString(forKey: "No", value: "", table: "Localizable")
         static let logIn = Bundle.main.localizedString(forKey: "Log in", value: "", table: "Localizable")
         static let logOut = Bundle.main.localizedString(forKey: "Log out", value: "", table: "Localizable")
+        static let getStarted = Bundle.main.localizedString(forKey: "Get started", value: "", table: "Localizable")
         static let occupied = Bundle.main.localizedString(forKey: "Occupied", value: "", table: "Localizable")
         static let left = Bundle.main.localizedString(forKey: "Left", value: "", table: "Localizable")
         static let next = Bundle.main.localizedString(forKey: "Next", value: "", table: "Localizable")
@@ -66,7 +73,7 @@ enum Constants {
         static let deleteFiles = Bundle.main.localizedString(forKey: "Delete file", value: "", table: "Localizable")
         static let onePlace = Bundle.main.localizedString(forKey: "All files in one place", value: "", table: "Localizable")
         static let offlineAccess = Bundle.main.localizedString(forKey: "Offline access", value: "", table: "Localizable")
-        static let shareFiles = Bundle.main.localizedString(forKey: "Share your files with friends", value: "", table: "Localizable")
+        static let shareFiles = Bundle.main.localizedString(forKey: "Share your files with others", value: "", table: "Localizable")
         static let deletingImage = Bundle.main.localizedString(forKey: "This image will be deleted", value: "", table: "Localizable")
         static let deleteImage = Bundle.main.localizedString(forKey: "Delete the image", value: "", table: "Localizable")
         static let share = Bundle.main.localizedString(forKey: "Share", value: "", table: "Localizable")

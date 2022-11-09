@@ -19,11 +19,10 @@ final class LoadingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private var isLoggedIn: Bool = true
+    private var isLoggedIn: Bool = false
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-
         imageView.image = UIImage(named: "sbDrive") ?? UIImage()
         return imageView
     }()
@@ -37,7 +36,7 @@ final class LoadingViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Constants.loadingDelay) {
             self.showInitialView()
         }
     }
