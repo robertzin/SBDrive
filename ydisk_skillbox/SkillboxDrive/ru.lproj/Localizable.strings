@@ -1,0 +1,43 @@
+/* 
+  Localizable.strings
+  SkillboxDrive
+
+  Created by Robert Zinyatullin on 07.11.2022.
+  
+*/
+
+"Yes" = "Да";
+"No" = "Нет";
+
+"Log in" = "Войти";
+"Log out" = "Выйти";
+"Loging out" = "Выход";
+
+"Occupied" = "Занято";
+"Left" = "Свободно";
+
+"Next" = "Далее";
+"Done" = "Готово";
+"Cancel" = "Отмена";
+"Refresh" = "Обновить";
+
+"Recents" = "Последние";
+"Rename" = "Переименовать";
+"No internet connection" = "Отсутствует подключение к интернету";
+"All files" = "Все файлы";
+"Directory is empty" = "Директория не содержит файлов";
+"Uploaded files" = "Опубликованные файлы";
+"You have no uploaded files" = "У вас пока нет опубликованных файлов";
+"Are you sure, you want to log out?" = "Вы уверены, что хотите выйти?";
+"Delete file" = "Убрать публикацию";
+
+"All files in one place" = "Теперь все ваши документы в одном месте";
+"Offline access" = "Доступ к файлам без интернета";
+"Share your files with friends" = "Делитесь вашими файлами с друзьями";
+
+"This image will be deleted" = "Данное изображение будет удалено";
+"Delete the image" = "Удалить изображение";
+
+"Share" = "Поделиться";
+"Send file" = "Файлом";
+"Send link" = "Ссылкой";

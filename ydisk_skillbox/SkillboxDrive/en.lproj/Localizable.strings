@@ -1,0 +1,43 @@
+/* 
+  Localizable.strings
+  SkillboxDrive
+
+  Created by Robert Zinyatullin on 07.11.2022.
+  
+*/
+
+"Yes" = "Yes";
+"No" = "No";
+
+"Log in" = "Log in";
+"Log out" = "Log out";
+"Loging out" = "Loging out";
+
+"Occupied" = "Occupied";
+"Left" = "Left";
+
+"Next" = "Next";
+"Done" = "Done";
+"Cancel" = "Cancel";
+"Refresh" = "Refresh";
+
+"Recents" = "Recents";
+"Rename" = "Rename";
+"No internet connection" = "No internet connection";
+"All files" = "All files";
+"Directory is empty" = "Directory is empty";
+"Uploaded files" = "Uploaded files";
+"You have no uploaded files" = "You have no uploaded files";
+"Are you sure, you want to log out?" = "Are you sure, you want to log out?";
+"Delete file" = "Delete file";
+
+"All files in one place" = "All files in one place";
+"Offline access" = "Offline access";
+"Share your files with friends" = "Share your files with friends";
+
+"This image will be deleted" = "This image will be deleted";
+"Delete the image" = "Delete the image";
+
+"Share" = "Share";
+"Send file" = "Send file";
+"Send link" = "Send link";
