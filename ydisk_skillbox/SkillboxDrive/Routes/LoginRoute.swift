@@ -23,7 +23,7 @@ extension LoginRoute where Self: Router {
     }
 
     func openLogin() {
-        openLogin(with: AnimatedTransition(animatedTransition: FadeAnimatedTransitioning()))
+        openLogin(with: ModalTransition())
     }
 }
 

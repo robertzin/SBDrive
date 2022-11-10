@@ -37,7 +37,7 @@ final class OnboardingViewController: UIViewController {
         let pageControl = UIPageControl()
         pageControl.currentPageIndicatorTintColor = Constants.Colors.accent1
         pageControl.pageIndicatorTintColor = Constants.Colors.onboardingDot
-        pageControl.numberOfPages = 3
+        pageControl.numberOfPages = OnboardingSlide.slides.count
         return pageControl
     }()
     
@@ -101,7 +101,7 @@ final class OnboardingViewController: UIViewController {
     
     @objc func nextButtonTapped(sender: UIButton!) {
         if currentPage == OnboardingSlide.slides.count - 1 {
-            debugPrint("Login")
+            viewModel.login()
         } else {
             currentPage += 1
             let indexPath = IndexPath(item: currentPage, section: 0)
