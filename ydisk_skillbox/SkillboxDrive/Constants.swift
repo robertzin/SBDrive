@@ -34,19 +34,19 @@ enum Constants {
     
     enum Fonts {
         static var header1: UIFont? {
-            UIFont(name: "Graphik-Bold", size: 26)
+            UIFont(name: "Graphik-Semibold", size: 26)
         }
         static var header2: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 17)
+            UIFont(name: "Graphik-Light", size: 17)
         }
         static var mainBody: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 15)
+            UIFont(name: "Graphik-Light", size: 15)
         }
         static var small: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 13)
+            UIFont(name: "Graphik-Regular", size: 13)
         }
         static var button: UIFont? {
-            UIFont(name: "Graphik-Medium", size: 16)
+            UIFont(name: "Graphik-Regular", size: 16)
         }
     }
     
@@ -55,6 +55,7 @@ enum Constants {
         static let no = Bundle.main.localizedString(forKey: "No", value: "", table: "Localizable")
         static let logIn = Bundle.main.localizedString(forKey: "Log in", value: "", table: "Localizable")
         static let logOut = Bundle.main.localizedString(forKey: "Log out", value: "", table: "Localizable")
+        static let quit = Bundle.main.localizedString(forKey: "Quit", value: "", table: "Localizable")
         static let getStarted = Bundle.main.localizedString(forKey: "Get started", value: "", table: "Localizable")
         static let occupied = Bundle.main.localizedString(forKey: "Occupied", value: "", table: "Localizable")
         static let left = Bundle.main.localizedString(forKey: "Left", value: "", table: "Localizable")
@@ -68,8 +69,9 @@ enum Constants {
         static let allFiles = Bundle.main.localizedString(forKey: "All files", value: "", table: "Localizable")
         static let emptyDir = Bundle.main.localizedString(forKey: "Directory is empty", value: "", table: "Localizable")
         static let uploadedFiles = Bundle.main.localizedString(forKey: "Uploaded files", value: "", table: "Localizable")
+        static let profile = Bundle.main.localizedString(forKey: "Profile", value: "", table: "Localizable")
         static let noUploadedFiles = Bundle.main.localizedString(forKey: "You have no uploaded files", value: "", table: "Localizable")
-        static let wantLogOut = Bundle.main.localizedString(forKey: "Are you sure, you want to log out", value: "", table: "Localizable")
+        static let wantLogOut = Bundle.main.localizedString(forKey: "Are you sure, you want to log out? All local data will be deleted!", value: "", table: "Localizable")
         static let deleteFiles = Bundle.main.localizedString(forKey: "Delete file", value: "", table: "Localizable")
         static let onePlace = Bundle.main.localizedString(forKey: "All files in one place", value: "", table: "Localizable")
         static let offlineAccess = Bundle.main.localizedString(forKey: "Offline access", value: "", table: "Localizable")

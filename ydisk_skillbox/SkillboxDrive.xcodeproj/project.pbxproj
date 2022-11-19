@@ -27,6 +27,12 @@
 		47175DBB291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175DBA291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift */; };
 		472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */; };
 		472C9AA6291BE14500FBEB55 /* OnboardingSlide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */; };
+		472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AAF291E58AA00FBEB55 /* TabBarController.swift */; };
+		472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */; };
+		472C9AB4291E58E900FBEB55 /* TabBarRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472C9AB3291E58E900FBEB55 /* TabBarRoute.swift */; };
+		473284972927F899003A200A /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284962927F899003A200A /* ProfileViewController.swift */; };
+		473284992927F8A2003A200A /* RecentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284982927F8A2003A200A /* RecentsViewController.swift */; };
+		4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4732849A2927F8D2003A200A /* AllFilesViewController.swift */; };
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
@@ -65,6 +71,12 @@
 		47175DBA291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadeAnimatedTransitioning.swift; sourceTree = "<group>"; };
 		472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCollectionViewCell.swift; sourceTree = "<group>"; };
 		472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSlide.swift; sourceTree = "<group>"; };
+		472C9AAF291E58AA00FBEB55 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewModel.swift; sourceTree = "<group>"; };
+		472C9AB3291E58E900FBEB55 /* TabBarRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarRoute.swift; sourceTree = "<group>"; };
+		473284962927F899003A200A /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		473284982927F8A2003A200A /* RecentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsViewController.swift; sourceTree = "<group>"; };
+		4732849A2927F8D2003A200A /* AllFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesViewController.swift; sourceTree = "<group>"; };
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -147,6 +159,7 @@
 				47175DA7291B9D4F0036D9E6 /* OnboardingRoute.swift */,
 				47175DAB291B9D7C0036D9E6 /* LoginRoute.swift */,
 				47175DB5291BA48D0036D9E6 /* LoadingRoute.swift */,
+				472C9AB3291E58E900FBEB55 /* TabBarRoute.swift */,
 			);
 			path = Routes;
 			sourceTree = "<group>";
@@ -184,6 +197,7 @@
 				47175DA3291B9CFE0036D9E6 /* LoginViewModel.swift */,
 				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
 				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
+				472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -202,6 +216,10 @@
 				47175D9D291B95B20036D9E6 /* LoadingViewController.swift */,
 				47175DA1291B9AD00036D9E6 /* LoginViewController.swift */,
 				47175DAD291B9F230036D9E6 /* OnboardingViewController.swift */,
+				472C9AAF291E58AA00FBEB55 /* TabBarController.swift */,
+				473284962927F899003A200A /* ProfileViewController.swift */,
+				473284982927F8A2003A200A /* RecentsViewController.swift */,
+				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -345,15 +363,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */,
 				47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */,
+				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
 				47175D96291B8C320036D9E6 /* ModalTransition.swift in Sources */,
 				47175DA8291B9D4F0036D9E6 /* OnboardingRoute.swift in Sources */,
 				47175DAE291B9F230036D9E6 /* OnboardingViewController.swift in Sources */,
+				4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */,
 				478361142918F19E001A6552 /* Transition.swift in Sources */,
 				472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */,
 				478361112918F11A001A6552 /* Router.swift in Sources */,
 				47175DBB291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift in Sources */,
+				473284972927F899003A200A /* ProfileViewController.swift in Sources */,
 				47175D9C291B91220036D9E6 /* DefaultRouter.swift in Sources */,
+				473284992927F8A2003A200A /* RecentsViewController.swift in Sources */,
 				4704DE292918EF7300B43157 /* AppDelegate.swift in Sources */,
 				472C9AA6291BE14500FBEB55 /* OnboardingSlide.swift in Sources */,
 				47175DA4291B9CFE0036D9E6 /* LoginViewModel.swift in Sources */,
@@ -361,6 +384,7 @@
 				47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */,
 				47175DB0291B9F8C0036D9E6 /* OnboardingViewModel.swift in Sources */,
 				4704DE2B2918EF7300B43157 /* SceneDelegate.swift in Sources */,
+				472C9AB4291E58E900FBEB55 /* TabBarRoute.swift in Sources */,
 				47175D9A291B8C450036D9E6 /* EmptyTransition.swift in Sources */,
 				478361162918F276001A6552 /* Constants.swift in Sources */,
 				47175DA2291B9AD00036D9E6 /* LoginViewController.swift in Sources */,

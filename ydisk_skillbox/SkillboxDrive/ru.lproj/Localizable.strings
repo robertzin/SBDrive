@@ -11,6 +11,7 @@
 
 "Log in" = "Войти";
 "Log out" = "Выйти";
+"Quit" = "Выход";
 "Loging out" = "Выход";
 "Get started" = "Приступить";
 
@@ -28,8 +29,9 @@
 "All files" = "Все файлы";
 "Directory is empty" = "Директория не содержит файлов";
 "Uploaded files" = "Опубликованные файлы";
+"Profile" = "Профиль";
 "You have no uploaded files" = "У вас пока нет опубликованных файлов";
-"Are you sure, you want to log out?" = "Вы уверены, что хотите выйти?";
+"Are you sure, you want to log out? All local data will be deleted!" = "Вы уверены, что хотите выйти? Все локальные данные будут удалены!";
 "Delete file" = "Убрать публикацию";
 
 "All files in one place" = "Теперь все ваши документы в одном месте";

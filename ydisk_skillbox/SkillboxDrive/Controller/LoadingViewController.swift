@@ -19,7 +19,7 @@ final class LoadingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private var isLoggedIn: Bool = false
+    private var isLoggedIn: Bool = true
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -59,5 +59,4 @@ final class LoadingViewController: UIViewController {
         }
     }
 }
-
 

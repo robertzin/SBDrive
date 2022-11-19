@@ -11,6 +11,7 @@
 
 "Log in" = "Log in";
 "Log out" = "Log out";
+"Quit" = "Quit";
 "Loging out" = "Loging out";
 "Get started" = "Get started";
 
@@ -28,8 +29,9 @@
 "All files" = "All files";
 "Directory is empty" = "Directory is empty";
 "Uploaded files" = "Uploaded files";
+"Profile" = "Profile";
 "You have no uploaded files" = "You have no uploaded files";
-"Are you sure, you want to log out?" = "Are you sure, you want to log out?";
+"Are you sure, you want to log out? All local data will be deleted!" = "Are you sure, you want to log out? All local data will be deleted!";
 "Delete file" = "Delete file";
 
 "All files in one place" = "All files in one place";

@@ -10,13 +10,6 @@ import UIKit
 final class LoginViewController: UIViewController {
     private let viewModel: LoginViewModel
     
-    private lazy var imageView: UIImageView = {
-       let iv = UIImageView()
-        iv.image = Constants.Image.equal
-        iv.contentMode = .scaleToFill
-        return iv
-    }()
-    
     private lazy var logoImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = Constants.Image.sbDrive
@@ -26,11 +19,22 @@ final class LoginViewController: UIViewController {
     
     private lazy var loginButton: UIButton = {
         let button = UIButton()
+        button.layer.cornerRadius = 10
         button.backgroundColor = Constants.Colors.accent1
         button.setTitle(Constants.Text.logIn, for: .normal)
         button.titleLabel?.font = Constants.Fonts.button
         button.addAction(UIAction(handler: { [weak self] _ in
-            debugPrint("button pressed")
+            // TODO: make helper function for login and logout?
+            if let window = self?.view.window {
+                self?.dismiss(animated: true)
+                let r = DefaultRouter(rootTransition: EmptyTransition())
+                let vm = TabBarViewModel(router: r)
+                window.rootViewController = TabBarController(viewModel: vm)
+                UIView.transition(with: window,
+                                  duration: 0.5,
+                                  options: .transitionCrossDissolve,
+                                  animations: nil)
+            }
         }), for: .touchUpInside)
         return button
     }()
@@ -43,10 +47,6 @@ final class LoginViewController: UIViewController {
         sv.spacing = 35
         return sv
     }()
-    
-    @objc func segmentedValueChanged(_ sender:UISegmentedControl!) {
-        print("Selected Segment Index is : \(sender.selectedSegmentIndex)")
-    }
     
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
@@ -64,19 +64,12 @@ final class LoginViewController: UIViewController {
     }
 
     private func configureViews() {
-        view.addSubview(imageView)
         view.addSubview(logoImageView)
         view.addSubview(stackView)
-        
-        imageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(15)
-            make.width.height.equalTo(20)
-        }
-        
+
         logoImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(imageView).offset(55)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(55)
             make.width.height.equalTo(150)
         }
         
@@ -98,20 +91,11 @@ final class LoginViewController: UIViewController {
         textField.placeholder = placeholder
         textField.borderStyle = .bezel
         textField.backgroundColor = .white
-        textField.textColor = Constants.Colors.details
-        textField.font = Constants.Fonts.small
+        textField.textColor = Constants.Colors.black
+        textField.font = Constants.Fonts.mainBody
+        textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         return textField
-    }
-}
-
-extension UIButton {
-    convenience init(title: String, target: Any, selector: Selector) {
-        self.init(frame: .zero)
-        translatesAutoresizingMaskIntoConstraints = false
-        setTitle(title, for: .normal)
-        setTitleColor(.systemBlue, for: .normal)
-        addTarget(target, action: selector, for: .touchUpInside)
     }
 }
 

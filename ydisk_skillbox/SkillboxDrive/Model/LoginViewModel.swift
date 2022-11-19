@@ -8,7 +8,7 @@
 import UIKit
 
 final class LoginViewModel {
-    typealias Routes = LoginRoute & OnboardingRoute & Closable
+    typealias Routes = LoginRoute & OnboardingRoute & TabBarRoute & Closable
     private var router: Routes
 
     init(router: Routes) {
@@ -17,5 +17,9 @@ final class LoginViewModel {
 
     func dismiss() {
         router.close()
+    }
+
+    func openTapBar() {
+        router.openTabBar()
     }
 }
