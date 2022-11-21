@@ -89,5 +89,6 @@ enum Constants {
         static let onboarding2 = UIImage(named: "onboarding2")
         static let onboarding3 = UIImage(named: "onboarding3")
         static let equal = UIImage(named: "equal")
+        static let ydxButton = UIImage(named: "ydxButton")
     }
 }

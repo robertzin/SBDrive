@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LoginViewModel {
+final class LoginViewModel: ViewModels {
     typealias Routes = LoginRoute & OnboardingRoute & TabBarRoute & Closable
     private var router: Routes
 

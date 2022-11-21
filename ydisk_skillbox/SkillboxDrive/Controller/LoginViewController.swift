@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import WebKit
 
 final class LoginViewController: UIViewController {
     private let viewModel: LoginViewModel
-    
+
     private lazy var logoImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = Constants.Image.sbDrive
@@ -24,30 +25,11 @@ final class LoginViewController: UIViewController {
         button.setTitle(Constants.Text.logIn, for: .normal)
         button.titleLabel?.font = Constants.Fonts.button
         button.addAction(UIAction(handler: { [weak self] _ in
-            // TODO: make helper function for login and logout?
-            if let window = self?.view.window {
-                self?.dismiss(animated: true)
-                let r = DefaultRouter(rootTransition: EmptyTransition())
-                let vm = TabBarViewModel(router: r)
-                window.rootViewController = TabBarController(viewModel: vm)
-                UIView.transition(with: window,
-                                  duration: 0.5,
-                                  options: .transitionCrossDissolve,
-                                  animations: nil)
-            }
+            self?.updateData()
         }), for: .touchUpInside)
         return button
     }()
-    
-    private lazy var stackView: UIStackView = {
-       let sv = UIStackView()
-        sv.axis = .vertical
-        sv.distribution = .fillEqually
-        sv.alignment = .fill
-        sv.spacing = 35
-        return sv
-    }()
-    
+
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -60,45 +42,44 @@ final class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        self.navigationItem.hidesBackButton = true
         configureViews()
     }
 
     private func configureViews() {
         view.addSubview(logoImageView)
-        view.addSubview(stackView)
+        view.addSubview(loginButton)
 
         logoImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(55)
-            make.width.height.equalTo(150)
+            make.centerX.centerY.equalToSuperview()
+            make.width.equalTo(195)
+            make.height.equalTo(168)
         }
         
-        stackView.snp.makeConstraints { make in
+        loginButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().inset(55)
-            make.height.equalTo(view.frame.size.height / 4)
+            make.width.equalTo(320)
+            make.height.equalTo(50)
             make.top.equalTo(logoImageView.snp.bottom).offset(55)
         }
-        
-        stackView.addArrangedSubview(setupTextField(placeholder: "Email"))
-        stackView.addArrangedSubview(setupTextField(placeholder: "Password"))
-        stackView.addArrangedSubview(loginButton)
     }
-    
-    private func setupTextField(placeholder: String) -> UITextField {
-        let textField = UITextField()
-        textField.delegate = self
-        textField.placeholder = placeholder
-        textField.borderStyle = .bezel
-        textField.backgroundColor = .white
-        textField.textColor = Constants.Colors.black
-        textField.font = Constants.Fonts.mainBody
-        textField.autocapitalizationType = .none
-        textField.autocorrectionType = .no
-        return textField
+
+    private func updateData() {
+        
+        guard !Helper.getToken().isEmpty else {
+            let requestTokenViewController = AuthViewController()
+            requestTokenViewController.delegate = self
+            navigationController?.pushViewController(requestTokenViewController, animated: true)
+            return
+        }
+        self.dismiss(animated: true)
+        PresenterManager.shared.show(vc: .tabBar)
     }
 }
 
-extension LoginViewController: UITextFieldDelegate {
-    
+extension LoginViewController: AuthViewControllerDelegate {
+    func handleTokenChanged(token: String) {
+        Helper.setToken(token: token)
+        updateData()
+    }
 }

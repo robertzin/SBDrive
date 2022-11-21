@@ -33,6 +33,9 @@
 		473284972927F899003A200A /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284962927F899003A200A /* ProfileViewController.swift */; };
 		473284992927F8A2003A200A /* RecentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284982927F8A2003A200A /* RecentsViewController.swift */; };
 		4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4732849A2927F8D2003A200A /* AllFilesViewController.swift */; };
+		473284AB292970CB003A200A /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AA292970CB003A200A /* AuthViewController.swift */; };
+		473284AD292BD24E003A200A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AC292BD24E003A200A /* Helper.swift */; };
+		473284AF292BD53A003A200A /* PresenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AE292BD53A003A200A /* PresenterManager.swift */; };
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
@@ -77,6 +80,9 @@
 		473284962927F899003A200A /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		473284982927F8A2003A200A /* RecentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsViewController.swift; sourceTree = "<group>"; };
 		4732849A2927F8D2003A200A /* AllFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesViewController.swift; sourceTree = "<group>"; };
+		473284AA292970CB003A200A /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
+		473284AC292BD24E003A200A /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		473284AE292BD53A003A200A /* PresenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterManager.swift; sourceTree = "<group>"; };
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -198,6 +204,8 @@
 				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
 				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
 				472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */,
+				473284AC292BD24E003A200A /* Helper.swift */,
+				473284AE292BD53A003A200A /* PresenterManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -220,6 +228,7 @@
 				473284962927F899003A200A /* ProfileViewController.swift */,
 				473284982927F8A2003A200A /* RecentsViewController.swift */,
 				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
+				473284AA292970CB003A200A /* AuthViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -364,11 +373,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */,
+				473284AD292BD24E003A200A /* Helper.swift in Sources */,
 				47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */,
 				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
+				473284AF292BD53A003A200A /* PresenterManager.swift in Sources */,
 				47175D96291B8C320036D9E6 /* ModalTransition.swift in Sources */,
 				47175DA8291B9D4F0036D9E6 /* OnboardingRoute.swift in Sources */,
 				47175DAE291B9F230036D9E6 /* OnboardingViewController.swift in Sources */,
+				473284AB292970CB003A200A /* AuthViewController.swift in Sources */,
 				4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */,
 				478361142918F19E001A6552 /* Transition.swift in Sources */,
 				472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */,

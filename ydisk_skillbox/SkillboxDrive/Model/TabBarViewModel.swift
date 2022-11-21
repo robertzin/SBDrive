@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TabBarViewModel {
+final class TabBarViewModel: ViewModels {
     typealias Routes = TabBarRoute & LoginRoute & Closable
     private let router: Routes
 

@@ -22,6 +22,7 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        print("token: " + Helper.getToken())
         view.backgroundColor = .white
         tabBar.tintColor = Constants.Colors.accent1
         tabBar.unselectedItemTintColor = Constants.Colors.details
@@ -36,7 +37,6 @@ class TabBarController: UITabBarController {
     }
 
     func setupViews() {
-
         viewControllers = [
             createNavController(for: ProfileViewController(), image: UIImage(named: "tb_person")!),
             createNavController(for: RecentsViewController(), image: UIImage(named: "tb_file")!),

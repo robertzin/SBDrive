@@ -7,8 +7,10 @@
 
 import UIKit
 
-final class LoadingViewModel {
-    typealias Routes = OnboardingRoute & LoginRoute & Closable
+protocol ViewModels {}
+
+final class LoadingViewModel: ViewModels {
+    typealias Routes = OnboardingRoute & LoginRoute & TabBarRoute & Closable
     private let router: Routes
 
     init(router: Routes) {
@@ -25,5 +27,9 @@ final class LoadingViewModel {
 
     func close() {
         router.close()
+    }
+    
+    func openTabBar() {
+        router.openTabBar()
     }
 }

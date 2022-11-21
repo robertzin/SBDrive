@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class OnboardingViewModel {
+final class OnboardingViewModel: ViewModels {
     typealias Routes = OnboardingRoute & LoginRoute & Closable
     private let router: Routes
 

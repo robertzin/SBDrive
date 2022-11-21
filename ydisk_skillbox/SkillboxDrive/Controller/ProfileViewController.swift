@@ -12,7 +12,6 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
         navigationItem.title = Constants.Text.profile
         navigationItem.rightBarButtonItem = makeRightButton()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
@@ -36,17 +35,9 @@ final class ProfileViewController: UIViewController {
             let attributedStringMessage = NSAttributedString(string: Constants.Text.wantLogOut, attributes: [NSAttributedString.Key.font: Constants.Fonts.mainBody!])
             
             let yesAction = UIAlertAction(title: Constants.Text.yes, style: .default) { action in
-                // TODO: make helper function for login and logout
-                if let window = self.view.window {
-                    self.dismiss(animated: true)
-                    let r = DefaultRouter(rootTransition: EmptyTransition())
-                    let vm = LoginViewModel(router: r)
-                    window.rootViewController = LoginViewController(viewModel: vm)
-                    UIView.transition(with: window,
-                                      duration: 0.5,
-                                      options: .transitionCrossDissolve,
-                                      animations: nil)
-                }
+                Helper.eraseToken()
+                self.dismiss(animated: true)
+                PresenterManager.shared.show(vc: .login)
             }
             alert.setValue(attributedStringTitle, forKey: "attributedTitle")
             alert.setValue(attributedStringMessage, forKey: "attributedMessage")

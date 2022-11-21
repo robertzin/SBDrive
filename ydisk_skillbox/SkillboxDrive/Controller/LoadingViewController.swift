@@ -28,6 +28,7 @@ final class LoadingViewController: UIViewController {
     }()
     
     override func viewDidLoad() {
+//        print("token: " + Helper.getToken())
         view.backgroundColor = .white
         super.viewDidLoad()
         configureViews()
@@ -52,8 +53,9 @@ final class LoadingViewController: UIViewController {
     }
 
     private func showInitialView() {
-        if isLoggedIn {
-            viewModel.login()
+        self.dismiss(animated: true)
+        if !Helper.getToken().isEmpty {
+            PresenterManager.shared.show(vc: .tabBar)
         } else {
             viewModel.onboarding()
         }
