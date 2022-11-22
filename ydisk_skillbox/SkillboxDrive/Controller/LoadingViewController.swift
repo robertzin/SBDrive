@@ -48,7 +48,8 @@ final class LoadingViewController: UIViewController {
         imageView.snp.makeConstraints { make in
             make.width.equalTo(195)
             make.height.equalTo(168)
-            make.centerX.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(270)
         }
     }
 

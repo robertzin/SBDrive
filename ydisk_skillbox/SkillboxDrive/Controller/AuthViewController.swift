@@ -45,7 +45,8 @@ class AuthViewController: UIViewController {
         guard var urlComponents = URLComponents(string: authURL) else { return nil }
         urlComponents.queryItems = [
             URLQueryItem(name: "response_type", value: "token"),
-            URLQueryItem(name: "client_id", value: "\(clientId)")
+            URLQueryItem(name: "client_id", value: "\(clientId)"),
+            URLQueryItem(name: "device_id", value: "\(UIDevice.current.identifierForVendor!)")
         ]
         guard let url = urlComponents.url else { return nil }
         return URLRequest(url: url)

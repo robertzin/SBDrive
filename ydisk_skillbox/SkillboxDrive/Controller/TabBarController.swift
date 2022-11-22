@@ -23,10 +23,11 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        print("token: " + Helper.getToken())
-        view.backgroundColor = .white
+        setupViews()
+        view.backgroundColor = .red
         tabBar.tintColor = Constants.Colors.accent1
         tabBar.unselectedItemTintColor = Constants.Colors.details
-        setupViews()
+        self.selectedIndex = 1
     }
     
     private func createNavController(for rootViewController: UIViewController, image: UIImage) -> UIViewController {

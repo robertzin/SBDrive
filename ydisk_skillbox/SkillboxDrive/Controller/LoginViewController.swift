@@ -41,6 +41,7 @@ final class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("\(Helper.getToken())")
         view.backgroundColor = .white
         self.navigationItem.hidesBackButton = true
         configureViews()
@@ -51,16 +52,17 @@ final class LoginViewController: UIViewController {
         view.addSubview(loginButton)
 
         logoImageView.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
             make.width.equalTo(195)
             make.height.equalTo(168)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(270)
         }
         
         loginButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(320)
             make.height.equalTo(50)
-            make.top.equalTo(logoImageView.snp.bottom).offset(55)
+            make.top.equalTo(logoImageView.snp.bottom).offset(230)
         }
     }
 

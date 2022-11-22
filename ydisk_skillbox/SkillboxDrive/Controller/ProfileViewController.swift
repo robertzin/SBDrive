@@ -10,6 +10,9 @@ import SnapKit
 
 final class ProfileViewController: UIViewController {
     
+    private let clientId = "8633c79e9a564a2a9839ccc47f3582f8"
+    private let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = Constants.Text.profile
@@ -35,6 +38,7 @@ final class ProfileViewController: UIViewController {
             let attributedStringMessage = NSAttributedString(string: Constants.Text.wantLogOut, attributes: [NSAttributedString.Key.font: Constants.Fonts.mainBody!])
             
             let yesAction = UIAlertAction(title: Constants.Text.yes, style: .default) { action in
+                self.logOut()
                 Helper.eraseToken()
                 self.dismiss(animated: true)
                 PresenterManager.shared.show(vc: .login)
@@ -53,5 +57,32 @@ final class ProfileViewController: UIViewController {
         alert.addAction(cancelAction)
 
         self.navigationController?.present(alert, animated: true, completion: nil)
+    }
+    
+    private func logOut() {
+        var request = URLRequest(url: URL(string: "https://oauth.yandex.ru/revoke_token")!)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        let dataString = "access_token=\(Helper.getToken())&client_id=\(clientId)&client_secret=\(clientSecret)"
+        let data : Data = dataString.data(using: .utf8)!
+        request.httpBody = data
+        request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
+        
+        URLSession.shared.dataTask(with: request) { [weak self] (data, response, error) in
+            if let response = response as? HTTPURLResponse {
+                switch response.statusCode {
+                case 200..<300:
+                    print("Success")
+                default:
+                    print("Status: \(response.statusCode)")
+                }
+            }
+        }.resume()
+    }
+}
+
+extension String {
+    func toBase64() -> String {
+        return Data(self.utf8).base64EncodedString()
     }
 }

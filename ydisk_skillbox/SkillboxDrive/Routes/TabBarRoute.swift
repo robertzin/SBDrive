@@ -19,7 +19,6 @@ extension TabBarRoute where Self: Router {
         router.root = viewController
 
         let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.tabBarItem = UITabBarItem(title: "New Transition", image: nil, tag: 0)
         
         router.root = viewController
         route(to: navigationController, as: transition)
@@ -27,10 +26,6 @@ extension TabBarRoute where Self: Router {
     
     func openTabBar() {
         openTabBar(with: AnimatedTransition(animatedTransition: FadeAnimatedTransitioning()))
-    }
-
-    func selectListTab() {
-        root?.tabBarController?.selectedIndex = 0
     }
 }
 
