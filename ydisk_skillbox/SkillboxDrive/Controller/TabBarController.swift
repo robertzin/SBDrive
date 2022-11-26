@@ -24,7 +24,6 @@ class TabBarController: UITabBarController {
         super.viewDidLoad()
 //        print("token: " + Helper.getToken())
         setupViews()
-        view.backgroundColor = .red
         tabBar.tintColor = Constants.Colors.accent1
         tabBar.unselectedItemTintColor = Constants.Colors.details
         self.selectedIndex = 1
@@ -40,7 +39,8 @@ class TabBarController: UITabBarController {
     func setupViews() {
         viewControllers = [
             createNavController(for: ProfileViewController(), image: UIImage(named: "tb_person")!),
-            createNavController(for: RecentsViewController(), image: UIImage(named: "tb_file")!),
+            PresenterManager.shared.createRecentsViewController(image: UIImage(named: "tb_file")!),
+//            createNavController(for: RecentsViewController(), image: UIImage(named: "tb_file")!),
             createNavController(for: AllFilesViewController(), image: UIImage(named: "tb_archive")!)
         ]
     }

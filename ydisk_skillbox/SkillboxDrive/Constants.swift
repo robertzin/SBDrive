@@ -10,7 +10,9 @@ import UIKit
 enum Constants {
     
     static var loadingDelay = 1.0
-    
+    static let clientId = "8633c79e9a564a2a9839ccc47f3582f8"
+    static let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
+
     enum Colors {
         static var white: UIColor? {
             UIColor(named: "white")
@@ -37,13 +39,13 @@ enum Constants {
             UIFont(name: "Graphik-Semibold", size: 26)
         }
         static var header2: UIFont? {
-            UIFont(name: "Graphik-Light", size: 17)
+            UIFont(name: "Graphik-Regular", size: 17)
         }
         static var mainBody: UIFont? {
-            UIFont(name: "Graphik-Light", size: 15)
+            UIFont(name: "Graphik-Regular", size: 15)
         }
         static var small: UIFont? {
-            UIFont(name: "Graphik-Regular", size: 13)
+            UIFont(name: "Graphik-Light", size: 13)
         }
         static var button: UIFont? {
             UIFont(name: "Graphik-Regular", size: 16)
@@ -81,6 +83,8 @@ enum Constants {
         static let share = Bundle.main.localizedString(forKey: "Share", value: "", table: "Localizable")
         static let sendFile = Bundle.main.localizedString(forKey: "Send file", value: "", table: "Localizable")
         static let sendLink = Bundle.main.localizedString(forKey: "Send link", value: "", table: "Localizable")
+        static let mb = Bundle.main.localizedString(forKey: "mb", value: "", table: "Localizable")
+        static let kb = Bundle.main.localizedString(forKey: "kb", value: "", table: "Localizable")
     }
     
     enum Image {

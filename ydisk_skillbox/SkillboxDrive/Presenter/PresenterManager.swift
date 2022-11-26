@@ -19,6 +19,20 @@ class PresenterManager {
         case login
     }
     
+    func createRecentsViewController(image: UIImage) -> UIViewController {
+        
+        let view = RecentsViewController()
+        let networkService = NetworkService()
+        let presenter = RecentsMainPresenter(view: view, networkService: networkService)
+        view.presenter = presenter
+
+        let navController = UINavigationController(rootViewController: view)
+        navController.tabBarItem.image = image
+        navController .navigationBar.prefersLargeTitles = false
+        
+        return navController
+    }
+    
     func show(vc: vc) {
         
         var viewController: UIViewController

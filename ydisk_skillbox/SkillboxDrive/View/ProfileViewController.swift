@@ -10,9 +10,6 @@ import SnapKit
 
 final class ProfileViewController: UIViewController {
     
-    private let clientId = "8633c79e9a564a2a9839ccc47f3582f8"
-    private let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = Constants.Text.profile
@@ -63,7 +60,7 @@ final class ProfileViewController: UIViewController {
         var request = URLRequest(url: URL(string: "https://oauth.yandex.ru/revoke_token")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let dataString = "access_token=\(Helper.getToken())&client_id=\(clientId)&client_secret=\(clientSecret)"
+        let dataString = "access_token=\(Helper.getToken())&client_id=\(Constants.clientId)&client_secret=\(Constants.clientSecret)"
         let data : Data = dataString.data(using: .utf8)!
         request.httpBody = data
         request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
@@ -84,5 +81,17 @@ final class ProfileViewController: UIViewController {
 extension String {
     func toBase64() -> String {
         return Data(self.utf8).base64EncodedString()
+    }
+    
+    func toDate() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        
+        let dateFormatterPrint = DateFormatter()
+        dateFormatterPrint.dateFormat = "dd.MM.yyyy HH:mm"
+        
+        let parsedDate = dateFormatter.date(from: self)!
+        return dateFormatterPrint.string(from: parsedDate)
     }
 }

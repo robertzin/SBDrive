@@ -36,6 +36,10 @@
 		473284AB292970CB003A200A /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AA292970CB003A200A /* AuthViewController.swift */; };
 		473284AD292BD24E003A200A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AC292BD24E003A200A /* Helper.swift */; };
 		473284AF292BD53A003A200A /* PresenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AE292BD53A003A200A /* PresenterManager.swift */; };
+		473284B1292D3F6D003A200A /* YDiskResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B0292D3F6D003A200A /* YDiskResponse.swift */; };
+		473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B3292D50D2003A200A /* RecentsPresenter.swift */; };
+		473284B6292D516F003A200A /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B5292D516F003A200A /* NetworkServices.swift */; };
+		4749A2BB2932B7EA00352B62 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */; };
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
@@ -83,6 +87,10 @@
 		473284AA292970CB003A200A /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		473284AC292BD24E003A200A /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		473284AE292BD53A003A200A /* PresenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterManager.swift; sourceTree = "<group>"; };
+		473284B0292D3F6D003A200A /* YDiskResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YDiskResponse.swift; sourceTree = "<group>"; };
+		473284B3292D50D2003A200A /* RecentsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsPresenter.swift; sourceTree = "<group>"; };
+		473284B5292D516F003A200A /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
+		4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -132,6 +140,7 @@
 		4704DE272918EF7300B43157 /* SkillboxDrive */ = {
 			isa = PBXGroup;
 			children = (
+				473284B2292D509E003A200A /* Presenter */,
 				47ECB3FC291916A7007DE862 /* Model */,
 				47ECB3FD291916AD007DE862 /* View */,
 				47ECB3FE291916CC007DE862 /* Controller */,
@@ -155,6 +164,15 @@
 				47175DBA291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift */,
 			);
 			path = Animated;
+			sourceTree = "<group>";
+		};
+		473284B2292D509E003A200A /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				473284B3292D50D2003A200A /* RecentsPresenter.swift */,
+				473284AE292BD53A003A200A /* PresenterManager.swift */,
+			);
+			path = Presenter;
 			sourceTree = "<group>";
 		};
 		4783610F2918F10B001A6552 /* Routes */ = {
@@ -205,7 +223,8 @@
 				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
 				472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */,
 				473284AC292BD24E003A200A /* Helper.swift */,
-				473284AE292BD53A003A200A /* PresenterManager.swift */,
+				473284B0292D3F6D003A200A /* YDiskResponse.swift */,
+				4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -214,6 +233,11 @@
 			isa = PBXGroup;
 			children = (
 				472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */,
+				473284962927F899003A200A /* ProfileViewController.swift */,
+				473284982927F8A2003A200A /* RecentsViewController.swift */,
+				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
+				473284AA292970CB003A200A /* AuthViewController.swift */,
+				473284B5292D516F003A200A /* NetworkServices.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -225,10 +249,6 @@
 				47175DA1291B9AD00036D9E6 /* LoginViewController.swift */,
 				47175DAD291B9F230036D9E6 /* OnboardingViewController.swift */,
 				472C9AAF291E58AA00FBEB55 /* TabBarController.swift */,
-				473284962927F899003A200A /* ProfileViewController.swift */,
-				473284982927F8A2003A200A /* RecentsViewController.swift */,
-				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
-				473284AA292970CB003A200A /* AuthViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -373,6 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */,
+				473284B1292D3F6D003A200A /* YDiskResponse.swift in Sources */,
 				473284AD292BD24E003A200A /* Helper.swift in Sources */,
 				47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */,
 				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
@@ -394,10 +415,13 @@
 				47175DA4291B9CFE0036D9E6 /* LoginViewModel.swift in Sources */,
 				47175DAC291B9D7C0036D9E6 /* LoginRoute.swift in Sources */,
 				47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */,
+				473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */,
 				47175DB0291B9F8C0036D9E6 /* OnboardingViewModel.swift in Sources */,
 				4704DE2B2918EF7300B43157 /* SceneDelegate.swift in Sources */,
 				472C9AB4291E58E900FBEB55 /* TabBarRoute.swift in Sources */,
 				47175D9A291B8C450036D9E6 /* EmptyTransition.swift in Sources */,
+				473284B6292D516F003A200A /* NetworkServices.swift in Sources */,
+				4749A2BB2932B7EA00352B62 /* ImageDownloader.swift in Sources */,
 				478361162918F276001A6552 /* Constants.swift in Sources */,
 				47175DA2291B9AD00036D9E6 /* LoginViewController.swift in Sources */,
 				47175D9E291B95B20036D9E6 /* LoadingViewController.swift in Sources */,
