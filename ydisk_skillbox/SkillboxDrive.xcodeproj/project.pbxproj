@@ -40,6 +40,8 @@
 		473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B3292D50D2003A200A /* RecentsPresenter.swift */; };
 		473284B6292D516F003A200A /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B5292D516F003A200A /* NetworkServices.swift */; };
 		4749A2BB2932B7EA00352B62 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */; };
+		4766B6652934F1B30058EF73 /* RecentImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6642934F1B30058EF73 /* RecentImageViewController.swift */; };
+		4766B6672934F5A60058EF73 /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6662934F5A60058EF73 /* ImageScrollView.swift */; };
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
@@ -91,6 +93,8 @@
 		473284B3292D50D2003A200A /* RecentsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsPresenter.swift; sourceTree = "<group>"; };
 		473284B5292D516F003A200A /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
 		4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
+		4766B6642934F1B30058EF73 /* RecentImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentImageViewController.swift; sourceTree = "<group>"; };
+		4766B6662934F5A60058EF73 /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -235,9 +239,11 @@
 				472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */,
 				473284962927F899003A200A /* ProfileViewController.swift */,
 				473284982927F8A2003A200A /* RecentsViewController.swift */,
+				4766B6642934F1B30058EF73 /* RecentImageViewController.swift */,
 				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
 				473284AA292970CB003A200A /* AuthViewController.swift */,
 				473284B5292D516F003A200A /* NetworkServices.swift */,
+				4766B6662934F5A60058EF73 /* ImageScrollView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -415,8 +421,10 @@
 				47175DA4291B9CFE0036D9E6 /* LoginViewModel.swift in Sources */,
 				47175DAC291B9D7C0036D9E6 /* LoginRoute.swift in Sources */,
 				47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */,
+				4766B6652934F1B30058EF73 /* RecentImageViewController.swift in Sources */,
 				473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */,
 				47175DB0291B9F8C0036D9E6 /* OnboardingViewModel.swift in Sources */,
+				4766B6672934F5A60058EF73 /* ImageScrollView.swift in Sources */,
 				4704DE2B2918EF7300B43157 /* SceneDelegate.swift in Sources */,
 				472C9AB4291E58E900FBEB55 /* TabBarRoute.swift in Sources */,
 				47175D9A291B8C450036D9E6 /* EmptyTransition.swift in Sources */,

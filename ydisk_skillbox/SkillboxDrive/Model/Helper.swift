@@ -9,6 +9,11 @@ import UIKit
 
 class Helper {
     
+    static let shared = Helper()
+    
+    var downloadedPreviewImageCache = NSCache<NSString, UIImage>()
+    var downloadedImageCache = NSCache<NSString, UIImage>()
+
     static var defaults = UserDefaults()
     
     static func getToken() -> String {

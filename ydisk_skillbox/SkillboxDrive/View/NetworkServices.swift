@@ -10,7 +10,6 @@ import UIKit
 
 protocol NetworkServiceProtocol: AnyObject {
     func getData(url: String, completion: @escaping (Result<[DiskItem]?, Error>) -> Void)
-    func downloadImage(url: String, completion: @escaping (Result<UIImage, Error>) -> Void)
 }
 
 class NetworkService: NetworkServiceProtocol {
@@ -47,32 +46,5 @@ class NetworkService: NetworkServiceProtocol {
                 debugPrint("parisng error!")
             }
         }.resume()
-    }
-    
-    func downloadImage(url: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
-        ImageDownloader.shared.downloadImage(with: url, completionHandler: { image, inCache in
-            DispatchQueue.main.async {
-                
-            }
-        }, placeholderImage: UIImage(named: "tb_person"))
-//        guard let remoteImageURL = URL(string: url) else { return }
-//        var request = URLRequest(url: remoteImageURL)
-//        request.setValue("OAuth \(Helper.getToken())", forHTTPHeaderField: "Authorization")
-//        task = URLSession.shared.dataTask(with: remoteImageURL) { data, _, error in
-//            if let error = error {
-//                debugPrint(error.localizedDescription)
-//                completion(.failure(error))
-//                return
-//            }
-//            do {
-////                debugPrint(String(data: data!, encoding: .utf8))
-//                if let downloadedImage = UIImage(data: data!) {
-//                    completion(.success(downloadedImage))
-//                } else {
-//                    debugPrint("completion failured!")
-//                }
-//            }
-//        }
-//        task.resume()
     }
 }

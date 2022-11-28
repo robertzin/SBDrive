@@ -11,7 +11,7 @@ import SnapKit
 class RecentsViewController: UITableViewController {
 
     private let cellId = "DiskResponseCellId"
-    private let urlString = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=100"
+    private let urlString = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=50"
     private var activityIndicator = UIActivityIndicatorView()
     var diskItems = [DiskItem]()
     
@@ -25,9 +25,12 @@ class RecentsViewController: UITableViewController {
     }
     
     private func setupViews() {
+        
         view.addSubview(activityIndicator)
         view.backgroundColor = .white
+//        hidesBottomBarWhenPushed = true
         navigationItem.title = Constants.Text.recents
+        navigationItem.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
         tableView.delegate = self
         tableView.dataSource = self
@@ -49,15 +52,14 @@ class RecentsViewController: UITableViewController {
     }
     
     @objc func handleRefreshControl() {
-//        presenter.getDiskItems(url: urlString)
+        presenter.getDiskItems(url: urlString)
         DispatchQueue.main.async {
             self.refreshControl?.endRefreshing()
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("selected at \(indexPath.row)")
-//        presenter.didSelectDiskItemAt(indexPath)
+        presenter.didSelectDiskItemAt(indexPath)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -65,8 +67,16 @@ class RecentsViewController: UITableViewController {
         let imageUrl = diskItem.preview ?? "https://bilgi-sayar.net/wp-content/uploads/2012/01/na.jpg"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         
+        let cellActivityIndicator = UIActivityIndicatorView()
+        cell.addSubview(cellActivityIndicator)
+        cellActivityIndicator.snp.makeConstraints { make in
+            make.left.equalTo(cell.contentView.safeAreaLayoutGuide.snp.left).offset(37.5)
+            make.centerY.equalToSuperview()
+        }
+        cellActivityIndicator.startAnimating()
+        
         var content = cell.defaultContentConfiguration()
-
+        content.image = UIImage()
         content.text = diskItem.name
         content.textProperties.numberOfLines = 1
         content.textProperties.font = Constants.Fonts.mainBody!
@@ -76,10 +86,12 @@ class RecentsViewController: UITableViewController {
         content.secondaryTextProperties.numberOfLines = 1
         content.secondaryTextProperties.font = Constants.Fonts.small!
         
-        content.image = self.presenter.imageCache?.object(forKey: NSString(string: imageUrl))
+        presenter.downloadImage(url: diskItem.preview!)
+        content.image = presenter.getImageForCell(url: imageUrl)
+        cellActivityIndicator.stopAnimating()
+        
         content.imageProperties.reservedLayoutSize = CGSize(width: 55, height: 55)
         content.imageProperties.maximumSize = CGSize(width: 55, height: 55)
-
         cell.contentConfiguration = content
         return cell
     }
@@ -97,7 +109,7 @@ extension RecentsViewController: RecentsMainProtocol {
     }
 
     func failure() {
-//        debugPrint("failure in Controller")
+        debugPrint("failure in Controller")
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }
@@ -111,8 +123,7 @@ extension RecentsViewController: RecentsMainProtocol {
         debugPrint("downloading image failure in Controller")
     }
 
-    func openDiskItemView(diskItem: DiskItem) {
-        print("open details:")
-//        navigationController?.pushViewController(<#T##viewController: UIViewController##UIViewController#>, animated: <#T##Bool#>)
+    func openDiskItemView(vc: UIViewController) {
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
