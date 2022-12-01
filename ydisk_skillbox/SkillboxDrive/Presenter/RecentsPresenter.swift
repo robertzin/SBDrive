@@ -122,11 +122,13 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
         
         switch diskItem.mime_type {
         case let str where str!.contains("document"):
-            view?.openDiskItemView(vc: UITableViewController())
+            let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.document)
+            view?.openDiskItemView(vc: vc)
         case let str where str!.contains("pdf"):
-            view?.openDiskItemView(vc: UITableViewController())
+            let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.pdf)
+            view?.openDiskItemView(vc: vc)
         case let str where str!.contains("image"):
-            let vc = RecentImageViewController(indexPath: indexPath)
+            let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.image)
             view?.openDiskItemView(vc: vc)
         default:
             view?.openDiskItemView(vc: UITableViewController())

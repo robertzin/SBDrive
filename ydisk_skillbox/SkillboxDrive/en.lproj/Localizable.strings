@@ -32,15 +32,17 @@
 "Profile" = "Profile";
 "You have no uploaded files" = "You have no uploaded files";
 "Are you sure, you want to log out? All local data will be deleted!" = "Are you sure, you want to log out? All local data will be deleted!";
-"Delete file" = "Delete file";
+"Delete the file" = "Delete the file";
 
 "All files in one place" = "All files in one place";
 "Offline access" = "Offline access";
 "Share your files with others" = "Share your files with others";
 
+"This file will be deleted" = "This file will be deleted";
 "This image will be deleted" = "This image will be deleted";
 "Delete the image" = "Delete the image";
 
+"Delete" = "Delete";
 "Share" = "Share";
 "Send file" = "Send file";
 "Send link" = "Send link";

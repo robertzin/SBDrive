@@ -39,7 +39,7 @@
 		473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B3292D50D2003A200A /* RecentsPresenter.swift */; };
 		473284B6292D516F003A200A /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B5292D516F003A200A /* NetworkServices.swift */; };
 		4749A2BB2932B7EA00352B62 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */; };
-		4766B6652934F1B30058EF73 /* RecentImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6642934F1B30058EF73 /* RecentImageViewController.swift */; };
+		4766B6652934F1B30058EF73 /* RecentsDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6642934F1B30058EF73 /* RecentsDetailsViewController.swift */; };
 		4766B6672934F5A60058EF73 /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6662934F5A60058EF73 /* ImageScrollView.swift */; };
 		4766B66A293610C90058EF73 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4766B668293610C90058EF73 /* Model.xcdatamodeld */; };
 		4766B67E293630800058EF73 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B67D293630800058EF73 /* CoreDataManager.swift */; };
@@ -97,7 +97,7 @@
 		473284B3292D50D2003A200A /* RecentsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsPresenter.swift; sourceTree = "<group>"; };
 		473284B5292D516F003A200A /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
 		4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
-		4766B6642934F1B30058EF73 /* RecentImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentImageViewController.swift; sourceTree = "<group>"; };
+		4766B6642934F1B30058EF73 /* RecentsDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsDetailsViewController.swift; sourceTree = "<group>"; };
 		4766B6662934F5A60058EF73 /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
 		4766B669293610C90058EF73 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		4766B67D293630800058EF73 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
@@ -253,7 +253,7 @@
 				472C9AA3291BE11600FBEB55 /* OnboardingCollectionViewCell.swift */,
 				473284962927F899003A200A /* ProfileViewController.swift */,
 				473284982927F8A2003A200A /* RecentsViewController.swift */,
-				4766B6642934F1B30058EF73 /* RecentImageViewController.swift */,
+				4766B6642934F1B30058EF73 /* RecentsDetailsViewController.swift */,
 				4766B68B293756B60058EF73 /* RenameViewController.swift */,
 				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
 				473284AA292970CB003A200A /* AuthViewController.swift */,
@@ -441,7 +441,7 @@
 				4766B68929363ECA0058EF73 /* YDiskItem+CoreDataClass.swift in Sources */,
 				47175DAC291B9D7C0036D9E6 /* LoginRoute.swift in Sources */,
 				47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */,
-				4766B6652934F1B30058EF73 /* RecentImageViewController.swift in Sources */,
+				4766B6652934F1B30058EF73 /* RecentsDetailsViewController.swift in Sources */,
 				473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */,
 				47175DB0291B9F8C0036D9E6 /* OnboardingViewModel.swift in Sources */,
 				4766B6672934F5A60058EF73 /* ImageScrollView.swift in Sources */,

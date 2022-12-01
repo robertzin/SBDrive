@@ -94,4 +94,22 @@ class NetworkService: NetworkServiceProtocol {
         }
         return [:]
     }
+    
+    func fileDownload(urlString: String, completion: @escaping (Result<Data?, Error>) -> Void) {
+        guard let url = URL(string: urlString) else { return }
+        
+        var request = URLRequest(url: url)
+        request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "GET"
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data else { return }
+            if let error = error {
+                debugPrint(error.localizedDescription)
+                completion(.failure(error))
+                return
+            }
+            completion(.success(data))
+        }.resume()
+    }
 }

@@ -112,7 +112,7 @@ class ImageScrollView: UIScrollView, UIScrollViewDelegate {
     }
     
     func zoomRect(scale: CGFloat, center: CGPoint) -> CGRect {
-        var zoomRect = CGRect.zero
+        var zoomRect = CGRect(x: 0, y: 0, width: 0, height: 0)
         let bounds = self.bounds
         zoomRect.size.width = bounds.size.width / scale
         zoomRect.size.height = bounds.size.height / scale

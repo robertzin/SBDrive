@@ -26,7 +26,7 @@ class RecentsViewController: UITableViewController {
         
         view.addSubview(activityIndicator)
         view.backgroundColor = .white
-        //        hidesBottomBarWhenPushed = true
+//        hidesBottomBarWhenPushed = true
         navigationItem.title = Constants.Text.recents
         navigationItem.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
@@ -168,7 +168,6 @@ extension RecentsViewController: NSFetchedResultsControllerDelegate {
                 cell.contentConfiguration = content
             }
         case .move:
-//            print("move")
             if let indexPath = indexPath {
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
@@ -176,7 +175,6 @@ extension RecentsViewController: NSFetchedResultsControllerDelegate {
                 tableView.insertRows(at: [newIndexPath], with: .automatic)
             }
         case .delete:
-//            print("delete")
             if let indexPath = indexPath {
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }

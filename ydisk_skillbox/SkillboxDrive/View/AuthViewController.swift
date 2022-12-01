@@ -19,7 +19,6 @@ class AuthViewController: UIViewController {
     var activityIndicator = UIActivityIndicatorView()
     
     private let webView = WKWebView()
-    private let authURL = "https://oauth.yandex.ru/authorize"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +42,7 @@ class AuthViewController: UIViewController {
     }
     
     private var request: URLRequest? {
-        guard var urlComponents = URLComponents(string: authURL) else { return nil }
+        guard var urlComponents = URLComponents(string: Constants.urlStringToken) else { return nil }
         urlComponents.queryItems = [
             URLQueryItem(name: "response_type", value: "token"),
             URLQueryItem(name: "client_id", value: "\(Constants.clientId)"),

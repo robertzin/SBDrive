@@ -58,7 +58,7 @@ final class LoadingViewController: UIViewController {
         var token = ""
         do { token = try KeyChain.shared.getToken() }
         catch { print(error.localizedDescription) }
-        
+//        print("count: \(CoreDataManager.shared.count())")
 //        print("token: \(token)")
         if !token.isEmpty { PresenterManager.shared.show(vc: .tabBar) }
         else { viewModel.onboarding() }

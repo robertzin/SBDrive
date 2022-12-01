@@ -60,6 +60,7 @@ final class ImageDownloader {
             }
             
             guard let image = UIImage(data: data) else {
+                print(String(data: data, encoding: .utf8))
                 completion(.failure(ImageDownloaderError.UIImageError))
                 return
             }
@@ -94,7 +95,7 @@ final class ImageDownloader {
 }
 
 enum ImageDownloaderError: Error {
-    case wrongURLString
-    case wrongURL
-    case UIImageError
+    case wrongURLString // = "ImageDownloader error: wrong URL String"
+    case wrongURL // = "ImageDownloader error: wrong URL"
+    case UIImageError // = "ImageDownloader error: UIImage converting error"
 }

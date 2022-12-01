@@ -125,8 +125,7 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
             self?.getNewDiskItem(dataString: data) { result in
                 switch result {
                 case .success(let diskItem):
-                    let indexPath = CoreDataManager.shared.fetchResultController.indexPath(forObject: self!.diskItem)
-                    let diskItemToChange = CoreDataManager.shared.fetchResultController.object(at: indexPath!) as! YDiskItem
+                    let diskItemToChange = CoreDataManager.shared.context.object(with: (self?.diskItem.objectID)!) as! YDiskItem
                     diskItemToChange.set(diskItem: diskItem)
                     CoreDataManager.shared.saveContext()
                     DispatchQueue.main.async {

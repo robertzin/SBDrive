@@ -21,11 +21,4 @@ class DiskItem: Codable {
     var media_type: String?
     var mime_type: String?
     var file: String?
-
-    enum type {
-        case wrongType
-        case document
-        case image
-        case pdf
-    }
 }

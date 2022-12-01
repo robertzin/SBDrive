@@ -10,6 +10,13 @@ import CoreData
 
 class CoreDataManager {
     
+    enum elementType{
+        case wrongType
+        case document
+        case image
+        case pdf
+    }
+    
     static let shared = CoreDataManager()
     
     private init() {}
@@ -25,6 +32,15 @@ class CoreDataManager {
         let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         return fetchResultController
     }()
+    
+    func count() -> Int {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "YDiskItem")
+        do {
+            let count = try context.count(for: fetchRequest)
+            return count
+        } catch { print(error.localizedDescription) }
+        return -1
+    }
     
     func deleteAllEntities() {
         let deleteRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
