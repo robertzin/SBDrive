@@ -14,7 +14,7 @@ final class LoadingViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -28,15 +28,14 @@ final class LoadingViewController: UIViewController {
     }()
     
     override func viewDidLoad() {
-//        print("token: " + Helper.getToken())
         view.backgroundColor = .white
         super.viewDidLoad()
         configureViews()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + Constants.loadingDelay) {
             self.showInitialView()
         }
@@ -52,14 +51,17 @@ final class LoadingViewController: UIViewController {
             make.top.equalToSuperview().offset(270)
         }
     }
-
+    
     private func showInitialView() {
         self.dismiss(animated: true)
-        if !Helper.getToken().isEmpty {
-            PresenterManager.shared.show(vc: .tabBar)
-        } else {
-            viewModel.onboarding()
-        }
+        
+        var token = ""
+        do { token = try KeyChain.shared.getToken() }
+        catch { print(error.localizedDescription) }
+        
+//        print("token: \(token)")
+        if !token.isEmpty { PresenterManager.shared.show(vc: .tabBar) }
+        else { viewModel.onboarding() }
     }
 }
 

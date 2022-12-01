@@ -7,19 +7,17 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 class RecentsViewController: UITableViewController {
-
-    private let cellId = "DiskResponseCellId"
-    private let urlString = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=50"
-    private var activityIndicator = UIActivityIndicatorView()
-    var diskItems = [DiskItem]()
     
+    private let cellId = "DiskResponseCellId"
+    private var activityIndicator = UIActivityIndicatorView()
     var presenter: RecentsMainPresenterProtocol!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.getDiskItems(url: urlString)
+        presenter.getDiskItems(url: Constants.urlStringRecents)
         setupViews()
         configureRefreshControl()
     }
@@ -28,15 +26,16 @@ class RecentsViewController: UITableViewController {
         
         view.addSubview(activityIndicator)
         view.backgroundColor = .white
-//        hidesBottomBarWhenPushed = true
+        //        hidesBottomBarWhenPushed = true
         navigationItem.title = Constants.Text.recents
         navigationItem.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
+        CoreDataManager.shared.fetchResultController.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         tableView.rowHeight = 55
-
+        
         activityIndicator.startAnimating()
         activityIndicator.snp.makeConstraints { make in
             make.centerX.centerY.equalToSuperview()
@@ -52,7 +51,7 @@ class RecentsViewController: UITableViewController {
     }
     
     @objc func handleRefreshControl() {
-        presenter.getDiskItems(url: urlString)
+        presenter.getDiskItems(url: Constants.urlStringRecents)
         DispatchQueue.main.async {
             self.refreshControl?.endRefreshing()
         }
@@ -81,7 +80,7 @@ class RecentsViewController: UITableViewController {
         content.textProperties.numberOfLines = 1
         content.textProperties.font = Constants.Fonts.mainBody!
         
-        let size = presenter.mbToKb(size: diskItem.size!)
+        let size = presenter.mbToKb(size: diskItem.size)
         content.secondaryText = "\(size) \((diskItem.modified?.toDate())!)"
         content.secondaryTextProperties.numberOfLines = 1
         content.secondaryTextProperties.font = Constants.Fonts.small!
@@ -103,27 +102,86 @@ class RecentsViewController: UITableViewController {
 
 extension RecentsViewController: RecentsMainProtocol {
     func success() {
-//        debugPrint("success in Controller")
+        //        debugPrint("success in Controller")
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }
-
+    
     func failure() {
         debugPrint("failure in Controller")
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }
-
+    
     func imageDownloadingSuccess() {
-//        debugPrint("downloading image success in Controller")
+        //        debugPrint("downloading image success in Controller")
         tableView.reloadData()
     }
-
+    
     func imageDownloadingFailure() {
         debugPrint("downloading image failure in Controller")
     }
-
+    
     func openDiskItemView(vc: UIViewController) {
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension RecentsViewController: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.beginUpdates()
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.endUpdates()
+    }
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+//            print("insert")
+            if let indexPath = newIndexPath {
+                tableView.insertRows(at: [indexPath], with: .automatic)
+            }
+        case .update:
+//            print("update")
+            if let indexPath = indexPath {
+                let diskItem = CoreDataManager.shared.fetchResultController.object(at: indexPath) as! YDiskItem
+
+                let cell = tableView.cellForRow(at: indexPath) ?? UITableViewCell()
+                var content = cell.defaultContentConfiguration()
+                content.image = UIImage()
+                content.text = diskItem.name
+                content.textProperties.numberOfLines = 1
+                content.textProperties.font = Constants.Fonts.mainBody!
+                
+                let size = presenter.mbToKb(size: diskItem.size)
+                content.secondaryText = "\(size) \((diskItem.modified?.toDate())!)"
+                content.secondaryTextProperties.numberOfLines = 1
+                content.secondaryTextProperties.font = Constants.Fonts.small!
+                
+                presenter.downloadImage(url: diskItem.preview!)
+                content.image = presenter.getImageForCell(url: diskItem.preview!)
+                
+                content.imageProperties.reservedLayoutSize = CGSize(width: 55, height: 55)
+                content.imageProperties.maximumSize = CGSize(width: 55, height: 55)
+                cell.contentConfiguration = content
+            }
+        case .move:
+//            print("move")
+            if let indexPath = indexPath {
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+            if let newIndexPath = newIndexPath {
+                tableView.insertRows(at: [newIndexPath], with: .automatic)
+            }
+        case .delete:
+//            print("delete")
+            if let indexPath = indexPath {
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+        @unknown default:
+            fatalError()
+        }
     }
 }

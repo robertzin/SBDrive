@@ -19,7 +19,6 @@ class AuthViewController: UIViewController {
     var activityIndicator = UIActivityIndicatorView()
     
     private let webView = WKWebView()
-    private let clientId = "8633c79e9a564a2a9839ccc47f3582f8"
     private let authURL = "https://oauth.yandex.ru/authorize"
     
     override func viewDidLoad() {
@@ -38,14 +37,16 @@ class AuthViewController: UIViewController {
         }
         
         guard let request = request else { return }
-        self.webView.load(request)
+        DispatchQueue.main.async {
+            self.webView.load(request)
+        }
     }
     
     private var request: URLRequest? {
         guard var urlComponents = URLComponents(string: authURL) else { return nil }
         urlComponents.queryItems = [
             URLQueryItem(name: "response_type", value: "token"),
-            URLQueryItem(name: "client_id", value: "\(clientId)"),
+            URLQueryItem(name: "client_id", value: "\(Constants.clientId)"),
             URLQueryItem(name: "device_id", value: "\(UIDevice.current.identifierForVendor!)")
         ]
         guard let url = urlComponents.url else { return nil }

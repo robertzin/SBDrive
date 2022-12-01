@@ -41,7 +41,6 @@ final class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("\(Helper.getToken())")
         view.backgroundColor = .white
         self.navigationItem.hidesBackButton = true
         configureViews()
@@ -67,8 +66,12 @@ final class LoginViewController: UIViewController {
     }
 
     private func updateData() {
+        var token = ""
         
-        guard !Helper.getToken().isEmpty else {
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while geting token in LoginVC: \(error.localizedDescription)") }
+        
+        guard !token.isEmpty else {
             let requestTokenViewController = AuthViewController()
             requestTokenViewController.delegate = self
             navigationController?.pushViewController(requestTokenViewController, animated: true)
@@ -81,7 +84,8 @@ final class LoginViewController: UIViewController {
 
 extension LoginViewController: AuthViewControllerDelegate {
     func handleTokenChanged(token: String) {
-        Helper.setToken(token: token)
+        do { try KeyChain.shared.saveToken(token: token) }
+        catch { print("error while saving token in LoginVC: \(error.localizedDescription)") }
         updateData()
     }
 }

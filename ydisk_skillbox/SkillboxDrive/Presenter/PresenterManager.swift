@@ -51,10 +51,12 @@ class PresenterManager {
             let vc = LoginViewController(viewModel: viewModel as! LoginViewModel)
             viewController = UINavigationController(rootViewController: vc)
         }
-        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
-            let window = sceneDelegate.window {
-            window.rootViewController = viewController
-            UIView.transition(with: window, duration: 0.25, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        DispatchQueue.main.async {
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
+               let window = sceneDelegate.window {
+                window.rootViewController = viewController
+                UIView.transition(with: window, duration: 0.25, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            }
         }
     }
 }

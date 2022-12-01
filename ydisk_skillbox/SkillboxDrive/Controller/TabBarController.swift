@@ -22,7 +22,6 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        print("token: " + Helper.getToken())
         setupViews()
         tabBar.tintColor = Constants.Colors.accent1
         tabBar.unselectedItemTintColor = Constants.Colors.details

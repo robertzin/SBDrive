@@ -11,6 +11,7 @@ final class ImageDownloader {
     
     static let shared = ImageDownloader()
     
+    private var token = ""
     var cachedImages: NSCache<NSString, UIImage>
     var imagesDownloadTasks: NSCache<NSString, URLSessionDataTask>
     
@@ -18,6 +19,8 @@ final class ImageDownloader {
     let serialQueueForDataTasks = DispatchQueue(label: "dataTasks.queue", attributes: .concurrent)
     
     private init() {
+        do { try token = KeyChain.shared.getToken() }
+        catch { print("failed to get token in ImageDownloader: \(error.localizedDescription)") }
         cachedImages = NSCache<NSString, UIImage>()
         imagesDownloadTasks = NSCache<NSString, URLSessionDataTask>()
     }
@@ -30,6 +33,7 @@ final class ImageDownloader {
             return
         }
         guard let url = URL(string: imageUrlString) else {
+            print("url: \(imageUrlString)")
             completion(.failure(ImageDownloaderError.wrongURL))
             return
         }
@@ -41,7 +45,8 @@ final class ImageDownloader {
         }
         
         var request = URLRequest(url: url)
-        request.setValue("OAuth \(Helper.getToken())", forHTTPHeaderField: "Authorization")
+//        request.setValue("OAuth \(self.token!)", forHTTPHeaderField: "Authorization")
+        request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             guard let data = data else {
                 return

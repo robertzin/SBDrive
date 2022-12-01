@@ -12,6 +12,11 @@ enum Constants {
     static var loadingDelay = 1.0
     static let clientId = "8633c79e9a564a2a9839ccc47f3582f8"
     static let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
+    
+    static let coreDataEntityName = "YDiskItem"
+    
+    static let urlStringToken = "https://oauth.yandex.ru/authorize"
+    static let urlStringRecents = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=50"
 
     enum Colors {
         static var white: UIColor? {
@@ -45,7 +50,7 @@ enum Constants {
             UIFont(name: "Graphik-Regular", size: 15)
         }
         static var small: UIFont? {
-            UIFont(name: "Graphik-Light", size: 13)
+            UIFont(name: "Graphik-Regular", size: 13)
         }
         static var button: UIFont? {
             UIFont(name: "Graphik-Regular", size: 16)

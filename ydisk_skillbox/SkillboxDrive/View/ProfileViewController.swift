@@ -10,8 +10,12 @@ import SnapKit
 
 final class ProfileViewController: UIViewController {
     
+    private var token = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in ProfileVC: \(error.localizedDescription)") }
         navigationItem.title = Constants.Text.profile
         navigationItem.rightBarButtonItem = makeRightButton()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
@@ -36,7 +40,6 @@ final class ProfileViewController: UIViewController {
             
             let yesAction = UIAlertAction(title: Constants.Text.yes, style: .default) { action in
                 self.logOut()
-                Helper.eraseToken()
                 self.dismiss(animated: true)
                 PresenterManager.shared.show(vc: .login)
             }
@@ -52,20 +55,24 @@ final class ProfileViewController: UIViewController {
         alert.setValue(msgString, forKey: "attributedMessage")
         alert.addAction(quitAction)
         alert.addAction(cancelAction)
-
+        
         self.navigationController?.present(alert, animated: true, completion: nil)
     }
     
     private func logOut() {
+        do { try KeyChain.shared.deleteToken() }
+        catch { print("error while deleting token: \(error.localizedDescription)") }
+        CoreDataManager.shared.deleteAllEntities()
+        
         var request = URLRequest(url: URL(string: "https://oauth.yandex.ru/revoke_token")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let dataString = "access_token=\(Helper.getToken())&client_id=\(Constants.clientId)&client_secret=\(Constants.clientSecret)"
+        let dataString = "access_token=\(token)&client_id=\(Constants.clientId)&client_secret=\(Constants.clientSecret)"
         let data : Data = dataString.data(using: .utf8)!
         request.httpBody = data
         request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
         
-        URLSession.shared.dataTask(with: request) { [weak self] (data, response, error) in
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let response = response as? HTTPURLResponse {
                 switch response.statusCode {
                 case 200..<300:

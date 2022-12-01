@@ -7,6 +7,7 @@
 
 import UIKit
 import Foundation
+import CoreData
 
 protocol RecentsMainProtocol {
     func success()
@@ -17,35 +18,38 @@ protocol RecentsMainProtocol {
 }
 
 protocol RecentsMainPresenterProtocol {
+ 
     init(view: RecentsMainProtocol, networkService: NetworkServiceProtocol)
     
     func getDiskItems(url: String)
+    func performFetch()
     func getImageForCell(url: String) -> UIImage
     func downloadImage(url: String)
     
-    func numberOfRowsInSection(at index: Int) -> Int
-    func dataForDiskItemAt(_ indexPath: IndexPath) -> DiskItem
+    func numberOfRowsInSection(at section: Int) -> Int
+    func dataForDiskItemAt(_ indexPath: IndexPath) -> YDiskItem
     func didSelectDiskItemAt(_ indexPath: IndexPath)
     func mbToKb(size: Int64) -> String
     
-    var diskItems: [DiskItem]? { get set }
     var imageCache: NSCache<NSString, UIImage>? { get set }
-    // TODO: DiskItems cache implementation
-//    var diskResponseCache: NSCache<NSString, DiskResponse>? { get set }
-//    var diskItemsCache: NSCache<NSString, DiskItem>? { get set }
 }
 
 class RecentsMainPresenter: RecentsMainPresenterProtocol {
 
     var view: RecentsMainProtocol?
     var networkService: NetworkServiceProtocol!
-    var diskItems: [DiskItem]?
     var imageCache: NSCache<NSString, UIImage>?
     
     required init(view: RecentsMainProtocol, networkService: NetworkServiceProtocol) {
         self.view = view
         self.networkService = networkService
-        imageCache = Helper.shared.downloadedPreviewImageCache
+        self.imageCache = ImageDownloader.shared.cachedImages
+    }
+    
+    func performFetch() {
+        CoreDataManager.shared.saveContext()
+        try! CoreDataManager.shared.fetchResultController.performFetch()
+        self.view?.success()
     }
     
     func getDiskItems(url: String) {
@@ -55,15 +59,20 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
                 switch result {
                 case .success(let diskItems):
                     // debugPrint("success in Presenter")
-                    self.diskItems = diskItems
+                    diskItems?.forEach({ diskItem in
+                        let YdiskItem = YDiskItem()
+                        YdiskItem.set(diskItem: diskItem)
+                    })
+//                    CoreDataManager.shared.deleteAllEntities()
+                    self.performFetch()
                     self.view?.success()
                 case .failure(let error):
                     debugPrint("error in Presenter: \(error.localizedDescription)")
-                    self.diskItems = [DiskItem]()
                     self.view?.failure()
                 }
             }
         })
+        
     }
     
     func downloadImage(url: String) {
@@ -96,17 +105,20 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
         return retImage
     }
     
-    func numberOfRowsInSection(at index: Int) -> Int {
-        return diskItems?.count ?? 0
+    func numberOfRowsInSection(at section: Int) -> Int {
+        guard let sections = CoreDataManager.shared.fetchResultController.sections else { return 0 }
+        return sections[section].numberOfObjects
     }
     
-    func dataForDiskItemAt(_ indexPath: IndexPath) -> DiskItem {
-        let diskItem = diskItems?[indexPath.row] ?? DiskItem()
-        return diskItem
+    func dataForDiskItemAt(_ indexPath: IndexPath) -> YDiskItem {
+        if (CoreDataManager.shared.fetchResultController.sections) != nil {
+            return CoreDataManager.shared.fetchResultController.object(at: indexPath) as! YDiskItem
+        }
+        return YDiskItem()
     }
     
     func didSelectDiskItemAt(_ indexPath: IndexPath) {
-        guard let diskItem = diskItems?[indexPath.row] else { return }
+        let diskItem = CoreDataManager.shared.fetchResultController.object(at: indexPath) as! YDiskItem
         
         switch diskItem.mime_type {
         case let str where str!.contains("document"):
@@ -114,8 +126,7 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
         case let str where str!.contains("pdf"):
             view?.openDiskItemView(vc: UITableViewController())
         case let str where str!.contains("image"):
-            let vc = RecentImageViewController()
-            vc.diskItem = diskItem
+            let vc = RecentImageViewController(indexPath: indexPath)
             view?.openDiskItemView(vc: vc)
         default:
             view?.openDiskItemView(vc: UITableViewController())

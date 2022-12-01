@@ -29,6 +29,9 @@ class ImageScrollView: UIScrollView, UIScrollViewDelegate {
     }
     
     func set(image: UIImage) {
+        imageZoomView.removeFromSuperview()
+        imageZoomView = UIImageView()
+        
         imageZoomView = UIImageView(image: image)
         self.addSubview(imageZoomView)
         configurate(imageSize: image.size)

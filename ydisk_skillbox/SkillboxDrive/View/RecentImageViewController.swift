@@ -7,18 +7,67 @@
 
 import UIKit
 
-class RecentImageViewController: UIViewController {
+final class RecentImageViewController: UIViewController {
     
     let imageDownloader = ImageDownloader.shared
     var activityIndicator = UIActivityIndicatorView()
     var imageScrollView: ImageScrollView!
-    var diskItem: DiskItem!
+    private var token = ""
+    private var indexPath: IndexPath
+    private var diskItem: YDiskItem
+    
+    init(indexPath: IndexPath) {
+        self.indexPath = indexPath
+        self.diskItem = CoreDataManager.shared.fetchResultController.object(at: indexPath) as! YDiskItem
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in RecentImageVC: \(error.localizedDescription)") }
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureNavigationControllerItems()
+        NotificationCenter.default.addObserver(self, selector: #selector(performAfter), name: NSNotification.Name(rawValue:  "PeformAfterPresenting"), object: nil)
         setupViews()
+    }
+    
+    @objc func performAfter(_ notification: Notification) {
+        let name = notification.userInfo?["name"] as! String
+        let modified = notification.userInfo?["modified"] as! String
+        self.navigationItem.titleView = getTitleForItemAgain(name: name, modified: modified)
+    }
+    
+    private func getTitleForItemAgain(name: String, modified: String) -> UILabel {
+        let label = UILabel()
+        label.font = Constants.Fonts.header2
+        label.textColor = Constants.Colors.white
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        
+        let firstLine = name
+        let firstAttributes: [NSAttributedString.Key: Any] = [
+            .font: Constants.Fonts.header2!,
+            .foregroundColor: Constants.Colors.white!,
+        ]
+        let firstAttributedString = NSAttributedString(string: firstLine, attributes: firstAttributes)
+        
+        let secondLine = modified
+        let secondAttributes: [NSAttributedString.Key: Any] = [
+            .font: Constants.Fonts.small!,
+            .foregroundColor: Constants.Colors.details!,
+        ]
+        let secondAttributedString = NSAttributedString(string: secondLine, attributes: secondAttributes)
+        
+        let finalString = NSMutableAttributedString(attributedString: firstAttributedString)
+        finalString.append(NSAttributedString(string: "\n"))
+        finalString.append(secondAttributedString)
+        label.attributedText = finalString.withLineSpacing(7.0)
+        return label
     }
     
     private func getTitleForItem() -> UILabel {
@@ -75,11 +124,46 @@ class RecentImageViewController: UIViewController {
     }
     
     @objc private func renameButton() {
- 
+        let vc = RenameViewController(diskItem: diskItem)
+        let nc = UINavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+    
+    private func sendFile() {
+        guard let image = imageDownloader.cachedImages.object(forKey: NSString(string: diskItem.file!)) else { return }
+        DispatchQueue.main.async {
+            let shareSheetVC = UIActivityViewController(activityItems: [image],applicationActivities: nil)
+            self.present(shareSheetVC, animated: true)
+        }
+    }
+    
+    private func sendLink() {
+        guard let link = diskItem.file else { return }
+        DispatchQueue.main.async {
+            let shareSheetVC = UIActivityViewController(activityItems: [link],applicationActivities: nil)
+            self.present(shareSheetVC, animated: true)
+        }
     }
     
     @objc private func shareButton() {
-        print("share")
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+        let msgAttributes = [NSAttributedString.Key.font: Constants.Fonts.small!, NSAttributedString.Key.foregroundColor: Constants.Colors.details]
+        let msgString = NSAttributedString(string: Constants.Text.share, attributes: msgAttributes as [NSAttributedString.Key : Any])
+        
+        let fileAction = UIAlertAction(title: Constants.Text.sendFile , style: .default, handler: { [weak self]_ in
+            self?.sendFile()
+        })
+        let linkAction = UIAlertAction(title: Constants.Text.sendLink , style: .default, handler: { [weak self] _ in
+            self?.sendLink()
+        })
+        let cancelAction = UIAlertAction(title: Constants.Text.cancel, style: .cancel, handler: nil)
+        
+        alert.view.tintColor = .black
+        alert.setValue(msgString, forKey: "attributedMessage")
+        alert.addAction(fileAction)
+        alert.addAction(linkAction)
+        alert.addAction(cancelAction)
+        self.navigationController?.present(alert, animated: true, completion: nil)
     }
     
     @objc private func deleteButton() {
@@ -88,18 +172,20 @@ class RecentImageViewController: UIViewController {
         let msgString = NSAttributedString(string: Constants.Text.deletingImage, attributes: msgAttributes as [NSAttributedString.Key : Any])
         let deleteAction = UIAlertAction(title: Constants.Text.deleteImage , style: .destructive, handler: { [weak self]_ in
             self?.deleteImage {
-                DispatchQueue.main.async {
-                    print("image deleted")
+                DispatchQueue.main.async { [weak self] in
+                    CoreDataManager.shared.context.delete(self!.diskItem)
+                    CoreDataManager.shared.saveContext()
                     self?.navigationController?.popViewController(animated: true)
                 }
             }
         })
         let cancelAction = UIAlertAction(title: Constants.Text.cancel, style: .cancel, handler: nil)
         
+        alert.view.tintColor = .black
         alert.setValue(msgString, forKey: "attributedMessage")
         alert.addAction(deleteAction)
         alert.addAction(cancelAction)
-
+        
         self.navigationController?.present(alert, animated: true, completion: nil)
     }
     
@@ -112,17 +198,16 @@ class RecentImageViewController: UIViewController {
         ]
         guard let url = components?.url else { return }
         var request = URLRequest(url: url)
-        request.setValue("OAuth \(Helper.getToken())", forHTTPHeaderField: "Authorization")
+        request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "DELETE"
         
         URLSession.shared.dataTask(with: request) { (data, response, error )in
             if let response = response as? HTTPURLResponse {
-                print("request")
                 switch response.statusCode {
                 case 200..<300:
-                    print("success")
+                    print("image deleting success")
                 default:
-                    print("failure")
+                    print("image deleting failure")
                 }
                 completion()
             }

@@ -34,7 +34,6 @@
 		473284992927F8A2003A200A /* RecentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284982927F8A2003A200A /* RecentsViewController.swift */; };
 		4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4732849A2927F8D2003A200A /* AllFilesViewController.swift */; };
 		473284AB292970CB003A200A /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AA292970CB003A200A /* AuthViewController.swift */; };
-		473284AD292BD24E003A200A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AC292BD24E003A200A /* Helper.swift */; };
 		473284AF292BD53A003A200A /* PresenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284AE292BD53A003A200A /* PresenterManager.swift */; };
 		473284B1292D3F6D003A200A /* YDiskResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B0292D3F6D003A200A /* YDiskResponse.swift */; };
 		473284B4292D50D2003A200A /* RecentsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473284B3292D50D2003A200A /* RecentsPresenter.swift */; };
@@ -42,6 +41,12 @@
 		4749A2BB2932B7EA00352B62 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */; };
 		4766B6652934F1B30058EF73 /* RecentImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6642934F1B30058EF73 /* RecentImageViewController.swift */; };
 		4766B6672934F5A60058EF73 /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B6662934F5A60058EF73 /* ImageScrollView.swift */; };
+		4766B66A293610C90058EF73 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4766B668293610C90058EF73 /* Model.xcdatamodeld */; };
+		4766B67E293630800058EF73 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B67D293630800058EF73 /* CoreDataManager.swift */; };
+		4766B68929363ECA0058EF73 /* YDiskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B68729363ECA0058EF73 /* YDiskItem+CoreDataClass.swift */; };
+		4766B68A29363ECA0058EF73 /* YDiskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B68829363ECA0058EF73 /* YDiskItem+CoreDataProperties.swift */; };
+		4766B68C293756B60058EF73 /* RenameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B68B293756B60058EF73 /* RenameViewController.swift */; };
+		4766B68E2938B48F0058EF73 /* KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4766B68D2938B48F0058EF73 /* KeyChain.swift */; };
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
@@ -87,7 +92,6 @@
 		473284982927F8A2003A200A /* RecentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsViewController.swift; sourceTree = "<group>"; };
 		4732849A2927F8D2003A200A /* AllFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesViewController.swift; sourceTree = "<group>"; };
 		473284AA292970CB003A200A /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
-		473284AC292BD24E003A200A /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		473284AE292BD53A003A200A /* PresenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterManager.swift; sourceTree = "<group>"; };
 		473284B0292D3F6D003A200A /* YDiskResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YDiskResponse.swift; sourceTree = "<group>"; };
 		473284B3292D50D2003A200A /* RecentsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsPresenter.swift; sourceTree = "<group>"; };
@@ -95,6 +99,12 @@
 		4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		4766B6642934F1B30058EF73 /* RecentImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentImageViewController.swift; sourceTree = "<group>"; };
 		4766B6662934F5A60058EF73 /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
+		4766B669293610C90058EF73 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		4766B67D293630800058EF73 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		4766B68729363ECA0058EF73 /* YDiskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		4766B68829363ECA0058EF73 /* YDiskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		4766B68B293756B60058EF73 /* RenameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameViewController.swift; sourceTree = "<group>"; };
+		4766B68D2938B48F0058EF73 /* KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChain.swift; sourceTree = "<group>"; };
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -155,6 +165,7 @@
 				4704DE2A2918EF7300B43157 /* SceneDelegate.swift */,
 				478361152918F276001A6552 /* Constants.swift */,
 				4704DE312918EF7600B43157 /* Assets.xcassets */,
+				4766B668293610C90058EF73 /* Model.xcdatamodeld */,
 				4704DE362918EF7600B43157 /* Info.plist */,
 				47ECB3FA29190F7E007DE862 /* Localizable.strings */,
 			);
@@ -221,14 +232,17 @@
 		47ECB3FC291916A7007DE862 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				4766B68729363ECA0058EF73 /* YDiskItem+CoreDataClass.swift */,
+				4766B68829363ECA0058EF73 /* YDiskItem+CoreDataProperties.swift */,
 				47175DB3291BA3E70036D9E6 /* LoadingViewModel.swift */,
 				47175DA3291B9CFE0036D9E6 /* LoginViewModel.swift */,
 				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
 				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
 				472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */,
-				473284AC292BD24E003A200A /* Helper.swift */,
 				473284B0292D3F6D003A200A /* YDiskResponse.swift */,
 				4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */,
+				4766B67D293630800058EF73 /* CoreDataManager.swift */,
+				4766B68D2938B48F0058EF73 /* KeyChain.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -240,6 +254,7 @@
 				473284962927F899003A200A /* ProfileViewController.swift */,
 				473284982927F8A2003A200A /* RecentsViewController.swift */,
 				4766B6642934F1B30058EF73 /* RecentImageViewController.swift */,
+				4766B68B293756B60058EF73 /* RenameViewController.swift */,
 				4732849A2927F8D2003A200A /* AllFilesViewController.swift */,
 				473284AA292970CB003A200A /* AuthViewController.swift */,
 				473284B5292D516F003A200A /* NetworkServices.swift */,
@@ -400,25 +415,30 @@
 			files = (
 				472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */,
 				473284B1292D3F6D003A200A /* YDiskResponse.swift in Sources */,
-				473284AD292BD24E003A200A /* Helper.swift in Sources */,
 				47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */,
 				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
 				473284AF292BD53A003A200A /* PresenterManager.swift in Sources */,
+				4766B68E2938B48F0058EF73 /* KeyChain.swift in Sources */,
 				47175D96291B8C320036D9E6 /* ModalTransition.swift in Sources */,
 				47175DA8291B9D4F0036D9E6 /* OnboardingRoute.swift in Sources */,
 				47175DAE291B9F230036D9E6 /* OnboardingViewController.swift in Sources */,
 				473284AB292970CB003A200A /* AuthViewController.swift in Sources */,
 				4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */,
 				478361142918F19E001A6552 /* Transition.swift in Sources */,
+				4766B67E293630800058EF73 /* CoreDataManager.swift in Sources */,
 				472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */,
 				478361112918F11A001A6552 /* Router.swift in Sources */,
+				4766B68A29363ECA0058EF73 /* YDiskItem+CoreDataProperties.swift in Sources */,
 				47175DBB291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift in Sources */,
 				473284972927F899003A200A /* ProfileViewController.swift in Sources */,
 				47175D9C291B91220036D9E6 /* DefaultRouter.swift in Sources */,
+				4766B66A293610C90058EF73 /* Model.xcdatamodeld in Sources */,
+				4766B68C293756B60058EF73 /* RenameViewController.swift in Sources */,
 				473284992927F8A2003A200A /* RecentsViewController.swift in Sources */,
 				4704DE292918EF7300B43157 /* AppDelegate.swift in Sources */,
 				472C9AA6291BE14500FBEB55 /* OnboardingSlide.swift in Sources */,
 				47175DA4291B9CFE0036D9E6 /* LoginViewModel.swift in Sources */,
+				4766B68929363ECA0058EF73 /* YDiskItem+CoreDataClass.swift in Sources */,
 				47175DAC291B9D7C0036D9E6 /* LoginRoute.swift in Sources */,
 				47175DB6291BA48D0036D9E6 /* LoadingRoute.swift in Sources */,
 				4766B6652934F1B30058EF73 /* RecentImageViewController.swift in Sources */,
@@ -645,6 +665,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		4766B668293610C90058EF73 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				4766B669293610C90058EF73 /* Model.xcdatamodel */,
+			);
+			currentVersion = 4766B669293610C90058EF73 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 4704DE1D2918EF7300B43157 /* Project object */;
 }

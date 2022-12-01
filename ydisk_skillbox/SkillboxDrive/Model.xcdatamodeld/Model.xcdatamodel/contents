@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="21G115" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="YDiskItem" representedClassName="YDiskItem" syncable="YES">
+        <attribute name="created" optional="YES" attributeType="String"/>
+        <attribute name="file" attributeType="String"/>
+        <attribute name="media_type" attributeType="String"/>
+        <attribute name="mime_type" attributeType="String"/>
+        <attribute name="modified" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="path" attributeType="String"/>
+        <attribute name="preview" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="created"/>
+                <constraint value="path"/>
+                <constraint value="name"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>
