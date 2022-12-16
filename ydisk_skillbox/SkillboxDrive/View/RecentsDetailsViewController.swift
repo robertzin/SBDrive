@@ -34,7 +34,6 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        self.tabBarController?.tabBar.layer.zPosition = -1
         NotificationCenter.default.addObserver(self, selector: #selector(performAfter), name: NSNotification.Name(rawValue:  "PeformAfterPresenting"), object: nil)
         setupViews()
     }

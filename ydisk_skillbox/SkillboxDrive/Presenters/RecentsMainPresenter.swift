@@ -1,5 +1,5 @@
 //
-//  RecentsPresenter.swift
+//  RecentsMainPresenter.swift
 //  SkillboxDrive
 //
 //  Created by Robert Zinyatullin on 22.11.2022.
@@ -15,6 +15,7 @@ protocol RecentsMainProtocol {
     func imageDownloadingSuccess()
     func imageDownloadingFailure()
     func openDiskItemView(vc: UIViewController)
+    func presentAlert(alert: UIAlertController)
 }
 
 protocol RecentsMainPresenterProtocol {
@@ -22,7 +23,6 @@ protocol RecentsMainPresenterProtocol {
     init(view: RecentsMainProtocol, networkService: NetworkServiceProtocol)
     
     func getDiskItems(url: String)
-    func performFetch()
     func getImageForCell(url: String) -> UIImage
     func downloadImage(url: String)
     
@@ -46,33 +46,29 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
         self.imageCache = ImageDownloader.shared.cachedImages
     }
     
-    func performFetch() {
-        CoreDataManager.shared.saveContext()
-        try! CoreDataManager.shared.fetchResultController.performFetch()
-        self.view?.success()
-    }
-    
     func getDiskItems(url: String) {
         networkService.getData(url: url, completion: { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .success(let diskItems):
-                    // debugPrint("success in Presenter")
+                     debugPrint("getDiskItems success")
+                    CoreDataManager.shared.deleteIfNotPresented(diskItemArray: diskItems!)
                     diskItems?.forEach({ diskItem in
-                        let YdiskItem = YDiskItem()
-                        YdiskItem.set(diskItem: diskItem)
+//                        print("downloaded element: \(diskItem.name!)")
+                        if CoreDataManager.shared.isUnique(diskItem: diskItem) {
+                            let YdiskItem = YDiskItem()
+                            YdiskItem.set(diskItem: diskItem)
+                        }
                     })
 //                    CoreDataManager.shared.deleteAllEntities()
-                    self.performFetch()
                     self.view?.success()
                 case .failure(let error):
-                    debugPrint("error in Presenter: \(error.localizedDescription)")
+                    debugPrint("getDiskItems failure: \(error.localizedDescription)")
                     self.view?.failure()
                 }
             }
         })
-        
     }
     
     func downloadImage(url: String) {
@@ -131,7 +127,9 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
             let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.image)
             view?.openDiskItemView(vc: vc)
         default:
-            view?.openDiskItemView(vc: UITableViewController())
+            let alert = UIAlertController(title: Constants.Text.error, message: Constants.Text.unsupportedType, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Constants.Text.dismiss, style: .cancel))
+            view?.presentAlert(alert: alert)
         }
     }
     

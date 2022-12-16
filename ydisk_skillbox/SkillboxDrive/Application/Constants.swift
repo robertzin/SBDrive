@@ -66,6 +66,8 @@ enum Constants {
         static let getStarted = Bundle.main.localizedString(forKey: "Get started", value: "", table: "Localizable")
         static let occupied = Bundle.main.localizedString(forKey: "Occupied", value: "", table: "Localizable")
         static let left = Bundle.main.localizedString(forKey: "Left", value: "", table: "Localizable")
+        static let error = Bundle.main.localizedString(forKey: "Error", value: "", table: "Localizable")
+        static let dismiss = Bundle.main.localizedString(forKey: "Dismiss", value: "", table: "Localizable")
         static let next = Bundle.main.localizedString(forKey: "Next", value: "", table: "Localizable")
         static let done = Bundle.main.localizedString(forKey: "Done", value: "", table: "Localizable")
         static let cancel = Bundle.main.localizedString(forKey: "Cancel", value: "", table: "Localizable")
@@ -86,10 +88,12 @@ enum Constants {
         static let deletingImage = Bundle.main.localizedString(forKey: "This image will be deleted", value: "", table: "Localizable")
         static let deleteFile = Bundle.main.localizedString(forKey: "This file will be deleted", value: "", table: "Localizable")
         static let deleteImage = Bundle.main.localizedString(forKey: "Delete the image", value: "", table: "Localizable")
+        static let unsupportedType = Bundle.main.localizedString(forKey: "Unsupported file type", value: "", table: "Localizable")
         static let delete = Bundle.main.localizedString(forKey: "Delete", value: "", table: "Localizable")
         static let share = Bundle.main.localizedString(forKey: "Share", value: "", table: "Localizable")
         static let sendFile = Bundle.main.localizedString(forKey: "Send file", value: "", table: "Localizable")
         static let sendLink = Bundle.main.localizedString(forKey: "Send link", value: "", table: "Localizable")
+        static let gb = Bundle.main.localizedString(forKey: "gb", value: "", table: "Localizable")
         static let mb = Bundle.main.localizedString(forKey: "mb", value: "", table: "Localizable")
         static let kb = Bundle.main.localizedString(forKey: "kb", value: "", table: "Localizable")
     }
@@ -100,5 +104,6 @@ enum Constants {
         static let onboarding2 = UIImage(named: "onboarding2")
         static let onboarding3 = UIImage(named: "onboarding3")
         static let equal = UIImage(named: "equal")
+        static let chevronR = UIImage(named: "chevronRight")
     }
 }

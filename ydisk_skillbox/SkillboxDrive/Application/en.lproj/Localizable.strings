@@ -18,6 +18,8 @@
 "Occupied" = "Occupied";
 "Left" = "Left";
 
+"Error" = "Error";
+"Dismiss" = "Dismiss";
 "Next" = "Next";
 "Done" = "Done";
 "Cancel" = "Cancel";
@@ -42,10 +44,13 @@
 "This image will be deleted" = "This image will be deleted";
 "Delete the image" = "Delete the image";
 
+"Unsupported file type" = "Unsupported file type";
+
 "Delete" = "Delete";
 "Share" = "Share";
 "Send file" = "Send file";
 "Send link" = "Send link";
 
+"gb" = "gb";
 "mb" = "mb";
 "kb" = "kb";

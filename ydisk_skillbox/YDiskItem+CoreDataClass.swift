@@ -2,7 +2,7 @@
 //  YDiskItem+CoreDataClass.swift
 //  SkillboxDrive
 //
-//  Created by Robert Zinyatullin on 29.11.2022.
+//  Created by Robert Zinyatullin on 06.12.2022.
 //
 //
 
@@ -16,14 +16,17 @@ public class YDiskItem: NSManagedObject {
     }
     
     func set(diskItem: DiskItem) {
-        self.path = diskItem.path
-        self.size = diskItem.size!
-        self.created = diskItem.created
-        self.modified = diskItem.modified
-        self.file = diskItem.file
-        self.media_type = diskItem.media_type
-        self.mime_type = diskItem.mime_type
+        self.md5 = diskItem.md5
         self.name = diskItem.name
         self.preview = diskItem.preview
+        self.mime_type = diskItem.mime_type
+        self.media_type = diskItem.media_type
+        self.path = diskItem.path
+        self.file = diskItem.file
+        self.created = diskItem.created
+        self.modified = diskItem.modified
+        self.size = diskItem.size!
+        self.sha256 = diskItem.sha256
+        self.type = diskItem.type
     }
 }

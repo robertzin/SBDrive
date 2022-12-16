@@ -21,4 +21,7 @@ class DiskItem: Codable {
     var media_type: String?
     var mime_type: String?
     var file: String?
+    var md5: String?
+    var sha256: String?
+    var type: String?
 }

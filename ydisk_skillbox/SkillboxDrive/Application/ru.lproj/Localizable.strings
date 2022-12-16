@@ -18,6 +18,8 @@
 "Occupied" = "Занято";
 "Left" = "Свободно";
 
+"Error" = "Ошибка";
+"Dismiss" = "Скрыть";
 "Next" = "Далее";
 "Done" = "Готово";
 "Cancel" = "Отмена";
@@ -42,10 +44,13 @@
 "This image will be deleted" = "Данное изображение будет удалено";
 "Delete the image" = "Удалить изображение";
 
+"Unsupported file type" = "Неподдерживаемый тип файла";
+
 "Delete" = "Удалить";
 "Share" = "Поделиться";
 "Send file" = "Файлом";
 "Send link" = "Ссылкой";
 
+"gb" = "гб";
 "mb" = "мб";
 "kb" = "кб";

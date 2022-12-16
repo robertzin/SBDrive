@@ -11,9 +11,13 @@ import CoreData
 
 class RecentsViewController: UITableViewController {
     
-    private let cellId = "DiskResponseCellId"
+    private let cellId = "DiskResponseRecentsCellId"
     private var activityIndicator = UIActivityIndicatorView()
     var presenter: RecentsMainPresenterProtocol!
+    
+    override func viewWillAppear(_ animated: Bool) {
+        hidesBottomBarWhenPushed = false
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,10 +27,8 @@ class RecentsViewController: UITableViewController {
     }
     
     private func setupViews() {
-        
         view.addSubview(activityIndicator)
         view.backgroundColor = .white
-//        hidesBottomBarWhenPushed = true
         navigationItem.title = Constants.Text.recents
         navigationItem.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
@@ -58,6 +60,7 @@ class RecentsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        hidesBottomBarWhenPushed = true
         presenter.didSelectDiskItemAt(indexPath)
     }
     
@@ -103,6 +106,8 @@ class RecentsViewController: UITableViewController {
 extension RecentsViewController: RecentsMainProtocol {
     func success() {
         //        debugPrint("success in Controller")
+        CoreDataManager.shared.saveContext()
+        try! CoreDataManager.shared.fetchResultController.performFetch()
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }
@@ -124,6 +129,10 @@ extension RecentsViewController: RecentsMainProtocol {
     
     func openDiskItemView(vc: UIViewController) {
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func presentAlert(alert: UIAlertController) {
+        navigationController?.present(alert, animated: true)
     }
 }
 

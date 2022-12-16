@@ -47,7 +47,7 @@ final class ImageDownloader {
         var request = URLRequest(url: url)
 //        request.setValue("OAuth \(self.token!)", forHTTPHeaderField: "Authorization")
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard let data = data else {
                 return
             }
@@ -61,6 +61,7 @@ final class ImageDownloader {
             
             guard let image = UIImage(data: data) else {
                 print(String(data: data, encoding: .utf8))
+                print(response?.url)
                 completion(.failure(ImageDownloaderError.UIImageError))
                 return
             }

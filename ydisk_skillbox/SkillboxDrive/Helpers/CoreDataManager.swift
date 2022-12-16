@@ -34,12 +34,56 @@ class CoreDataManager {
     }()
     
     func count() -> Int {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "YDiskItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
         do {
             let count = try context.count(for: fetchRequest)
             return count
         } catch { print(error.localizedDescription) }
         return -1
+    }
+    
+    func isUnique(diskItem: DiskItem) -> Bool {
+        var isUnique = true
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        do {
+            let allData = try context.fetch(fetchRequest) as! [YDiskItem]
+            if allData.first(where: { $0.name == diskItem.name }) != nil {
+//                print("is not unique: \(diskItem.name!): \(diskItem.md5)")
+                isUnique = false
+            }
+        } catch {
+            print("error while isUnique is checked: \(error.localizedDescription)")
+        }
+        
+        return isUnique
+    }
+    
+    func deleteIfNotPresented(diskItemArray: [DiskItem]) {
+        let idsArray = diskItemArray.map { $0.name }
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        do {
+            let allData = try context.fetch(fetchRequest) as! [YDiskItem]
+            allData.forEach { yDiskItem in
+                if !idsArray.contains(yDiskItem.name) {
+//                    print("deleting: \(yDiskItem.name)")
+                    context.delete(yDiskItem)
+                }
+            }
+        } catch {
+            print("error performing deletion and inserting: \(error.localizedDescription)")
+        }
+    }
+    
+    func printData() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        do {
+            let allData = try context.fetch(fetchRequest)
+            for object in allData as! [YDiskItem] {
+                print(object.md5!)
+            }
+        } catch {
+            print("error while printing IDs: \(error.localizedDescription)")
+        }
     }
     
     func deleteAllEntities() {
