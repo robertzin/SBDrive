@@ -47,6 +47,10 @@
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
+		47E855C8294DECB400403600 /* RenamePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E855C7294DECB400403600 /* RenamePresenter.swift */; };
+		47E855CA294DED6400403600 /* CommonPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E855C9294DED6400403600 /* CommonPresenter.swift */; };
+		47E855CD294F60CF00403600 /* YDiskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E855CB294F60CF00403600 /* YDiskItem+CoreDataClass.swift */; };
+		47E855CE294F60CF00403600 /* YDiskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E855CC294F60CF00403600 /* YDiskItem+CoreDataProperties.swift */; };
 		47ECB3ED29190691007DE862 /* GraphikRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47ECB3E829190691007DE862 /* GraphikRegular.otf */; };
 		47ECB3EE29190691007DE862 /* GraphikThin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47ECB3E929190691007DE862 /* GraphikThin.otf */; };
 		47ECB3EF29190691007DE862 /* GraphikMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47ECB3EA29190691007DE862 /* GraphikMedium.otf */; };
@@ -57,10 +61,8 @@
 		47ECB3F829190F7E007DE862 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 47ECB3FA29190F7E007DE862 /* Localizable.strings */; };
 		47F7572A293F460B00B98281 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47F75729293F460B00B98281 /* Assets.xcassets */; };
 		47F7572D293F513100B98281 /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F7572C293F513100B98281 /* ProfilePresenter.swift */; };
-		47F7572F293F519400B98281 /* RecentsDetailsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F7572E293F519400B98281 /* RecentsDetailsPresenter.swift */; };
+		47F7572F293F519400B98281 /* DetailsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F7572E293F519400B98281 /* DetailsPresenter.swift */; };
 		47F75731293F540D00B98281 /* PublishedMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F75730293F540C00B98281 /* PublishedMainViewController.swift */; };
-		47F75734293F56E600B98281 /* YDiskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F75732293F56E600B98281 /* YDiskItem+CoreDataClass.swift */; };
-		47F75735293F56E600B98281 /* YDiskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F75733293F56E600B98281 /* YDiskItem+CoreDataProperties.swift */; };
 		47F75737293F57FD00B98281 /* PublishedMainPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F75736293F57FD00B98281 /* PublishedMainPresenter.swift */; };
 		47F75739293F580A00B98281 /* PublishedDetailsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F75738293F580A00B98281 /* PublishedDetailsPresenter.swift */; };
 		7B7AFDA1F4208FFCDE3FF2B1 /* Pods_SkillboxDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D041F63B8EE3CF1BA4A128 /* Pods_SkillboxDrive.framework */; };
@@ -110,6 +112,10 @@
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		47E855C7294DECB400403600 /* RenamePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenamePresenter.swift; sourceTree = "<group>"; };
+		47E855C9294DED6400403600 /* CommonPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonPresenter.swift; sourceTree = "<group>"; };
+		47E855CB294F60CF00403600 /* YDiskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		47E855CC294F60CF00403600 /* YDiskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		47ECB3E829190691007DE862 /* GraphikRegular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GraphikRegular.otf; sourceTree = "<group>"; };
 		47ECB3E929190691007DE862 /* GraphikThin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GraphikThin.otf; sourceTree = "<group>"; };
 		47ECB3EA29190691007DE862 /* GraphikMedium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GraphikMedium.otf; sourceTree = "<group>"; };
@@ -121,10 +127,8 @@
 		47ECB3FB29191021007DE862 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		47F75729293F460B00B98281 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47F7572C293F513100B98281 /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
-		47F7572E293F519400B98281 /* RecentsDetailsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsDetailsPresenter.swift; sourceTree = "<group>"; };
+		47F7572E293F519400B98281 /* DetailsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsPresenter.swift; sourceTree = "<group>"; };
 		47F75730293F540C00B98281 /* PublishedMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedMainViewController.swift; sourceTree = "<group>"; };
-		47F75732293F56E600B98281 /* YDiskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		47F75733293F56E600B98281 /* YDiskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		47F75736293F57FD00B98281 /* PublishedMainPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedMainPresenter.swift; sourceTree = "<group>"; };
 		47F75738293F580A00B98281 /* PublishedDetailsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedDetailsPresenter.swift; sourceTree = "<group>"; };
 		952468E180FF8301103BD79E /* Pods-SkillboxDrive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SkillboxDrive.release.xcconfig"; path = "Target Support Files/Pods-SkillboxDrive/Pods-SkillboxDrive.release.xcconfig"; sourceTree = "<group>"; };
@@ -229,14 +233,14 @@
 		47ECB3FC291916A7007DE862 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				47F75732293F56E600B98281 /* YDiskItem+CoreDataClass.swift */,
-				47F75733293F56E600B98281 /* YDiskItem+CoreDataProperties.swift */,
-				47175DB3291BA3E70036D9E6 /* LoadingViewModel.swift */,
-				47175DA3291B9CFE0036D9E6 /* LoginViewModel.swift */,
-				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
-				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
-				472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */,
+				47E855CB294F60CF00403600 /* YDiskItem+CoreDataClass.swift */,
+				47E855CC294F60CF00403600 /* YDiskItem+CoreDataProperties.swift */,
 				473284B0292D3F6D003A200A /* YDiskResponse.swift */,
+				47175DB3291BA3E70036D9E6 /* LoadingViewModel.swift */,
+				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
+				47175DA3291B9CFE0036D9E6 /* LoginViewModel.swift */,
+				472C9AB1291E58CD00FBEB55 /* TabBarViewModel.swift */,
+				472C9AA5291BE14500FBEB55 /* OnboardingSlide.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -305,10 +309,12 @@
 			isa = PBXGroup;
 			children = (
 				473284B3292D50D2003A200A /* RecentsMainPresenter.swift */,
-				47F7572E293F519400B98281 /* RecentsDetailsPresenter.swift */,
+				47E855C9294DED6400403600 /* CommonPresenter.swift */,
+				47F7572E293F519400B98281 /* DetailsPresenter.swift */,
 				47F7572C293F513100B98281 /* ProfilePresenter.swift */,
 				47F75736293F57FD00B98281 /* PublishedMainPresenter.swift */,
 				47F75738293F580A00B98281 /* PublishedDetailsPresenter.swift */,
+				47E855C7294DECB400403600 /* RenamePresenter.swift */,
 			);
 			path = Presenters;
 			sourceTree = "<group>";
@@ -452,11 +458,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47E855CE294F60CF00403600 /* YDiskItem+CoreDataProperties.swift in Sources */,
 				472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */,
 				473284B1292D3F6D003A200A /* YDiskResponse.swift in Sources */,
 				47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */,
 				47F75739293F580A00B98281 /* PublishedDetailsPresenter.swift in Sources */,
-				47F75734293F56E600B98281 /* YDiskItem+CoreDataClass.swift in Sources */,
 				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
 				473284AF292BD53A003A200A /* PresenterManager.swift in Sources */,
 				4766B68E2938B48F0058EF73 /* KeyChain.swift in Sources */,
@@ -467,7 +473,9 @@
 				473284AB292970CB003A200A /* AuthViewController.swift in Sources */,
 				4732849B2927F8D2003A200A /* AllFilesViewController.swift in Sources */,
 				478361142918F19E001A6552 /* Transition.swift in Sources */,
-				47F7572F293F519400B98281 /* RecentsDetailsPresenter.swift in Sources */,
+				47F7572F293F519400B98281 /* DetailsPresenter.swift in Sources */,
+				47E855CD294F60CF00403600 /* YDiskItem+CoreDataClass.swift in Sources */,
+				47E855C8294DECB400403600 /* RenamePresenter.swift in Sources */,
 				4766B67E293630800058EF73 /* CoreDataManager.swift in Sources */,
 				472C9AA4291BE11600FBEB55 /* OnboardingCollectionViewCell.swift in Sources */,
 				478361112918F11A001A6552 /* Router.swift in Sources */,
@@ -475,7 +483,6 @@
 				473284972927F899003A200A /* ProfileViewController.swift in Sources */,
 				47175D9C291B91220036D9E6 /* DefaultRouter.swift in Sources */,
 				4766B66A293610C90058EF73 /* Model.xcdatamodeld in Sources */,
-				47F75735293F56E600B98281 /* YDiskItem+CoreDataProperties.swift in Sources */,
 				4766B68C293756B60058EF73 /* RenameViewController.swift in Sources */,
 				473284992927F8A2003A200A /* RecentsViewController.swift in Sources */,
 				4704DE292918EF7300B43157 /* AppDelegate.swift in Sources */,
@@ -490,6 +497,7 @@
 				4766B6672934F5A60058EF73 /* ImageScrollView.swift in Sources */,
 				4704DE2B2918EF7300B43157 /* SceneDelegate.swift in Sources */,
 				472C9AB4291E58E900FBEB55 /* TabBarRoute.swift in Sources */,
+				47E855CA294DED6400403600 /* CommonPresenter.swift in Sources */,
 				47F75731293F540D00B98281 /* PublishedMainViewController.swift in Sources */,
 				47175D9A291B8C450036D9E6 /* EmptyTransition.swift in Sources */,
 				473284B6292D516F003A200A /* NetworkServices.swift in Sources */,

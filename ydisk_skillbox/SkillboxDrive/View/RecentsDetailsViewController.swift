@@ -165,7 +165,7 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
     @objc private func deleteButton() {
         let alert = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
         let msgAttributes = [NSAttributedString.Key.font: Constants.Fonts.small!, NSAttributedString.Key.foregroundColor: Constants.Colors.details]
-        let msgString = NSAttributedString(string: Constants.Text.deleteFile, attributes: msgAttributes as [NSAttributedString.Key : Any])
+        let msgString = NSAttributedString(string: Constants.Text.fileWillBeDeleted, attributes: msgAttributes as [NSAttributedString.Key : Any])
         let deleteAction = UIAlertAction(title: Constants.Text.delete , style: .destructive, handler: { [weak self]_ in
             self?.deleteImage {
                 DispatchQueue.main.async { [weak self] in

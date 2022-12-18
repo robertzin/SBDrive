@@ -8,22 +8,33 @@
 import UIKit
 import SnapKit
 
-class PublishedMainViewController: UIViewController {
+final class PublishedMainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    private let cellId = "DiskResponsePublishedCellId"
+    private let publishedCellId = "PublishedCell"
+    private lazy var tableView: UITableView = {
+        let tv = UITableView()
+        tv.delegate = self
+        tv.dataSource = self
+        tv.register(UITableViewCell.self, forCellReuseIdentifier: publishedCellId)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.rowHeight = 55
+        return tv
+    }()
+    
     private var activityIndicator = UIActivityIndicatorView()
     var presenter: PublishedMainPresenterProtocol!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.getDiskItems(url: Constants.urlStringPublished)
         setupViews()
-        view.backgroundColor = .white
-        navigationItem.title = Constants.Text.uploadedFiles
-        navigationController?.navigationBar.tintColor = Constants.Colors.details
     }
     
     private func setupViews() {
-        setupViewsIfNothingToDisplay()
+        view.backgroundColor = .white
+        navigationItem.title = Constants.Text.uploadedFiles
+        navigationController?.navigationBar.tintColor = Constants.Colors.details
+//        setupViewsIfNothingToDisplay()
         setupViewsIfSomethingToDisplay()
     }
     
@@ -31,14 +42,11 @@ class PublishedMainViewController: UIViewController {
         view.subviews.forEach({ $0.removeFromSuperview() })
         view.subviews.map({ $0.removeFromSuperview() })
         
-        let label = UILabel()
-        label.text = "Hello, mutherf*cker!"
-        label.textAlignment = .center
-        view.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
-            make.width.equalToSuperview().inset(55)
-            make.height.equalTo(65)
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+            make.height.equalToSuperview()
+            make.center.equalToSuperview()
         }
     }
     
@@ -91,26 +99,110 @@ class PublishedMainViewController: UIViewController {
         print("refresh data")
         setupViewsIfSomethingToDisplay()
     }
+    
+    @objc private func cellButtonTapped(_ sender: UIButton) {
+        let point = sender.convert(CGPoint.zero, to: tableView as UIView)
+        let indexPath: IndexPath! = tableView.indexPathForRow(at: point)
+        print("row is = \(indexPath.row) && section is = \(indexPath.section)")
+        presenter.alert(indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return presenter.numberOfRowsInSection(at: section)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let diskItem = presenter.dataForDiskItemAt(indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: publishedCellId, for: indexPath)
+        cell.contentView.layoutIfNeeded()
+        
+        // cell activity indicator
+        let cellActivityIndicator = UIActivityIndicatorView()
+        cell.addSubview(cellActivityIndicator)
+        cellActivityIndicator.snp.makeConstraints { make in
+            make.left.equalTo(cell.contentView.safeAreaLayoutGuide.snp.left).offset(37.5)
+            make.centerY.equalToSuperview()
+        }
+        cellActivityIndicator.startAnimating()
+        
+        // cell button
+        let cellButton = UIButton()
+        cellButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        cellButton.tintColor = Constants.Colors.details
+        cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
+        cell.contentView.addSubview(cellButton)
+        cell.contentView.layoutIfNeeded()
+        cellButton.snp.makeConstraints { make in
+            make.width.equalTo(35)
+            make.height.equalTo(25)
+            make.centerY.equalToSuperview()
+            make.right.equalToSuperview().inset(15)
+        }
+        
+        // cell content
+        var content = cell.defaultContentConfiguration()
+        content.image = UIImage()
+        content.text = diskItem.name
+        content.textProperties.numberOfLines = 1
+        content.textProperties.font = Constants.Fonts.mainBody!
+        
+        let date = diskItem.modified?.toDate() ?? ""
+        if diskItem.type != "dir" {
+            let size = presenter.mbToKb(size: diskItem.size)
+            content.secondaryText = "\(size) \(date)"
+        } else { content.secondaryText = date }
+        content.secondaryTextProperties.numberOfLines = 1
+        content.secondaryTextProperties.font = Constants.Fonts.small!
+        content.image = presenter.getImageForCell(diskItem: diskItem)
+        cellActivityIndicator.stopAnimating()
+        
+        content.imageProperties.reservedLayoutSize = CGSize(width: 55, height: 55)
+        content.imageProperties.maximumSize = CGSize(width: 55, height: 55)
+        cell.contentConfiguration = content
+        
+        cell.contentView.setNeedsLayout()
+        cell.contentView.layoutIfNeeded()
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("tapped at \(indexPath.row)")
+    }
 }
 
 extension PublishedMainViewController: PublishedMainProtocol {
     func success() {
+        //        debugPrint("success in Controller")
+        CoreDataManager.shared.saveContext()
+        try! CoreDataManager.shared.fetchPublishedResultController.performFetch()
         
+//        print(CoreDataManager.shared.count())
+//        CoreDataManager.shared.printData()
+        
+        activityIndicator.stopAnimating()
+        tableView.reloadData()
     }
     
     func failure() {
-        
+        debugPrint("failure in Controller")
+        activityIndicator.stopAnimating()
+        tableView.reloadData()
     }
     
     func imageDownloadingSuccess() {
-        
+//        debugPrint("downloading image success in Controller")
+        tableView.reloadData()
     }
     
     func imageDownloadingFailure() {
-        
+        debugPrint("downloading image failure in Controller")
     }
     
     func openDiskItemView(vc: UIViewController) {
         
+    }
+    
+    func presentAlert(alert: UIAlertController) {
+        navigationController?.present(alert, animated: true)
     }
 }

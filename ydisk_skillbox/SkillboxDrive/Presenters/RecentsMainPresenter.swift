@@ -53,7 +53,7 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
                 switch result {
                 case .success(let diskItems):
                      debugPrint("getDiskItems success")
-                    CoreDataManager.shared.deleteIfNotPresented(diskItemArray: diskItems!)
+//                    CoreDataManager.shared.deleteIfNotPresented(diskItemArray: diskItems!)
                     diskItems?.forEach({ diskItem in
 //                        print("downloaded element: \(diskItem.name!)")
                         if CoreDataManager.shared.isUnique(diskItem: diskItem) {
@@ -134,7 +134,13 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
     }
     
     func mbToKb(size: Int64) -> String {
-        switch size {
+        size.mbToKb()
+    }
+}
+
+extension Int64 {
+    func mbToKb() -> String {
+        switch self {
         case let size where size < 1000:
             let newSize = String(format: "%.2f", Double(size) / 1000.00)
             return "\(newSize) \(Constants.Text.kb)"
@@ -142,7 +148,7 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
             let newSize = String(format: "%.2f", Double(size) / 1000000.00)
             return "\(newSize) \(Constants.Text.mb)"
         default:
-            let newSize = size / 1000000
+            let newSize = self / 1000000
             return "\(newSize) \(Constants.Text.mb)"
         }
     }

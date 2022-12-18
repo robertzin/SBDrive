@@ -2,7 +2,7 @@
 //  YDiskItem+CoreDataProperties.swift
 //  SkillboxDrive
 //
-//  Created by Robert Zinyatullin on 06.12.2022.
+//  Created by Robert Zinyatullin on 18.12.2022.
 //
 //
 
@@ -28,6 +28,7 @@ extension YDiskItem {
     @NSManaged public var sha256: String?
     @NSManaged public var size: Int64
     @NSManaged public var type: String?
+    @NSManaged public var public_key: String?
 
 }
 

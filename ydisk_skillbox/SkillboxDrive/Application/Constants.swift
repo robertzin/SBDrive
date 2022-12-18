@@ -14,9 +14,11 @@ enum Constants {
     static let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
     
     static let coreDataEntityName = "YDiskItem"
+//    static let coreDataPublishedEntityName = "YDiskPublishedItem"
     
     static let urlStringToken = "https://oauth.yandex.ru/authorize"
     static let urlStringRecents = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=50"
+    static let urlStringPublished = "https://cloud-api.yandex.net/v1/disk/resources/public?limit=10"
 
     enum Colors {
         static var white: UIColor? {
@@ -81,12 +83,12 @@ enum Constants {
         static let profile = Bundle.main.localizedString(forKey: "Profile", value: "", table: "Localizable")
         static let noUploadedFiles = Bundle.main.localizedString(forKey: "You have no uploaded files", value: "", table: "Localizable")
         static let wantLogOut = Bundle.main.localizedString(forKey: "Are you sure, you want to log out? All local data will be deleted!", value: "", table: "Localizable")
-        static let deleteFiles = Bundle.main.localizedString(forKey: "Delete file", value: "", table: "Localizable")
+        static let deleteFile = Bundle.main.localizedString(forKey: "Delete the file", value: "", table: "Localizable")
         static let onePlace = Bundle.main.localizedString(forKey: "All files in one place", value: "", table: "Localizable")
         static let offlineAccess = Bundle.main.localizedString(forKey: "Offline access", value: "", table: "Localizable")
         static let shareFiles = Bundle.main.localizedString(forKey: "Share your files with others", value: "", table: "Localizable")
         static let deletingImage = Bundle.main.localizedString(forKey: "This image will be deleted", value: "", table: "Localizable")
-        static let deleteFile = Bundle.main.localizedString(forKey: "This file will be deleted", value: "", table: "Localizable")
+        static let fileWillBeDeleted = Bundle.main.localizedString(forKey: "This file will be deleted", value: "", table: "Localizable")
         static let deleteImage = Bundle.main.localizedString(forKey: "Delete the image", value: "", table: "Localizable")
         static let unsupportedType = Bundle.main.localizedString(forKey: "Unsupported file type", value: "", table: "Localizable")
         static let delete = Bundle.main.localizedString(forKey: "Delete", value: "", table: "Localizable")

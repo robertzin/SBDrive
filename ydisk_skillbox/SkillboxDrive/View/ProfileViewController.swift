@@ -88,7 +88,8 @@ final class ProfileViewController: UIViewController {
         }
         
         button.addAction(UIAction(handler: { action in
-            let vc = PublishedViewController()
+            let vc = PublishedMainViewController()
+            vc.presenter = PublishedMainPresenter(view: vc, networkService: NetworkService.shared)
             self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
     }
@@ -102,8 +103,8 @@ final class ProfileViewController: UIViewController {
         }
         
         let usedSpaceString = String(format: "%.2f", usedSpace! / 1000000000.00)
-        let leftSpaceString = String(format: "%.2f", totalSpace! / 1000000000.00)
-        let totalSpaceString = String(format: "%.0f", (totalSpace! + usedSpace!) / 1000000000.00)
+        let leftSpaceString = String(format: "%.2f", (totalSpace! - usedSpace!) / 1000000000.00)
+        let totalSpaceString = String(format: "%.0f", totalSpace! / 1000000000.00)
         
         var entries: [ChartDataEntry] = []
         entries.append(PieChartDataEntry(value: usedSpace!, label: "\(Constants.Text.occupied) - \(usedSpaceString) \(Constants.Text.gb)"))

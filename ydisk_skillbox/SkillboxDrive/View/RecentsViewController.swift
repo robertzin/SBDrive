@@ -88,7 +88,7 @@ class RecentsViewController: UITableViewController {
         content.secondaryTextProperties.numberOfLines = 1
         content.secondaryTextProperties.font = Constants.Fonts.small!
         
-        presenter.downloadImage(url: diskItem.preview!)
+        presenter.downloadImage(url: imageUrl)
         content.image = presenter.getImageForCell(url: imageUrl)
         cellActivityIndicator.stopAnimating()
         
@@ -108,6 +108,8 @@ extension RecentsViewController: RecentsMainProtocol {
         //        debugPrint("success in Controller")
         CoreDataManager.shared.saveContext()
         try! CoreDataManager.shared.fetchResultController.performFetch()
+        print(CoreDataManager.shared.count())
+        
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }

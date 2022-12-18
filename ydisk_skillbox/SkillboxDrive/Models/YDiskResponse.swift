@@ -24,4 +24,5 @@ class DiskItem: Codable {
     var md5: String?
     var sha256: String?
     var type: String?
+    var public_key: String?
 }

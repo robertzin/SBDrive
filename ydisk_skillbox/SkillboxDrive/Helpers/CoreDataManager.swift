@@ -25,10 +25,22 @@ class CoreDataManager {
         persistentContainer.viewContext
     }()
     
+    lazy var fetchPublishedResultController: NSFetchedResultsController<NSFetchRequestResult> = {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
+        let predicate = NSPredicate(format: "public_key != nil")
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.predicate = predicate
+        let fetchPublishedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchPublishedResultController
+    }()
+    
     lazy var fetchResultController: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
         let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
+        let predicate = NSPredicate(format: "public_key == nil")
         fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.predicate = predicate
         let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         return fetchResultController
     }()
@@ -48,7 +60,7 @@ class CoreDataManager {
         do {
             let allData = try context.fetch(fetchRequest) as! [YDiskItem]
             if allData.first(where: { $0.name == diskItem.name }) != nil {
-//                print("is not unique: \(diskItem.name!): \(diskItem.md5)")
+//                debugPrint("is not unique: \(diskItem.name!): \(diskItem.public_key)")
                 isUnique = false
             }
         } catch {
@@ -65,7 +77,7 @@ class CoreDataManager {
             let allData = try context.fetch(fetchRequest) as! [YDiskItem]
             allData.forEach { yDiskItem in
                 if !idsArray.contains(yDiskItem.name) {
-//                    print("deleting: \(yDiskItem.name)")
+                    debugPrint("deleted from CoreData when not presented: \(yDiskItem.name)")
                     context.delete(yDiskItem)
                 }
             }
@@ -79,7 +91,7 @@ class CoreDataManager {
         do {
             let allData = try context.fetch(fetchRequest)
             for object in allData as! [YDiskItem] {
-                print(object.md5!)
+                print("\(object.name) - \(object.public_key)")
             }
         } catch {
             print("error while printing IDs: \(error.localizedDescription)")
@@ -90,7 +102,8 @@ class CoreDataManager {
         let deleteRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
         do {
             let allData = try context.fetch(deleteRequest)
-            for object in allData as! [NSManagedObject] {
+            for object in allData as! [YDiskItem] {
+                print("deleting from CoreData: \(object.name)")
                 context.delete(object)
             }
         } catch {

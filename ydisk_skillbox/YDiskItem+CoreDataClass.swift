@@ -2,7 +2,7 @@
 //  YDiskItem+CoreDataClass.swift
 //  SkillboxDrive
 //
-//  Created by Robert Zinyatullin on 06.12.2022.
+//  Created by Robert Zinyatullin on 18.12.2022.
 //
 //
 
@@ -25,8 +25,9 @@ public class YDiskItem: NSManagedObject {
         self.file = diskItem.file
         self.created = diskItem.created
         self.modified = diskItem.modified
-        self.size = diskItem.size!
+        self.size = diskItem.size ?? 0
         self.sha256 = diskItem.sha256
         self.type = diskItem.type
+        self.public_key = diskItem.public_key
     }
 }

@@ -33,6 +33,17 @@ class PresenterManager {
         return navController
     }
     
+//    func createPublishedViewController() -> UIViewController {
+//
+//        let view = PublishedMainViewController()
+//        let networkService = NetworkService()
+//        let presenter = PublishedMainPresenter(view: view, networkService: networkService)
+//        view.presenter = presenter
+//
+//        let navController = UINavigationController(rootViewController: view)
+//        return navController
+//    }
+    
     func show(vc: vc) {
         
         var viewController: UIViewController
