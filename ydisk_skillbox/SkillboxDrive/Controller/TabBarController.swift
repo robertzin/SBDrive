@@ -36,8 +36,13 @@ class TabBarController: UITabBarController {
     }
 
     func setupViews() {
+        let profileVC = ProfileViewController()
+        let profilePresenter = ProfilePresenter(view: profileVC)
+        profileVC.presenter = profilePresenter
+        
+        
         viewControllers = [
-            createNavController(for: ProfileViewController(), image: UIImage(named: "tb_person")!),
+            createNavController(for: profileVC, image: UIImage(named: "tb_person")!),
             PresenterManager.shared.createRecentsViewController(image: UIImage(named: "tb_file")!),
             createNavController(for: AllFilesViewController(), image: UIImage(named: "tb_archive")!)
         ]

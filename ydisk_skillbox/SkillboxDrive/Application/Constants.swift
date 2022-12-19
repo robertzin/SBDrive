@@ -14,11 +14,15 @@ enum Constants {
     static let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
     
     static let coreDataEntityName = "YDiskItem"
-//    static let coreDataPublishedEntityName = "YDiskPublishedItem"
     
     static let urlStringToken = "https://oauth.yandex.ru/authorize"
     static let urlStringRecents = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=50"
-    static let urlStringPublished = "https://cloud-api.yandex.net/v1/disk/resources/public?limit=10"
+    static let urlStringPublished = "https://cloud-api.yandex.net/v1/disk/resources/public?limit=15"
+    static let urlStringFileDelete = "https://cloud-api.yandex.net/v1/disk/resources"
+    static let urlStringDirContent = "https://cloud-api.yandex.net/v1/disk/public/resources?public_key="
+    static let urlStringFileRename = "https://cloud-api.yandex.net/v1/disk/resources/move"
+    static let urlStringDiskInfo = "https://cloud-api.yandex.net/v1/disk/"
+    static let urlStringRevokeToken = "https://oauth.yandex.ru/revoke_token"
 
     enum Colors {
         static var white: UIColor? {

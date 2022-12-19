@@ -1,5 +1,5 @@
 //
-//  RecentsDetailsViewController.swift
+//  DetailsViewController.swift
 //  SkillboxDrive
 //
 //  Created by Robert Zinyatullin on 28.11.2022.
@@ -9,11 +9,12 @@ import UIKit
 import PDFKit
 import WebKit
 
-final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKUIDelegate {
+final class DetailsViewController: UIViewController, PDFViewDelegate, WKUIDelegate {
+    
+    var presenter: DetailsPresenterProtocol!
     
     var activityIndicator = UIActivityIndicatorView()
     var imageScrollView: ImageScrollView!
-    private var token = ""
     private var fileType: CoreDataManager.elementType
     private var webView: WKWebView?
     private var pdfView = PDFView()
@@ -22,8 +23,6 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
     init(diskItem: YDiskItem, type: CoreDataManager.elementType) {
         self.diskItem = diskItem
         self.fileType = type
-        do { token = try KeyChain.shared.getToken() }
-        catch { print("error while getting token in RecentImageVC: \(error.localizedDescription)") }
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -35,41 +34,14 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         super.viewDidLoad()
         view.backgroundColor = .white
         NotificationCenter.default.addObserver(self, selector: #selector(performAfter), name: NSNotification.Name(rawValue:  "PeformAfterPresenting"), object: nil)
+        presenter.getToken()
         setupViews()
     }
     
     @objc func performAfter(_ notification: Notification) {
         let name = notification.userInfo?["name"] as! String
         let modified = notification.userInfo?["modified"] as! String
-        self.navigationItem.titleView = getTitleForItem(name: name, modified: modified)
-    }
-    
-    private func getTitleForItem(name: String, modified: String) -> UILabel {
-        let label = UILabel()
-        label.font = Constants.Fonts.header2
-        label.textColor = Constants.Colors.white
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        
-        let firstLine = name
-        let firstAttributes: [NSAttributedString.Key: Any] = [
-            .font: Constants.Fonts.header2!,
-            .foregroundColor: self.fileType == .image ? Constants.Colors.white! : Constants.Colors.black!,
-        ]
-        let firstAttributedString = NSAttributedString(string: firstLine, attributes: firstAttributes)
-        
-        let secondLine = modified
-        let secondAttributes: [NSAttributedString.Key: Any] = [
-            .font: Constants.Fonts.small!,
-            .foregroundColor: Constants.Colors.details!,
-        ]
-        let secondAttributedString = NSAttributedString(string: secondLine, attributes: secondAttributes)
-        
-        let finalString = NSMutableAttributedString(attributedString: firstAttributedString)
-        finalString.append(NSAttributedString(string: "\n"))
-        finalString.append(secondAttributedString)
-        label.attributedText = finalString.withLineSpacing(7.0)
-        return label
+        self.navigationItem.titleView = presenter.getTitleForItem(name: name, modified: modified, fileType: self.fileType)
     }
     
     private func configureNavigationControllerItems() {
@@ -94,51 +66,7 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
     }
     
     @objc private func renameButton() {
-        let vc = RenameViewController(diskItem: diskItem)
-        let nc = UINavigationController(rootViewController: vc)
-        present(nc, animated: true)
-    }
-    
-    private func shareFile() {
-        if self.fileType == .image {
-            guard let image = ImageDownloader.shared.cachedImages.object(forKey: NSString(string: diskItem.file!)) else { return }
-            DispatchQueue.main.async {
-                let shareSheetVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-                self.present(shareSheetVC, animated: true)
-            }
-        }
-        else if self.fileType == .pdf {
-            let pdf = pdfView.document?.dataRepresentation()
-            DispatchQueue.main.async {
-                let shareSheetVC = UIActivityViewController(activityItems: [pdf as Any], applicationActivities: nil)
-                self.present(shareSheetVC, animated: true)
-            }
-        }
-        else if self.fileType == .document {
-            let path = FileManager.default.temporaryDirectory.appending(path: diskItem.name!)
-            NetworkService.shared.fileDownload(urlString: diskItem.file!) { result in
-                switch result {
-                case .success(let data):
-                    guard let file = data else { return }
-                    try? file.write(to: path)
-                    DispatchQueue.main.async {
-                        print("downloaded")
-                        let shareSheetVC = UIActivityViewController(activityItems: [path], applicationActivities: nil)
-                        self.present(shareSheetVC, animated: true)
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
-        }
-    }
-    
-    private func shareLink() {
-        guard let link = diskItem.file else { return }
-        DispatchQueue.main.async {
-            let shareSheetVC = UIActivityViewController(activityItems: [link], applicationActivities: nil)
-            self.present(shareSheetVC, animated: true)
-        }
+        self.presenter.renameFile(diskItem: diskItem)
     }
     
     @objc private func shareButton() {
@@ -147,10 +75,12 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         let msgString = NSAttributedString(string: Constants.Text.share, attributes: msgAttributes as [NSAttributedString.Key : Any])
         
         let fileAction = UIAlertAction(title: Constants.Text.sendFile , style: .default, handler: { [weak self]_ in
-            self?.shareFile()
+            guard let self = self else { return }
+            self.presenter.shareFile(diskItem: self.diskItem, fileType: self.fileType, pdfView: self.pdfView)
         })
         let linkAction = UIAlertAction(title: Constants.Text.sendLink , style: .default, handler: { [weak self] _ in
-            self?.shareLink()
+            guard let self = self else { return }
+            self.presenter.shareLink(diskItem: self.diskItem, fileType: self.fileType, pdfView: self.pdfView)
         })
         let cancelAction = UIAlertAction(title: Constants.Text.cancel, style: .cancel, handler: nil)
         
@@ -167,13 +97,7 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         let msgAttributes = [NSAttributedString.Key.font: Constants.Fonts.small!, NSAttributedString.Key.foregroundColor: Constants.Colors.details]
         let msgString = NSAttributedString(string: Constants.Text.fileWillBeDeleted, attributes: msgAttributes as [NSAttributedString.Key : Any])
         let deleteAction = UIAlertAction(title: Constants.Text.delete , style: .destructive, handler: { [weak self]_ in
-            self?.deleteImage {
-                DispatchQueue.main.async { [weak self] in
-                    CoreDataManager.shared.context.delete(self!.diskItem)
-                    CoreDataManager.shared.saveContext()
-                    self?.navigationController?.popViewController(animated: true)
-                }
-            }
+            self?.presenter.deleteFile(diskItem: self!.diskItem)
         })
         let cancelAction = UIAlertAction(title: Constants.Text.cancel, style: .cancel, handler: nil)
         
@@ -185,31 +109,6 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         self.navigationController?.present(alert, animated: true, completion: nil)
     }
     
-    private func deleteImage(completion: @escaping () -> Void) {
-        guard let url = URL(string: "https://cloud-api.yandex.net/v1/disk/resources"), let path = diskItem.path else { return }
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        components?.queryItems = [
-            URLQueryItem(name: "path", value: path),
-            URLQueryItem(name: "permanently", value: "true")
-        ]
-        guard let url = components?.url else { return }
-        var request = URLRequest(url: url)
-        request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "DELETE"
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error )in
-            if let response = response as? HTTPURLResponse {
-                switch response.statusCode {
-                case 200..<300:
-                    print("image deleting success")
-                default:
-                    print("image deleting failure")
-                }
-                completion()
-            }
-        }.resume()
-    }
-    
     private func proceedWithImage() {
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(),for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -219,13 +118,15 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         let iv = ImageScrollView(frame: view.unsafelyUnwrapped.bounds)
         iv.backgroundColor = .black
         iv.contentMode = .scaleAspectFit
-        ImageDownloader.shared.downloadImage(with: diskItem.file, completion: { [weak self] result in
+        guard let urlString = diskItem.file else { return }
+        presenter.downloadImage(urlString: urlString, completion: { [weak self] result in
             switch result {
             case .success(let image):
                 iv.set(image: image)
                 self?.activityIndicator.stopAnimating()
                 if let name = self?.diskItem.name, let modified = self?.diskItem.modified?.toDate() {
-                    self?.navigationItem.titleView = self?.getTitleForItem(name: name, modified: modified)
+                    guard let type = self?.fileType else { return }
+                    self?.navigationItem.titleView = self?.presenter.getTitleForItem(name: name, modified: modified, fileType: type)
                 }
                 self?.navigationItem.rightBarButtonItem = self?.makeRightButton()
                 self?.navigationController?.toolbar.isHidden = false
@@ -234,7 +135,7 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
             case .failure(let error):
                 debugPrint(error.localizedDescription)
             }
-        }, placeholderImage: UIImage(named: "tb_person"))
+        })
     }
     
     private func proceedWithPDF() {
@@ -255,39 +156,26 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         //            make.width.equalToSuperview()
         //        }
         //
-        guard let url = URL(string: diskItem.file!) else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let doc = PDFDocument(url: url) else { return }
-            self?.activityIndicator.stopAnimating()
-            self?.pdfView.document = doc
-            self?.pdfView.autoScales = true
-            self?.pdfView.maxScaleFactor = 4.0
-            self?.pdfView.minScaleFactor = (self?.pdfView.scaleFactorForSizeToFit)!
-            self?.activityIndicator.stopAnimating()
-            if let name = self?.diskItem.name, let modified = self?.diskItem.modified?.toDate() {
-                self?.navigationItem.titleView = self?.getTitleForItem(name: name, modified: modified)
-            }
-        }
+        
+        guard let urlString = diskItem.file else { return }
+        self.presenter.loadPDF(pdfView: self.pdfView, urlString: urlString)
     }
     
     private func proceedWithDocument() {
         webView = WKWebView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         guard let webView = webView else { return }
         view.addSubview(webView)
+        
         webView.allowsBackForwardNavigationGestures = true
         webView.allowsLinkPreview = true
-
+        
         webView.frame = view.safeAreaLayoutGuide.layoutFrame
         webView.addSubview(activityIndicator)
         webView.uiDelegate = self
         webView.navigationDelegate = self
-
-        guard let url = URL(string: diskItem.file!) else { return }
-        var request = URLRequest(url: url)
-        request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
-        DispatchQueue.main.async { [weak self] in
-            self?.webView!.load(request)
-        }
+        
+        guard let urlString = diskItem.file else { return }
+        presenter.loadWebView(webView: webView, urlString: urlString)
     }
     
     private func setupViews() {
@@ -321,8 +209,8 @@ final class RecentsDetailsViewController: UIViewController, PDFViewDelegate, WKU
         
         if self.fileType == .pdf {
             pdfView.removeFromSuperview()
-//        } else if self.fileType == .document {
-//            webView.removeFromSuperview()
+            //        } else if self.fileType == .document {
+            //            webView.removeFromSuperview()
         }
     }
 }
@@ -340,11 +228,11 @@ extension NSAttributedString {
     }
 }
 
-extension RecentsDetailsViewController: WKNavigationDelegate {
+extension DetailsViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         activityIndicator.startAnimating()
     }
-
+    
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         activityIndicator.stopAnimating()
         navigationItem.rightBarButtonItem = self.makeRightButton()
@@ -352,7 +240,34 @@ extension RecentsDetailsViewController: WKNavigationDelegate {
         navigationController?.toolbar.backgroundColor = .white
         navigationController?.setToolbarHidden(false, animated: false)
         if let name = self.diskItem.name, let modified = self.diskItem.modified?.toDate() {
-            self.navigationItem.titleView = self.getTitleForItem(name: name, modified: modified)
+            self.navigationItem.titleView = presenter.getTitleForItem(name: name, modified: modified, fileType: self.fileType)
         }
+    }
+}
+
+extension DetailsViewController: DetailsProtocol {
+    func presentVC(vc: UIViewController) {
+        self.present(vc, animated: true)
+    }
+    
+    func deleteFileSuccess() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    func loadPDFSuccess(doc: PDFDocument) {
+        self.activityIndicator.stopAnimating()
+        self.pdfView.document = doc
+        self.pdfView.autoScales = true
+        self.pdfView.maxScaleFactor = 4.0
+        self.pdfView.minScaleFactor = self.pdfView.scaleFactorForSizeToFit
+        self.activityIndicator.stopAnimating()
+        if let name = self.diskItem.name, let modified = self.diskItem.modified?.toDate() {
+            
+            self.navigationItem.titleView = self.presenter.getTitleForItem(name: name, modified: modified, fileType: self.fileType)
+        }
+    }
+    
+    func loadWebView(webView: WKWebView, request: URLRequest) {
+        webView.load(request)
     }
 }

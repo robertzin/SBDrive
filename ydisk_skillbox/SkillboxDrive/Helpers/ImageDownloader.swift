@@ -24,6 +24,11 @@ final class ImageDownloader {
         cachedImages = NSCache<NSString, UIImage>()
         imagesDownloadTasks = NSCache<NSString, URLSessionDataTask>()
     }
+    
+    func clearCache() {
+        self.cachedImages.removeAllObjects()
+        self.imagesDownloadTasks.removeAllObjects()
+    }
 
     func downloadImage(with imageUrlString: String?,
                        completion: @escaping (Result<UIImage, Error>) -> Void,
@@ -60,8 +65,6 @@ final class ImageDownloader {
             }
             
             guard let image = UIImage(data: data) else {
-                print(String(data: data, encoding: .utf8))
-                print(response?.url)
                 completion(.failure(ImageDownloaderError.UIImageError))
                 return
             }

@@ -68,7 +68,6 @@ class RecentsViewController: UITableViewController {
         let diskItem = presenter.dataForDiskItemAt(indexPath)
         let imageUrl = diskItem.preview ?? "https://bilgi-sayar.net/wp-content/uploads/2012/01/na.jpg"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-        
         let cellActivityIndicator = UIActivityIndicatorView()
         cell.addSubview(cellActivityIndicator)
         cellActivityIndicator.snp.makeConstraints { make in
@@ -76,22 +75,22 @@ class RecentsViewController: UITableViewController {
             make.centerY.equalToSuperview()
         }
         cellActivityIndicator.startAnimating()
-        
+
         var content = cell.defaultContentConfiguration()
         content.image = UIImage()
         content.text = diskItem.name
         content.textProperties.numberOfLines = 1
         content.textProperties.font = Constants.Fonts.mainBody!
-        
+
         let size = presenter.mbToKb(size: diskItem.size)
         content.secondaryText = "\(size) \((diskItem.modified?.toDate())!)"
         content.secondaryTextProperties.numberOfLines = 1
         content.secondaryTextProperties.font = Constants.Fonts.small!
-        
-        presenter.downloadImage(url: imageUrl)
+
+//        presenter.downloadImage(url: imageUrl)
         content.image = presenter.getImageForCell(url: imageUrl)
         cellActivityIndicator.stopAnimating()
-        
+
         content.imageProperties.reservedLayoutSize = CGSize(width: 55, height: 55)
         content.imageProperties.maximumSize = CGSize(width: 55, height: 55)
         cell.contentConfiguration = content

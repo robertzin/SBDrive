@@ -11,13 +11,12 @@ import Charts
 
 final class ProfileViewController: UIViewController {
     
-    private var token = ""
     private var totalSpace: Double?
     private var usedSpace: Double?
+    private var activityIndicator = UIActivityIndicatorView()
     
     private var pieChart = PieChartView()
-    private let urlString = "https://cloud-api.yandex.net/v1/disk/"
-    
+    var presenter: ProfilePresenterPrototol!
     
     private lazy var button: UIButton = {
         var container = AttributeContainer()
@@ -53,29 +52,8 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        do { token = try KeyChain.shared.getToken() }
-        catch { print("error while getting token in ProfileVC: \(error.localizedDescription)") }
+        presenter.getData()
         setupViews()
-        getData()
-    }
-    
-    private func getData() {
-        NetworkService.shared.fileDownload(urlString: urlString) { [weak self] result in
-            switch result {
-            case .success(let data):
-                let dict = NetworkService.shared.JSONtoDictionary(dataString: data!)
-//                for i in dict! {
-//                    print(i)
-//                }
-                DispatchQueue.main.async {
-                    self?.totalSpace = dict!["total_space"] as? Double
-                    self?.usedSpace = dict!["used_space"] as? Double
-                    self?.configurePieChart()
-                }
-            case .failure(let error):
-                print("error: \(error.localizedDescription)")
-            }
-        }
     }
     
     func configureButton() {
@@ -87,10 +65,8 @@ final class ProfileViewController: UIViewController {
             make.top.equalTo(pieChart.snp.bottom).offset(32)
         }
         
-        button.addAction(UIAction(handler: { action in
-            let vc = PublishedMainViewController()
-            vc.presenter = PublishedMainPresenter(view: vc, networkService: NetworkService.shared)
-            self.navigationController?.pushViewController(vc, animated: true)
+        button.addAction(UIAction(handler: { [weak self] action in
+            self?.presenter.pushVC()
         }), for: .touchUpInside)
     }
     
@@ -102,7 +78,12 @@ final class ProfileViewController: UIViewController {
             make.centerX.equalToSuperview()
         }
         
+        print(usedSpace)
+        print(totalSpace)
+        
         let usedSpaceString = String(format: "%.2f", usedSpace! / 1000000000.00)
+        
+        // TODO: Error occured while first load
         let leftSpaceString = String(format: "%.2f", (totalSpace! - usedSpace!) / 1000000000.00)
         let totalSpaceString = String(format: "%.0f", totalSpace! / 1000000000.00)
         
@@ -129,7 +110,6 @@ final class ProfileViewController: UIViewController {
         let attrString = NSAttributedString(string: centerText, attributes: attributes)
         pieChart.centerAttributedText = attrString
         
-        
         let legend = pieChart.legend
         legend.font = Constants.Fonts.mainBody!
         legend.orientation = .vertical
@@ -144,9 +124,15 @@ final class ProfileViewController: UIViewController {
     
     private func setupViews() {
         view.addSubview(pieChart)
+        view.addSubview(activityIndicator)
+        
+        activityIndicator.startAnimating()
+        activityIndicator.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+            make.height.width.equalTo(140)
+        }
         
         navigationItem.backButtonTitle = ""
-        
         navigationItem.title = Constants.Text.profile
         navigationItem.rightBarButtonItem = makeRightButton()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
@@ -168,10 +154,9 @@ final class ProfileViewController: UIViewController {
             let attributedStringTitle = NSAttributedString(string: Constants.Text.quit, attributes: [NSAttributedString.Key.font: Constants.Fonts.header2!])
             let attributedStringMessage = NSAttributedString(string: Constants.Text.wantLogOut, attributes: [NSAttributedString.Key.font: Constants.Fonts.mainBody!])
             
-            let yesAction = UIAlertAction(title: Constants.Text.yes, style: .default) { action in
-                self.logOut()
-                self.dismiss(animated: true)
-                PresenterManager.shared.show(vc: .login)
+            let yesAction = UIAlertAction(title: Constants.Text.yes, style: .default) { [weak self] action in
+                self?.presenter.performLogOut()
+                self?.dismiss(animated: true)
             }
             alert.setValue(attributedStringTitle, forKey: "attributedTitle")
             alert.setValue(attributedStringMessage, forKey: "attributedMessage")
@@ -188,30 +173,20 @@ final class ProfileViewController: UIViewController {
         
         self.navigationController?.present(alert, animated: true, completion: nil)
     }
+}
+
+extension ProfileViewController: ProfileProtocol {
+    func pushVC(vc: UIViewController) {
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
-    private func logOut() {
-        do { try KeyChain.shared.deleteToken() }
-        catch { print("error while deleting token: \(error.localizedDescription)") }
-        CoreDataManager.shared.deleteAllEntities()
-        
-        var request = URLRequest(url: URL(string: "https://oauth.yandex.ru/revoke_token")!)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let dataString = "access_token=\(token)&client_id=\(Constants.clientId)&client_secret=\(Constants.clientSecret)"
-        let data : Data = dataString.data(using: .utf8)!
-        request.httpBody = data
-        request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let response = response as? HTTPURLResponse {
-                switch response.statusCode {
-                case 200..<300:
-                    print("Success")
-                default:
-                    print("Status: \(response.statusCode)")
-                }
-            }
-        }.resume()
+    func success(dict: [String:AnyObject]) {
+        DispatchQueue.main.async { [weak self] in
+            self?.totalSpace = dict["total_space"] as? Double
+            self?.usedSpace = dict["used_space"] as? Double
+            self?.configurePieChart()
+            self?.activityIndicator.stopAnimating()
+        }
     }
 }
 

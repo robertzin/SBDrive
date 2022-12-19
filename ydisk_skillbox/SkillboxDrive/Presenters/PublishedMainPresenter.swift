@@ -35,11 +35,13 @@ protocol PublishedMainPresenterProtocol {
 class PublishedMainPresenter: PublishedMainPresenterProtocol {
     var view: PublishedMainProtocol?
     var networkService: NetworkServiceProtocol!
+    var coreDataManager: CoreDataManager!
     var imageCache: NSCache<NSString, UIImage>?
-
+    
     required init(view: PublishedMainProtocol, networkService: NetworkServiceProtocol) {
         self.view = view
         self.networkService = networkService
+        self.coreDataManager = CoreDataManager.shared
         self.imageCache = ImageDownloader.shared.cachedImages
     }
     
@@ -50,14 +52,12 @@ class PublishedMainPresenter: PublishedMainPresenterProtocol {
                 switch result {
                 case .success(let diskItems):
                     debugPrint("getDiskItems success")
-//                    CoreDataManager.shared.deleteIfNotPresented(diskItemArray: diskItems!)
+                    //                    CoreDataManager.shared.deleteIfNotPresented(diskItemArray: diskItems!)
                     diskItems?.forEach({ diskItem in
-//                        print("downloaded element: \(diskItem.name!)")
-                        if CoreDataManager.shared.isUnique(diskItem: diskItem) {
+                        if self.coreDataManager.isUnique(diskItem: diskItem) {
                             let YdiskItem = YDiskItem()
                             YdiskItem.set(diskItem: diskItem)
-//                            print("\(YdiskItem.name) - \(YdiskItem.public_key)")
-//                            print("\(YdiskItem.name) - \(YdiskItem.public_key)")
+                            //                            print("\(YdiskItem.name) - \(YdiskItem.public_key)")
                         }
                     })
                     self.view?.success()
@@ -80,7 +80,7 @@ class PublishedMainPresenter: PublishedMainPresenterProtocol {
                 self.view?.imageDownloadingSuccess()
             case (.failure(let error)):
                 debugPrint("image downloading failure: \(error.localizedDescription)")
-               self.view?.imageDownloadingFailure()
+                self.view?.imageDownloadingFailure()
             }
         }, placeholderImage: UIImage(named: "tb_person"))
     }
@@ -88,9 +88,6 @@ class PublishedMainPresenter: PublishedMainPresenterProtocol {
     func getImageForCell(diskItem: YDiskItem) -> UIImage {
         if diskItem.type == "dir" { return UIImage(named: "dirPreview")! }
         let url = diskItem.preview ?? "https://bilgi-sayar.net/wp-content/uploads/2012/01/na.jpg"
-//        if let img = imageCache?.object(forKey: NSString(string: url)) {
-//            return img
-//        }
         var retImage = UIImage()
         ImageDownloader.shared.downloadImage(with: url, completion: { result in
             switch result {
@@ -98,30 +95,57 @@ class PublishedMainPresenter: PublishedMainPresenterProtocol {
                 retImage = image
             case (.failure(let error)):
                 debugPrint("image downloading failure: \(error.localizedDescription)")
-               self.view?.imageDownloadingFailure()
+                self.view?.imageDownloadingFailure()
             }
         }, placeholderImage: UIImage(named: "tb_person"))
         return retImage
     }
     
     func numberOfRowsInSection(at section: Int) -> Int {
-        guard let sections = CoreDataManager.shared.fetchPublishedResultController.sections else { return 0 }
+        guard let sections = self.coreDataManager.fetchPublishedResultController.sections else { return 0 }
         return sections[section].numberOfObjects
     }
     
     func dataForDiskItemAt(_ indexPath: IndexPath) -> YDiskItem {
-        if (CoreDataManager.shared.fetchPublishedResultController.sections) != nil {
-            let diskItem = CoreDataManager.shared.fetchPublishedResultController.object(at: indexPath) as! YDiskItem
+        if (self.coreDataManager.fetchPublishedResultController.sections) != nil {
+            let diskItem = self.coreDataManager.fetchPublishedResultController.object(at: indexPath) as! YDiskItem
             let url = diskItem.preview ?? "https://bilgi-sayar.net/wp-content/uploads/2012/01/na.jpg"
             downloadImage(url: url)
             return diskItem
         }
-        print("returning nil")
         return YDiskItem()
     }
     
     func didSelectDiskItemAt(_ indexPath: IndexPath) {
+        let diskItem = self.coreDataManager.fetchPublishedResultController.object(at: indexPath) as! YDiskItem
         
+        if diskItem.type == "dir" {
+            guard let pKey = diskItem.public_key else { return }
+            let urlString = Constants.urlStringDirContent.appending(pKey)
+            print(urlString)
+            
+            let vc = PublishedMainViewController(requestURLstring: urlString)
+            vc.presenter = PublishedMainPresenter(view: vc, networkService: NetworkService.shared)
+            view?.openDiskItemView(vc: vc)
+            //            debugPrint("it is directory")
+            return
+        }
+        
+        switch diskItem.mime_type {
+        case let str where str!.contains("document"):
+            let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.document)
+            view?.openDiskItemView(vc: vc)
+        case let str where str!.contains("pdf"):
+            let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.pdf)
+            view?.openDiskItemView(vc: vc)
+        case let str where str!.contains("image"):
+            let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.image)
+            view?.openDiskItemView(vc: vc)
+        default:
+            let alert = UIAlertController(title: Constants.Text.error, message: Constants.Text.unsupportedType, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Constants.Text.dismiss, style: .cancel))
+            view?.presentAlert(alert: alert)
+        }
     }
     
     func mbToKb(size: Int64) -> String {
@@ -129,22 +153,22 @@ class PublishedMainPresenter: PublishedMainPresenterProtocol {
     }
     
     func alert(indexPath: IndexPath) {
-        if (CoreDataManager.shared.fetchPublishedResultController.sections) == nil { return }
-        let diskItem = CoreDataManager.shared.fetchPublishedResultController.object(at: indexPath) as! YDiskItem
+        if (self.coreDataManager.fetchPublishedResultController.sections) == nil { return }
+        let diskItem = self.coreDataManager.fetchPublishedResultController.object(at: indexPath) as! YDiskItem
         let alert = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
         let msgAttributes = [NSAttributedString.Key.font: Constants.Fonts.small!, NSAttributedString.Key.foregroundColor: Constants.Colors.details]
         let msgString = NSAttributedString(string: diskItem.name!, attributes: msgAttributes as [NSAttributedString.Key : Any])
         let deleteAction = UIAlertAction(title: Constants.Text.deleteFile , style: .destructive, handler: { [weak self]_ in
-            CoreDataManager.shared.context.delete(diskItem)
-            self?.view?.success()
-//            self?.deleteImage {
-//                DispatchQueue.main.async { [weak self] in
-//                    CoreDataManager.shared.context.delete(self!.diskItem)
-//                    CoreDataManager.shared.saveContext()
-//                    self?.navigationController?.popViewController(animated: true)
-//                }
-//            }
+            
+            guard let path = diskItem.path else { return }
+            self?.networkService.fileDelete(path: path, completion: { result in
+                DispatchQueue.main.async { [weak self] in
+                    self?.coreDataManager.context.delete(diskItem)
+                    self?.coreDataManager.saveContext()
+                }
+            })
         })
+        
         let cancelAction = UIAlertAction(title: Constants.Text.cancel, style: .cancel, handler: nil)
         
         alert.view.tintColor = .black

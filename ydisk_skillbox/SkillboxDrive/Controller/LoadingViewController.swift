@@ -19,8 +19,6 @@ final class LoadingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private var isLoggedIn: Bool = true
-    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "sbDrive") ?? UIImage()
@@ -52,12 +50,15 @@ final class LoadingViewController: UIViewController {
         }
     }
     
+    // TODO: when logout do not need to re auth
     private func showInitialView() {
         self.dismiss(animated: true)
         
         var token = ""
         do { token = try KeyChain.shared.getToken() }
         catch { print(error.localizedDescription) }
+        print(token)
+        
         if !token.isEmpty { PresenterManager.shared.show(vc: .tabBar) }
         else { viewModel.onboarding() }
     }

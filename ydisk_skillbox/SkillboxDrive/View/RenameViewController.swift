@@ -9,10 +9,11 @@ import UIKit
 
 class RenameViewController: UITableViewController, UITextFieldDelegate {
     
-    private var token = ""
     private var diskItem: YDiskItem
     private var newTitle = ""
     private var fileFormat: String?
+    
+    var presenter: RenamePresenterProtocol!
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -37,8 +38,6 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
     init(diskItem: YDiskItem) {
         self.diskItem = diskItem
         super.init(nibName: nil, bundle: nil)
-        do { token = try KeyChain.shared.getToken() }
-        catch { print("error while getting token in RenameVC: \(error.localizedDescription)") }
     }
     
     required init?(coder: NSCoder) {
@@ -49,6 +48,7 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
         super.viewDidLoad()
         self.textField.becomeFirstResponder()
         title = Constants.Text.rename
+        presenter.getToken()
         setupViews()
     }
     
@@ -59,7 +59,8 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
         iv.contentMode = .scaleAspectFit
         iconContainer.addSubview(iv)
         
-        ImageDownloader.shared.downloadImage(with: diskItem.preview, completion: { [weak self] result in
+        guard let urlString = diskItem.preview else { return }
+        presenter.downloadImage(urlString: urlString, completion: { [weak self ]result in
             switch result {
             case .success(let image):
                 let image = image
@@ -68,7 +69,7 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
             case .failure(let error):
                 print(error.localizedDescription)
             }
-        }, placeholderImage: UIImage(named: "tb_person"))
+        })
     }
     
     private func setupViews() {
@@ -78,7 +79,7 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
         navigationItem.leftBarButtonItem?.tintColor = Constants.Colors.details
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: Constants.Text.done, style: .done, target: self, action: #selector(doneButton))
         navigationItem.rightBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font : Constants.Fonts.small!], for: .normal)
-
+        
         let idx = diskItem.name?.lastIndex(of: ".")
         textField.text = String(diskItem.name![..<idx!])
         self.fileFormat = String(diskItem.name![idx!...])
@@ -105,55 +106,7 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
             return
         }
         
-        let idx = diskItem.path?.lastIndex(of: "/")
-        let oldPath = diskItem.path
-        let newPath = String(diskItem.path![...idx!]).appending(self.newTitle)
-
-        guard let url = URL(string: "https://cloud-api.yandex.net/v1/disk/resources/move") else { return }
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        components?.queryItems = [
-            URLQueryItem(name: "from", value: oldPath),
-            URLQueryItem(name: "path", value: newPath)
-        ]
-        guard let url = components?.url else { return }
-        var request = URLRequest(url: url)
-        request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-
-        URLSession.shared.dataTask(with: request) { [weak self] (data, response, error) in
-            guard let data = data else { return }
-            self?.getNewDiskItem(dataString: data) { result in
-                switch result {
-                case .success(let diskItem):
-                    let diskItemToChange = CoreDataManager.shared.context.object(with: (self?.diskItem.objectID)!) as! YDiskItem
-                    diskItemToChange.set(diskItem: diskItem)
-                    CoreDataManager.shared.saveContext()
-                    DispatchQueue.main.async {
-                        let dict: [String: String] = [
-                            "name": diskItem.name!,
-                            "modified": (diskItem.modified?.toDate())!
-                        ]
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue:  "PeformAfterPresenting"), object: nil, userInfo: dict)
-                        self?.dismiss(animated: true)
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
-        }.resume()
-    }
-    
-    private func getNewDiskItem(dataString: Data, completion: @escaping (Result<DiskItem, Error>) -> Void) {
-        guard let jsonDict = NetworkService.shared.JSONtoDictionary(dataString: dataString) else { return }
-        let urlString = jsonDict["href"] as! String
-        NetworkService.shared.makeGETrequest(urlString: urlString) { result in
-            switch result {
-            case .success(let diskItem):
-                completion(.success(diskItem!))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        presenter.renameFile(diskItem: self.diskItem, newTitle: newTitle)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -163,5 +116,11 @@ class RenameViewController: UITableViewController, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         self.newTitle = textField.text ?? "noname"
+    }
+}
+
+extension RenameViewController: RenameProtocol {
+    func dismissVC() {
+        self.dismiss(animated: true)
     }
 }

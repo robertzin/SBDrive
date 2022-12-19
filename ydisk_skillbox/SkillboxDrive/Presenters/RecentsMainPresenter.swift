@@ -38,11 +38,15 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
 
     var view: RecentsMainProtocol?
     var networkService: NetworkServiceProtocol!
+    var coreDataManager: CoreDataManager!
+    var imageDownloader: ImageDownloader!
     var imageCache: NSCache<NSString, UIImage>?
     
     required init(view: RecentsMainProtocol, networkService: NetworkServiceProtocol) {
         self.view = view
         self.networkService = networkService
+        self.coreDataManager = CoreDataManager.shared
+        self.imageDownloader = ImageDownloader.shared
         self.imageCache = ImageDownloader.shared.cachedImages
     }
     
@@ -75,7 +79,7 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
         if let _ = imageCache?.object(forKey: NSString(string: url)) {
             return
         }
-        ImageDownloader.shared.downloadImage(with: url, completion: { result in
+        imageDownloader.downloadImage(with: url, completion: { result in
             switch result {
             case .success(let image):
                 self.imageCache?.setObject(image, forKey: NSString(string: url))
@@ -89,11 +93,11 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
     
     func getImageForCell(url: String) -> UIImage {
         var retImage = UIImage()
-        ImageDownloader.shared.downloadImage(with: url, completion: { result in
+        imageDownloader.downloadImage(with: url, completion: { result in
             switch result {
             case .success(let image):
                 retImage = image
-            case (.failure(let error)):
+            case .failure(let error):
                 debugPrint("image downloading failure: \(error.localizedDescription)")
                self.view?.imageDownloadingFailure()
             }
@@ -108,7 +112,10 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
     
     func dataForDiskItemAt(_ indexPath: IndexPath) -> YDiskItem {
         if (CoreDataManager.shared.fetchResultController.sections) != nil {
-            return CoreDataManager.shared.fetchResultController.object(at: indexPath) as! YDiskItem
+            let diskItem = self.coreDataManager.fetchResultController.object(at: indexPath) as! YDiskItem
+            let url = diskItem.preview ?? "https://bilgi-sayar.net/wp-content/uploads/2012/01/na.jpg"
+            downloadImage(url: url)
+            return diskItem
         }
         return YDiskItem()
     }
@@ -118,13 +125,16 @@ class RecentsMainPresenter: RecentsMainPresenterProtocol {
         
         switch diskItem.mime_type {
         case let str where str!.contains("document"):
-            let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.document)
+            let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.document)
+            vc.presenter = DetailsPresenter(view: vc)
             view?.openDiskItemView(vc: vc)
         case let str where str!.contains("pdf"):
-            let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.pdf)
+            let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.pdf)
+            vc.presenter = DetailsPresenter(view: vc)
             view?.openDiskItemView(vc: vc)
         case let str where str!.contains("image"):
-            let vc = RecentsDetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.image)
+            let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.image)
+            vc.presenter = DetailsPresenter(view: vc)
             view?.openDiskItemView(vc: vc)
         default:
             let alert = UIAlertController(title: Constants.Text.error, message: Constants.Text.unsupportedType, preferredStyle: .alert)
