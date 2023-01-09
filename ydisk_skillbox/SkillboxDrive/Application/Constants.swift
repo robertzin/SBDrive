@@ -15,11 +15,16 @@ enum Constants {
     
     static let coreDataEntityName = "YDiskItem"
     
+    static let coreDataRecents = "recents"
+    static let coreDataPublished = "published"
+    static let coreDataAllFiles = "allFiles"
+    
     static let urlStringToken = "https://oauth.yandex.ru/authorize"
-    static let urlStringRecents = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded?limit=50"
-    static let urlStringPublished = "https://cloud-api.yandex.net/v1/disk/resources/public?limit=15"
+    static let urlStringRecents = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded"
+    static let urlStringPublished = "https://cloud-api.yandex.net/v1/disk/resources/public"
+    static let urlStringAllFiles = "https://cloud-api.yandex.net/v1/disk/resources/files"
     static let urlStringFileDelete = "https://cloud-api.yandex.net/v1/disk/resources"
-    static let urlStringDirContent = "https://cloud-api.yandex.net/v1/disk/public/resources?public_key="
+    static let urlStringDirContent = "https://cloud-api.yandex.net/v1/disk/resources?path="
     static let urlStringFileRename = "https://cloud-api.yandex.net/v1/disk/resources/move"
     static let urlStringDiskInfo = "https://cloud-api.yandex.net/v1/disk/"
     static let urlStringRevokeToken = "https://oauth.yandex.ru/revoke_token"

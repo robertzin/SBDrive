@@ -47,15 +47,14 @@ final class ImageDownloader {
         }
         if let image = getCachedImageFrom(urlString: imageUrlString) {
             completion(.success(image))
+            return
         }
         
         var request = URLRequest(url: url)
-//        request.setValue("OAuth \(self.token!)", forHTTPHeaderField: "Authorization")
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let data = data else {
-                return
-            }
+//            debugPrint("downloading image")
+            guard let data = data else { return }
             
             if let error = error {
                 DispatchQueue.main.async {
@@ -71,6 +70,7 @@ final class ImageDownloader {
             
             self.serialQueueForImages.sync(flags: .barrier) {
                 self.cachedImages.setObject(image, forKey: NSString(string: imageUrlString))
+//                debugPrint("cached")
             }
             
             let _ = self.serialQueueForDataTasks.sync(flags: .barrier) {

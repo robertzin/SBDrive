@@ -10,6 +10,7 @@ import UIKit
 class TabBarController: UITabBarController {
     
     private let viewModel: TabBarViewModel
+    private let presenterManager = PresenterManager.shared
     
     init(viewModel: TabBarViewModel) {
         self.viewModel = viewModel
@@ -28,23 +29,19 @@ class TabBarController: UITabBarController {
         self.selectedIndex = 1
     }
     
-    private func createNavController(for rootViewController: UIViewController, image: UIImage) -> UIViewController {
-        let navController = UINavigationController(rootViewController: rootViewController)
-        navController.tabBarItem.image = image
-        navController .navigationBar.prefersLargeTitles = false
-        return navController
-    }
+//    private func createNavController(for rootViewController: UIViewController, image: UIImage) -> UIViewController {
+//        let navController = UINavigationController(rootViewController: rootViewController)
+//        navController.tabBarItem.image = image
+//        navController .navigationBar.prefersLargeTitles = false
+//        return navController
+//    }
 
+    // TODO: move create logic to PresenterManager
     func setupViews() {
-        let profileVC = ProfileViewController()
-        let profilePresenter = ProfilePresenter(view: profileVC)
-        profileVC.presenter = profilePresenter
-        
-        
         viewControllers = [
-            createNavController(for: profileVC, image: UIImage(named: "tb_person")!),
-            PresenterManager.shared.createRecentsViewController(image: UIImage(named: "tb_file")!),
-            createNavController(for: AllFilesViewController(), image: UIImage(named: "tb_archive")!)
+            presenterManager.createProfileViewController(image: UIImage(named: "tb_person")!),
+            presenterManager.createRecentsViewController(image: UIImage(named: "tb_file")!),
+            presenterManager.createAllFilesViewController(image: UIImage(named: "tb_archive")!)
         ]
     }
 }

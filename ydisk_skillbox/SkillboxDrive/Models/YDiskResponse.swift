@@ -7,7 +7,17 @@
 
 import UIKit
 
+class DirectoryDiskResponse: Codable {
+    let public_key: String?
+    let path: String?
+    let _embedded: DiskResponse?
+    let limit: Int16?
+    let offset: Int16?
+    let total: Int16?
+}
+
 class DiskResponse: Codable {
+    let offset: Int16?
     let items: [DiskItem]?
 }
 
@@ -25,4 +35,5 @@ class DiskItem: Codable {
     var sha256: String?
     var type: String?
     var public_key: String?
+    var offset: Int16?
 }

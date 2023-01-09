@@ -19,30 +19,34 @@ class PresenterManager {
         case login
     }
     
-    func createRecentsViewController(image: UIImage) -> UIViewController {
-        
-        let view = RecentsViewController()
-        let networkService = NetworkService()
-        let presenter = RecentsMainPresenter(view: view, networkService: networkService)
-        view.presenter = presenter
-
-        let navController = UINavigationController(rootViewController: view)
+    private func createNavController(for rootViewController: UIViewController, image: UIImage) -> UIViewController {
+        let navController = UINavigationController(rootViewController: rootViewController)
         navController.tabBarItem.image = image
         navController .navigationBar.prefersLargeTitles = false
-        
         return navController
     }
     
-//    func createPublishedViewController() -> UIViewController {
-//
-//        let view = PublishedMainViewController()
-//        let networkService = NetworkService()
-//        let presenter = PublishedMainPresenter(view: view, networkService: networkService)
-//        view.presenter = presenter
-//
-//        let navController = UINavigationController(rootViewController: view)
-//        return navController
-//    }
+    func createProfileViewController(image: UIImage) -> UIViewController {
+        
+        let vc = ProfileViewController()
+        vc.presenter = ProfilePresenter(view: vc)
+        return createNavController(for: vc, image: image)
+    }
+    
+    func createAllFilesViewController(image: UIImage) -> UIViewController {
+        
+        let vc = MainViewController(requestURLstring: Constants.urlStringAllFiles, header: Constants.Text.allFiles)
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataAllFiles)
+        return createNavController(for: vc, image: image)
+    }
+    
+    func createRecentsViewController(image: UIImage) -> UIViewController {
+        
+        let vc = MainViewController(requestURLstring: Constants.urlStringRecents, header: Constants.Text.recents)
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataRecents)
+        return createNavController(for: vc, image: image)
+    }
+    
     
     func show(vc: vc) {
         

@@ -7,15 +7,20 @@
 
 import Foundation
 import UIKit
+import Alamofire
+import AlamofireImage
 
 protocol NetworkServiceProtocol: AnyObject {
-    func getData(url: String, completion: @escaping (Result<[DiskItem]?, Error>) -> Void)
+    func getData(url: String, offset: Int16, completion: @escaping (Result<([DiskItem]?, Int16?), Error>) -> Void)
     func makeGETrequest(urlString: String, completion: @escaping (Result<DiskItem?, Error>) -> Void)
     func JSONtoDictionary(dataString: Data) -> [String:AnyObject]?
+    func imageDownload(urlString: String, completion: @escaping (Result<UIImage?, Error>) -> Void)
     func fileDownload(urlString: String, completion: @escaping (Result<Data?, Error>) -> Void)
     func fileDelete(path: String, completion: @escaping (Result<Data?, Error>) -> Void)
     func fileRename(oldPath: String, newPath: String, completion: @escaping (Result<DiskItem?, Error>) -> Void)
     func revokeToken()
+    
+    var imageCache: AutoPurgingImageCache { get }
 }
 
 class NetworkService: NetworkServiceProtocol {
@@ -27,26 +32,44 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     private var token = ""
-    static var shared = NetworkService()
+    private let limit = 15
     private var task: URLSessionDataTask!
+    static var shared = NetworkService()
+    var imageCache: AutoPurgingImageCache
     
     init() {
         do { token = try KeyChain.shared.getToken() }
         catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+        self.imageCache = AutoPurgingImageCache(
+            memoryCapacity: 100_000_000,
+            preferredMemoryUsageAfterPurge: 60_000_000
+        )
     }
     
-    func getData(url: String, completion: @escaping (Result<[DiskItem]?, Error>) -> Void) {
-        guard let url = URL(string: url) else { return }
-        //        debugPrint(url)
+    func getData(url: String, offset: Int16 = 0, completion: @escaping (Result<([DiskItem]?, Int16?), Error>) -> Void) {
+        var isDirectory: Bool = false
         
-        //        var components = URLComponents(string: url)
-        //        components?.queryItems = [
-        //            URLQueryItem(name: "preview_size", value: "75x75"),
-        //            URLQueryItem(name: "preview_crop", value: "true")
-        //        ]
-        //        guard let url = components?.url else { return }
+        var components = URLComponents(string: url)
+        components?.queryItems = []
+        if url.contains("path=") {
+            isDirectory = true
+            let idx = url.lastIndex(of: "=")!
+            let path = String(url[idx...])
+            components?.queryItems?.append(URLQueryItem(name: "path", value: path))
+        }
+
+        components?.queryItems?.append(URLQueryItem(name: "limit", value: "\(limit)"))
+        components?.queryItems?.append(URLQueryItem(name: "preview_crop", value: "true"))
+        components?.queryItems?.append(URLQueryItem(name: "preview_size", value: "55x55"))
+        
+//        debugPrint("offset: \(offset)")
+        if offset > 0 {
+            components?.queryItems?.append(URLQueryItem(name: "offset", value: "\(offset)"))
+        }
+        guard let url = components?.url else { return }
         
         var request = URLRequest(url: url)
+        debugPrint("request: \(request)")
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request) { data, _, error in
@@ -58,15 +81,25 @@ class NetworkService: NetworkServiceProtocol {
                 return
             }
             do {
-                let diskItems = try JSONDecoder().decode(DiskResponse.self, from: data)
-                //                debugPrint("success in networkService")
-                completion(.success(diskItems.items))
+                if isDirectory == true {
+                    let dirDiskResponse = try JSONDecoder().decode(DirectoryDiskResponse.self, from: data)
+//                    debugPrint("diskItems count: \(dirDiskResponse._embedded?.items?.count)")
+                    completion(.success((dirDiskResponse._embedded?.items, dirDiskResponse.offset)))
+                    return
+                }
+                
+                let diskResponse = try JSONDecoder().decode(DiskResponse.self, from: data)
+//                debugPrint("success in networkService")
+//                debugPrint("diskItems count: \(diskResponse.items?.count)")
+                completion(.success((diskResponse.items, diskResponse.offset)))
             } catch {
                 completion(.failure(error))
                 debugPrint("parisng error!")
             }
         }.resume()
     }
+    
+//    func getDataFromDirectory()
     
     func makeGETrequest(urlString: String, completion: @escaping (Result<DiskItem?, Error>) -> Void) {
         guard let url = URL(string: urlString) else { return }
@@ -102,6 +135,27 @@ class NetworkService: NetworkServiceProtocol {
         return [:]
     }
     
+    func imageDownload(urlString: String, completion: @escaping (Result<UIImage?, Error>) -> Void) {
+//        if let cachedImage = imageCache.image(withIdentifier: urlString) {
+//            print("returning cached image")
+//            completion(.success(cachedImage))
+//            return
+//        }
+        let headers: HTTPHeaders = [
+                "Authorization": "OAuth \(token)"
+            ]
+        AF.request(urlString, headers: headers).responseImage { response in
+            switch response.result {
+            case .success(let image):
+                self.imageCache.add(image, withIdentifier: urlString)
+                completion(.success(image))
+            case .failure(let error):
+                print(String(data: response.data!, encoding: .utf8))
+                completion(.failure(error))
+            }
+        }
+    }
+    
     func fileDownload(urlString: String, completion: @escaping (Result<Data?, Error>) -> Void) {
         guard let url = URL(string: urlString) else { return }
         
@@ -117,11 +171,11 @@ class NetworkService: NetworkServiceProtocol {
             if let response = response as? HTTPURLResponse {
                 switch response.statusCode {
                 case 200..<300:
-                    print("fileDownload success")
+//                    debugPrint("fileDownload success")
                     completion(.success(data))
                 default:
-                    print("fileDownload failure")
-                    debugPrint(String(data: data, encoding: .utf8))
+//                    debugPrint("fileDownload failure")
+//                    debugPrint(String(data: data, encoding: .utf8))
                     completion(.failure(NetworkError.responseStatus))
                 }
             }
@@ -152,10 +206,6 @@ class NetworkService: NetworkServiceProtocol {
                 }
             }
         }.resume()
-    }
-    
-    func getHrefForRenaming() {
-        
     }
     
     func fileRename(oldPath: String, newPath: String, completion: @escaping (Result<DiskItem?, Error>) -> Void) {

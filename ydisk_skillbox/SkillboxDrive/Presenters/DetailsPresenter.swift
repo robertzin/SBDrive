@@ -9,14 +9,14 @@ import UIKit
 import PDFKit
 import WebKit
 
-protocol DetailsProtocol {
+protocol DetailsProtocol: AnyObject {
     func presentVC(vc: UIViewController)
     func deleteFileSuccess()
     func loadPDFSuccess(doc: PDFDocument)
     func loadWebView(webView: WKWebView, request: URLRequest)
 }
 
-protocol DetailsPresenterProtocol {
+protocol DetailsPresenterProtocol: AnyObject {
     
     init(view: DetailsProtocol)
     
@@ -55,7 +55,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
     }
     
     func downloadImage(urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
-        imageDownloader.downloadImage(with: urlString, completion: { result in
+        imageDownloader.downloadImage(with: urlString, completion: { [weak self] result in
                 switch result {
                 case .success(let image):
                     completion(.success(image))
@@ -67,7 +67,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
 
     func deleteFile(diskItem: YDiskItem) {
         guard let path = diskItem.path else { return }
-        NetworkService.shared.fileDelete(path: path) { result in
+        NetworkService.shared.fileDelete(path: path) { [weak self] result in
             switch result {
             case .success(_):
                 DispatchQueue.main.async { [weak self] in
@@ -144,7 +144,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
         }
         else if fileType == .document {
             let path = FileManager.default.temporaryDirectory.appending(path: diskItem.name!)
-            networkService.fileDownload(urlString: diskItem.file!) { result in
+            networkService.fileDownload(urlString: diskItem.file!) { [weak self] result in
                 switch result {
                 case .success(let data):
                     guard let file = data else { return }

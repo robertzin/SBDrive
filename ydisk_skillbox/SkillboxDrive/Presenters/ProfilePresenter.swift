@@ -15,7 +15,7 @@ protocol ProfileProtocol {
 protocol ProfilePresenterPrototol {
     init(view: ProfileProtocol)
     
-    func getData()
+    func getDiskInfo()
     func pushVC()
     func performLogOut()
 }
@@ -26,15 +26,17 @@ class ProfilePresenter: ProfilePresenterPrototol {
     var networkService: NetworkServiceProtocol!
     var imageDownloader: ImageDownloader!
     var coreDataManager: CoreDataManager!
+    var presenterManager: PresenterManager
     
     required init(view: ProfileProtocol) {
         self.view = view
         self.networkService = NetworkService.shared
         self.imageDownloader = ImageDownloader.shared
         self.coreDataManager = CoreDataManager.shared
+        self.presenterManager = PresenterManager.shared
     }
-
-    func getData() {
+    
+    func getDiskInfo() {
         networkService.fileDownload(urlString: Constants.urlStringDiskInfo) { [weak self] result in
             switch result {
             case .success(let data):
@@ -47,17 +49,38 @@ class ProfilePresenter: ProfilePresenterPrototol {
     }
     
     func pushVC() {
-        let vc = PublishedMainViewController()
-        vc.presenter = PublishedMainPresenter(view: vc, networkService: NetworkService.shared)
+        let vc = MainViewController(requestURLstring: Constants.urlStringPublished, header: Constants.Text.uploadedFiles)
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataPublished)
         view?.pushVC(vc: vc)
+    }
+    
+    func clearTmpDirectory() {
+        let fm = FileManager()
+        fm.clearTmpDirectory()
     }
     
     func performLogOut() {
         do { try KeyChain.shared.deleteToken() }
         catch { print("error while getting token in RecentImageVC: \(error.localizedDescription)") }
         networkService.revokeToken()
+        clearTmpDirectory()
         coreDataManager.deleteAllEntities()
-        ImageDownloader.shared.clearCache()
-        PresenterManager.shared.show(vc: .login)
+        imageDownloader.clearCache()
+        presenterManager.show(vc: .login)
+    }
+}
+
+extension FileManager {
+    func clearTmpDirectory() {
+        do {
+            let tmpDirURL = FileManager.default.temporaryDirectory
+            let tmpDirectory = try contentsOfDirectory(atPath: tmpDirURL.path)
+            try tmpDirectory.forEach { file in
+                let fileUrl = tmpDirURL.appendingPathComponent(file)
+                try removeItem(atPath: fileUrl.path)
+            }
+        } catch {
+           //catch the error somehow
+        }
     }
 }

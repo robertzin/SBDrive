@@ -52,7 +52,7 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        presenter.getData()
+        presenter.getDiskInfo()
         setupViews()
     }
     
@@ -77,13 +77,7 @@ final class ProfileViewController: UIViewController {
             make.height.equalTo(view.safeAreaLayoutGuide.layoutFrame.height * 10 / 13)
             make.centerX.equalToSuperview()
         }
-        
-        print(usedSpace)
-        print(totalSpace)
-        
         let usedSpaceString = String(format: "%.2f", usedSpace! / 1000000000.00)
-        
-        // TODO: Error occured while first load
         let leftSpaceString = String(format: "%.2f", (totalSpace! - usedSpace!) / 1000000000.00)
         let totalSpaceString = String(format: "%.0f", totalSpace! / 1000000000.00)
         

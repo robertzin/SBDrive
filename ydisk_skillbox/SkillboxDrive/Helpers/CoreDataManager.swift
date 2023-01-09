@@ -25,25 +25,45 @@ class CoreDataManager {
         persistentContainer.viewContext
     }()
     
-    lazy var fetchPublishedResultController: NSFetchedResultsController<NSFetchRequestResult> = {
+    lazy var fetchAllFilesResultController: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
         let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
-        let predicate = NSPredicate(format: "public_key != nil")
+        let predicate = NSPredicate(format: "comment == %@", Constants.coreDataAllFiles)
         fetchRequest.sortDescriptors = [sortDescriptor]
         fetchRequest.predicate = predicate
         let fetchPublishedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         return fetchPublishedResultController
     }()
     
-    lazy var fetchResultController: NSFetchedResultsController<NSFetchRequestResult> = {
+    lazy var fetchPublishedResultController: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
         let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
-        let predicate = NSPredicate(format: "public_key == nil")
+        let predicate = NSPredicate(format: "comment == %@", Constants.coreDataPublished)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.predicate = predicate
+        let fetchPublishedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchPublishedResultController
+    }()
+    
+    lazy var fetchRecentsResultController: NSFetchedResultsController<NSFetchRequestResult> = {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
+        let predicate = NSPredicate(format: "comment == %@", Constants.coreDataRecents)
         fetchRequest.sortDescriptors = [sortDescriptor]
         fetchRequest.predicate = predicate
         let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         return fetchResultController
     }()
+    
+    func fetchResultController(comment: String) -> NSFetchedResultsController<NSFetchRequestResult> {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
+        let predicate = NSPredicate(format: "comment == %@", comment)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.predicate = predicate
+        let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchResultController
+    }
     
     func count() -> Int {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
@@ -91,7 +111,7 @@ class CoreDataManager {
         do {
             let allData = try context.fetch(fetchRequest)
             for object in allData as! [YDiskItem] {
-                print("\(object.name) - \(object.public_key)")
+                print("\(object.name) - \(object.comment)")
             }
         } catch {
             print("error while printing IDs: \(error.localizedDescription)")

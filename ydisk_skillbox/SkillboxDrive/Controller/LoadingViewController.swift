@@ -50,14 +50,13 @@ final class LoadingViewController: UIViewController {
         }
     }
     
-    // TODO: when logout do not need to re auth
     private func showInitialView() {
         self.dismiss(animated: true)
         
         var token = ""
         do { token = try KeyChain.shared.getToken() }
         catch { print(error.localizedDescription) }
-        print(token)
+//        debugPrint(token)
         
         if !token.isEmpty { PresenterManager.shared.show(vc: .tabBar) }
         else { viewModel.onboarding() }

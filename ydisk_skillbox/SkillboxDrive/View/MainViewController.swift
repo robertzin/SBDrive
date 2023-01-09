@@ -1,35 +1,44 @@
 //
-//  PublishedMainViewController.swift
+//  MainViewController.swift
 //  SkillboxDrive
 //
-//  Created by Robert Zinyatullin on 06.12.2022.
+//  Created by Robert Zinyatullin on 09.01.2023.
 //
 
 import UIKit
 import SnapKit
 import CoreData
 
-// TODO: refresh control
-
-final class PublishedMainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+final class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     
-    private let publishedCellId = "PublishedCell"
+    private let cellId = "cellId"
     private lazy var tableView: UITableView = {
         let tv = UITableView()
         tv.delegate = self
         tv.dataSource = self
-        tv.register(UITableViewCell.self, forCellReuseIdentifier: publishedCellId)
+        tv.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.rowHeight = 55
         return tv
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                 action: #selector(handleRefreshControl),
+                                 for: .valueChanged)
+        return refreshControl
+    }()
+    
+    private var header: String?
     private var requestURLstring: String?
     private var activityIndicator = UIActivityIndicatorView()
-    var presenter: PublishedMainPresenterProtocol!
+    private var footerActivityIndicator = UIActivityIndicatorView()
+    var presenter: MainPresenterProtocol!
     
-    init(requestURLstring: String? = Constants.urlStringPublished) {
+    init(requestURLstring: String?, header: String) {
         super.init(nibName: nil, bundle: nil)
+        self.header = header
         self.requestURLstring = requestURLstring
     }
     
@@ -50,20 +59,17 @@ final class PublishedMainViewController: UIViewController, UITableViewDataSource
     private func setupViews() {
         view.addSubview(activityIndicator)
         view.backgroundColor = .white
-        navigationItem.title = Constants.Text.uploadedFiles
+        navigationItem.title = self.header
         navigationItem.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: Constants.Fonts.header2!]
         navigationController?.navigationBar.tintColor = Constants.Colors.details
-        CoreDataManager.shared.fetchPublishedResultController.delegate = self
+        presenter.fetchResultController.delegate = self
         
         activityIndicator.startAnimating()
         activityIndicator.snp.makeConstraints { make in
             make.centerX.centerY.equalToSuperview()
             make.height.width.equalTo(140)
         }
-        
-//        setupViewsIfNothingToDisplay()
-        setupViewsIfSomethingToDisplay()
     }
     
     private func setupViewsIfSomethingToDisplay() {
@@ -76,6 +82,7 @@ final class PublishedMainViewController: UIViewController, UITableViewDataSource
             make.height.equalToSuperview()
             make.center.equalToSuperview()
         }
+        tableView.addSubview(refreshControl)
     }
     
     private func setupViewsIfNothingToDisplay() {
@@ -123,10 +130,15 @@ final class PublishedMainViewController: UIViewController, UITableViewDataSource
         button.addTarget(self, action: #selector(refreshData), for: .touchUpInside)
     }
     
-    // TODO: check if something to display, then show
     @objc private func refreshData() {
-        print("refresh data")
-        setupViewsIfSomethingToDisplay()
+        presenter.getDiskItems(url: requestURLstring!)
+    }
+    
+    @objc func handleRefreshControl() {
+        presenter.getDiskItems(url: requestURLstring!)
+        DispatchQueue.main.async {
+            self.refreshControl.endRefreshing()
+        }
     }
     
     @objc private func cellButtonTapped(_ sender: UIButton) {
@@ -136,9 +148,18 @@ final class PublishedMainViewController: UIViewController, UITableViewDataSource
         presenter.alert(indexPath: indexPath)
     }
     
+    func createFooterSpinner() -> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100))
+        
+        footerActivityIndicator.center = footerView.center
+        footerView.addSubview(footerActivityIndicator)
+        footerActivityIndicator.startAnimating()
+        return footerView
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let diskItem = presenter.dataForDiskItemAt(indexPath)
-        let cell = tableView.dequeueReusableCell(withIdentifier: publishedCellId, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         cell.contentView.layoutIfNeeded()
         
         // cell activity indicator
@@ -198,24 +219,49 @@ final class PublishedMainViewController: UIViewController, UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return presenter.numberOfRowsInSection(at: section)
     }
+    
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        self.tableView.tableFooterView = createFooterSpinner()
+//        presenter.rowToPaginate(indexPath)
+//    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if header == Constants.Text.recents { return }
+        let position = scrollView.contentOffset.y
+        if position > tableView.contentSize.height - scrollView.frame.size.height {
+            self.tableView.tableFooterView = createFooterSpinner()
+            presenter.performPaginate(url: requestURLstring!)
+        }
+    }
 }
 
-extension PublishedMainViewController: PublishedMainProtocol {
+extension MainViewController: MainProtocol {
     func success() {
-        //        debugPrint("success in Controller")
-        CoreDataManager.shared.saveContext()
-        try! CoreDataManager.shared.fetchPublishedResultController.performFetch()
-        print(CoreDataManager.shared.count())
-//        CoreDataManager.shared.printData()
+//        debugPrint("success in Controller")
+        DispatchQueue.main.async { self.tableView.tableFooterView = nil }
+        presenter.coreDataManager.saveContext()
+        try! presenter.fetchResultController.performFetch()
+//        print(presenter.coreDataManager.count())
+//        presenter.coreDataManager.printData()
         
+        if presenter.fetchResultController.fetchedObjects!.count > 0 {
+            self.setupViewsIfSomethingToDisplay()
+        } else {
+            setupViewsIfNothingToDisplay()
+        }
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }
     
     func failure() {
         debugPrint("failure in Controller")
-        activityIndicator.stopAnimating()
-        tableView.reloadData()
+        if self.tableView.tableFooterView != nil {
+            DispatchQueue.main.async { self.tableView.tableFooterView = nil }
+        }
+        if activityIndicator.isAnimating {
+            activityIndicator.stopAnimating()
+        }
+//        tableView.reloadData()
     }
     
     func imageDownloadingSuccess() {
@@ -236,7 +282,7 @@ extension PublishedMainViewController: PublishedMainProtocol {
     }
 }
 
-extension PublishedMainViewController: NSFetchedResultsControllerDelegate {
+extension MainViewController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.beginUpdates()
     }
@@ -256,7 +302,8 @@ extension PublishedMainViewController: NSFetchedResultsControllerDelegate {
 //            print("update")
             if let indexPath = indexPath {
                 let diskItem = presenter.dataForDiskItemAt(indexPath)
-                let cell = tableView.dequeueReusableCell(withIdentifier: publishedCellId, for: indexPath)
+                
+                let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
                 cell.contentView.layoutIfNeeded()
                 
                 // cell button

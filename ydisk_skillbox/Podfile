@@ -8,5 +8,7 @@ target 'SkillboxDrive' do
   # Pods for SkillboxDrive
 pod 'SnapKit'
 pod 'Charts'
+pod 'Alamofire'
+pod 'AlamofireImage'
 
 end
