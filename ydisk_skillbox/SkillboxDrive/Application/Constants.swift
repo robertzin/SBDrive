@@ -48,6 +48,9 @@ enum Constants {
         static var accent2: UIColor? {
             UIColor(named: "accent2")
         }
+        static var noConnection: UIColor? {
+            UIColor(named: "noConnection")
+        }
     }
     
     enum Fonts {

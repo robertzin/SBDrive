@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import Alamofire
 import AlamofireImage
+import Network
 
 protocol NetworkServiceProtocol: AnyObject {
     func getData(url: String, offset: Int16, completion: @escaping (Result<([DiskItem]?, Int16?), Error>) -> Void)
@@ -54,7 +55,8 @@ class NetworkService: NetworkServiceProtocol {
         if url.contains("path=") {
             isDirectory = true
             let idx = url.lastIndex(of: "=")!
-            let path = String(url[idx...])
+            let path = String(url[url.index(idx, offsetBy: 1)...])
+            
             components?.queryItems?.append(URLQueryItem(name: "path", value: path))
         }
 
@@ -72,34 +74,36 @@ class NetworkService: NetworkServiceProtocol {
         debugPrint("request: \(request)")
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
-        URLSession.shared.dataTask(with: request) { data, _, error in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else { return }
 //            debugPrint(String(data: data, encoding: .utf8))
-            if let error = error {
-                debugPrint(error.localizedDescription)
-                completion(.failure(error))
-                return
-            }
-            do {
-                if isDirectory == true {
-                    let dirDiskResponse = try JSONDecoder().decode(DirectoryDiskResponse.self, from: data)
-//                    debugPrint("diskItems count: \(dirDiskResponse._embedded?.items?.count)")
-                    completion(.success((dirDiskResponse._embedded?.items, dirDiskResponse.offset)))
-                    return
+            if let response = response as? HTTPURLResponse {
+//                debugPrint("response.status code: \(response.statusCode)")
+                switch response.statusCode {
+                case 200..<300:
+                    do {
+                        if isDirectory == true {
+                            let dirDiskResponse = try JSONDecoder().decode(DirectoryDiskResponse.self, from: data)
+//                            debugPrint("diskItems count: \(dirDiskResponse._embedded?.items?.count)")
+                            completion(.success((dirDiskResponse._embedded?.items, dirDiskResponse.offset)))
+                            return
+                        }
+                        
+                        let diskResponse = try JSONDecoder().decode(DiskResponse.self, from: data)
+//                        debugPrint("success in networkService")
+//                        debugPrint("diskItems count: \(diskResponse.items?.count)")
+                        completion(.success((diskResponse.items, diskResponse.offset)))
+                    } catch {
+                        completion(.failure(error))
+                        debugPrint("parisng error!")
+                    }
+                default:
+                    print("response status: \(response.statusCode)")
+                    completion(.failure(NetworkError.responseStatus))
                 }
-                
-                let diskResponse = try JSONDecoder().decode(DiskResponse.self, from: data)
-//                debugPrint("success in networkService")
-//                debugPrint("diskItems count: \(diskResponse.items?.count)")
-                completion(.success((diskResponse.items, diskResponse.offset)))
-            } catch {
-                completion(.failure(error))
-                debugPrint("parisng error!")
             }
         }.resume()
     }
-    
-//    func getDataFromDirectory()
     
     func makeGETrequest(urlString: String, completion: @escaping (Result<DiskItem?, Error>) -> Void) {
         guard let url = URL(string: urlString) else { return }

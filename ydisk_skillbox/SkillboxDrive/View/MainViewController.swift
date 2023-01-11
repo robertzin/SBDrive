@@ -22,6 +22,23 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         return tv
     }()
     
+    private lazy var noConnectionLabel: UILabel = {
+        let label = UILabel()
+        label.text = Constants.Text.noInternet
+        label.font = Constants.Fonts.small
+        label.textColor = .white
+        label.textAlignment = .center
+        label.center = view.center
+        return label
+    }()
+    
+    private lazy var noConnectionView: UIView = {
+        let view = UIView()
+        view.alpha = 0
+        view.backgroundColor = Constants.Colors.noConnection
+        return view
+    }()
+    
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self,
@@ -52,8 +69,10 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.getDiskItems(url: requestURLstring!)
+        handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
+        NotificationCenter.default.addObserver(self, selector: #selector(handleConnectionLabel(notification:)), name: NSNotification.Name(rawValue:  "connectivityStatusChanged"), object: nil)
         setupViews()
+        presenter.getDiskItems(url: requestURLstring!)
     }
     
     private func setupViews() {
@@ -72,6 +91,44 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
     
+    @objc func handleConnectionLabel(notification: Notification) {
+            if NetworkMonitor.shared.isConnected {
+//                debugPrint("Connected")
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 1, delay: 0.15) {
+                        self.viewDissapear(view: self.noConnectionView)
+                    } completion: { void in
+                        self.noConnectionLabel.removeFromSuperview()
+                        self.noConnectionView.removeFromSuperview()
+                    }
+                }
+            } else {
+//                debugPrint("Not connected")
+                DispatchQueue.main.async {
+                    self.view.addSubview(self.noConnectionView)
+                    self.noConnectionView.snp.makeConstraints { make in
+                        make.width.equalToSuperview()
+                        make.height.equalTo(40)
+                        make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+                    }
+                    
+                    self.noConnectionView.addSubview(self.noConnectionLabel)
+                    self.noConnectionLabel.snp.makeConstraints { make in
+                        make.width.equalTo(self.noConnectionView)
+                        make.height.equalTo(self.noConnectionView)
+                        make.centerX.equalTo(self.noConnectionView.snp.centerX)
+                    }
+                    UIView.animate(withDuration: 1, delay: 0.15) {
+                        self.viewAppear(view: self.noConnectionView)
+                    }
+                }
+            }
+        }
+    
+    private func viewDissapear(view: UIView) { view.alpha = 0 }
+    
+    private func viewAppear(view: UIView) { view.alpha = 1 }
+    
     private func setupViewsIfSomethingToDisplay() {
         view.subviews.forEach({ $0.removeFromSuperview() })
         view.subviews.map({ $0.removeFromSuperview() })
@@ -86,8 +143,10 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     private func setupViewsIfNothingToDisplay() {
-        view.subviews.forEach({ $0.removeFromSuperview() })
-        view.subviews.map({ $0.removeFromSuperview() })
+//        view.subviews.forEach({ $0.removeFromSuperview() })
+//        view.subviews.map({ $0.removeFromSuperview() })
+        
+        self.tableView.removeFromSuperview()
         
         let imageVIew = UIImageView()
         imageVIew.image = UIImage(named: "emptyPublished")
@@ -172,17 +231,19 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         cellActivityIndicator.startAnimating()
         
         // cell button
-        let cellButton = UIButton()
-        cellButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        cellButton.tintColor = Constants.Colors.details
-        cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
-        cell.contentView.addSubview(cellButton)
-        cell.contentView.layoutIfNeeded()
-        cellButton.snp.makeConstraints { make in
-            make.width.equalTo(35)
-            make.height.equalTo(25)
-            make.centerY.equalToSuperview()
-            make.right.equalToSuperview().inset(15)
+        if header != Constants.Text.recents {
+            let cellButton = UIButton()
+            cellButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+            cellButton.tintColor = Constants.Colors.details
+            cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
+            cell.contentView.addSubview(cellButton)
+            cell.contentView.layoutIfNeeded()
+            cellButton.snp.makeConstraints { make in
+                make.width.equalTo(35)
+                make.height.equalTo(25)
+                make.centerY.equalToSuperview()
+                make.right.equalToSuperview().inset(15)
+            }
         }
         
         // cell content
@@ -243,7 +304,6 @@ extension MainViewController: MainProtocol {
         try! presenter.fetchResultController.performFetch()
 //        print(presenter.coreDataManager.count())
 //        presenter.coreDataManager.printData()
-        
         if presenter.fetchResultController.fetchedObjects!.count > 0 {
             self.setupViewsIfSomethingToDisplay()
         } else {
@@ -307,17 +367,19 @@ extension MainViewController: NSFetchedResultsControllerDelegate {
                 cell.contentView.layoutIfNeeded()
                 
                 // cell button
-                let cellButton = UIButton()
-                cellButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-                cellButton.tintColor = Constants.Colors.details
-                cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
-                cell.contentView.addSubview(cellButton)
-                cell.contentView.layoutIfNeeded()
-                cellButton.snp.makeConstraints { make in
-                    make.width.equalTo(35)
-                    make.height.equalTo(25)
-                    make.centerY.equalToSuperview()
-                    make.right.equalToSuperview().inset(15)
+                if header != Constants.coreDataRecents {
+                    let cellButton = UIButton()
+                    cellButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+                    cellButton.tintColor = Constants.Colors.details
+                    cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
+                    cell.contentView.addSubview(cellButton)
+                    cell.contentView.layoutIfNeeded()
+                    cellButton.snp.makeConstraints { make in
+                        make.width.equalTo(35)
+                        make.height.equalTo(25)
+                        make.centerY.equalToSuperview()
+                        make.right.equalToSuperview().inset(15)
+                    }
                 }
                 
                 // cell content

@@ -48,6 +48,7 @@
 		47D6F038296C0234003539E7 /* YDiskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F036296C0234003539E7 /* YDiskItem+CoreDataProperties.swift */; };
 		47D6F03E296C11EF003539E7 /* MainPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F03D296C11EF003539E7 /* MainPresenter.swift */; };
 		47D6F040296C1CAB003539E7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F03F296C1CAB003539E7 /* MainViewController.swift */; };
+		47D6F044296D9669003539E7 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F043296D9669003539E7 /* NetworkMonitor.swift */; };
 		47E855C8294DECB400403600 /* RenamePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E855C7294DECB400403600 /* RenamePresenter.swift */; };
 		47ECB3ED29190691007DE862 /* GraphikRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47ECB3E829190691007DE862 /* GraphikRegular.otf */; };
 		47ECB3EE29190691007DE862 /* GraphikThin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 47ECB3E929190691007DE862 /* GraphikThin.otf */; };
@@ -108,6 +109,7 @@
 		47D6F036296C0234003539E7 /* YDiskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		47D6F03D296C11EF003539E7 /* MainPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPresenter.swift; sourceTree = "<group>"; };
 		47D6F03F296C1CAB003539E7 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		47D6F043296D9669003539E7 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		47E855C7294DECB400403600 /* RenamePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenamePresenter.swift; sourceTree = "<group>"; };
 		47ECB3E829190691007DE862 /* GraphikRegular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GraphikRegular.otf; sourceTree = "<group>"; };
 		47ECB3E929190691007DE862 /* GraphikThin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GraphikThin.otf; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 			isa = PBXGroup;
 			children = (
 				473284B5292D516F003A200A /* NetworkServices.swift */,
+				47D6F043296D9669003539E7 /* NetworkMonitor.swift */,
 				4749A2BA2932B7EA00352B62 /* ImageDownloader.swift */,
 				4766B67D293630800058EF73 /* CoreDataManager.swift */,
 				4766B68D2938B48F0058EF73 /* KeyChain.swift */,
@@ -450,6 +453,7 @@
 				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
 				473284AF292BD53A003A200A /* PresenterManager.swift in Sources */,
 				4766B68E2938B48F0058EF73 /* KeyChain.swift in Sources */,
+				47D6F044296D9669003539E7 /* NetworkMonitor.swift in Sources */,
 				47D6F038296C0234003539E7 /* YDiskItem+CoreDataProperties.swift in Sources */,
 				47175D96291B8C320036D9E6 /* ModalTransition.swift in Sources */,
 				47F7572D293F513100B98281 /* ProfilePresenter.swift in Sources */,

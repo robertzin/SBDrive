@@ -31,6 +31,7 @@ protocol MainPresenterProtocol {
     func mbToKb(size: Int64) -> String
     func performPaginate(url: String)
     
+    var isConnected: Bool { get }
     var imageCache: NSCache<NSString, UIImage>? { get set }
     var coreDataManager: CoreDataManager! { get }
     var fetchResultController: NSFetchedResultsController<NSFetchRequestResult> { get }
@@ -40,9 +41,11 @@ class MainPresenter: MainPresenterProtocol {
 
     var view: MainProtocol?
     var networkService: NetworkServiceProtocol!
-    var coreDataManager: CoreDataManager!
     var imageDownloader: ImageDownloader!
+    
+    var isConnected: Bool
     var imageCache: NSCache<NSString, UIImage>?
+    var coreDataManager: CoreDataManager!
     var fetchResultController: NSFetchedResultsController<NSFetchRequestResult>
     
     var maxLimitExceeded: Bool
@@ -59,9 +62,14 @@ class MainPresenter: MainPresenterProtocol {
         
         self.comment = comment
         self.fetchResultController = coreDataManager.fetchResultController(comment: comment)
+        self.isConnected = NetworkMonitor.shared.isConnected
     }
     
     func getDiskItems(url: String) {
+        if !NetworkMonitor.shared.isConnected {
+            self.view?.success()
+            return
+        }
         networkService.getData(url: url, offset: 0, completion: { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {

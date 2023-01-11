@@ -37,6 +37,13 @@ class ProfilePresenter: ProfilePresenterPrototol {
     }
     
     func getDiskInfo() {
+        if !NetworkMonitor.shared.isConnected {
+            var dict: [String: AnyObject] = [:]
+            dict["total_space"] = 10000 as AnyObject
+            dict["used_space"] = 10000 as AnyObject
+            self.view?.success(dict: dict)
+            return
+        }
         networkService.fileDownload(urlString: Constants.urlStringDiskInfo) { [weak self] result in
             switch result {
             case .success(let data):

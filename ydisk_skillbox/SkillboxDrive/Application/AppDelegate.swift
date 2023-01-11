@@ -14,6 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:  "connectivityStatusChanged"), object: nil)
+        NetworkMonitor.shared.start()
         return true
     }
 
