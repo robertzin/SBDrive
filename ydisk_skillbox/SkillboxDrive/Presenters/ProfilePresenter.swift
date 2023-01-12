@@ -57,7 +57,8 @@ class ProfilePresenter: ProfilePresenterPrototol {
     
     func pushVC() {
         let vc = MainViewController(requestURLstring: Constants.urlStringPublished, header: Constants.Text.uploadedFiles)
-        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataPublished)
+        let sortDescriptors = NSSortDescriptor(key: "name", ascending: true)
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataPublished, sortDescriptors: [sortDescriptors])
         view?.pushVC(vc: vc)
     }
     
@@ -67,6 +68,7 @@ class ProfilePresenter: ProfilePresenterPrototol {
     }
     
     func performLogOut() {
+        if !NetworkMonitor.shared.isConnected { return }
         do { try KeyChain.shared.deleteToken() }
         catch { print("error while getting token in RecentImageVC: \(error.localizedDescription)") }
         networkService.revokeToken()
@@ -87,7 +89,7 @@ extension FileManager {
                 try removeItem(atPath: fileUrl.path)
             }
         } catch {
-           //catch the error somehow
+           // TODO: catch any errors
         }
     }
 }

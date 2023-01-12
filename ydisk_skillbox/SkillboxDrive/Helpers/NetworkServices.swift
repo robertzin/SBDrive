@@ -7,21 +7,16 @@
 
 import Foundation
 import UIKit
-import Alamofire
-import AlamofireImage
 import Network
 
 protocol NetworkServiceProtocol: AnyObject {
     func getData(url: String, offset: Int16, completion: @escaping (Result<([DiskItem]?, Int16?), Error>) -> Void)
     func makeGETrequest(urlString: String, completion: @escaping (Result<DiskItem?, Error>) -> Void)
     func JSONtoDictionary(dataString: Data) -> [String:AnyObject]?
-    func imageDownload(urlString: String, completion: @escaping (Result<UIImage?, Error>) -> Void)
     func fileDownload(urlString: String, completion: @escaping (Result<Data?, Error>) -> Void)
     func fileDelete(path: String, completion: @escaping (Result<Data?, Error>) -> Void)
     func fileRename(oldPath: String, newPath: String, completion: @escaping (Result<DiskItem?, Error>) -> Void)
     func revokeToken()
-    
-    var imageCache: AutoPurgingImageCache { get }
 }
 
 class NetworkService: NetworkServiceProtocol {
@@ -30,21 +25,17 @@ class NetworkService: NetworkServiceProtocol {
         case wrongURLString
         case wrongURL
         case responseStatus
+        case noInternetConnection
     }
     
     private var token = ""
     private let limit = 15
     private var task: URLSessionDataTask!
     static var shared = NetworkService()
-    var imageCache: AutoPurgingImageCache
     
     init() {
         do { token = try KeyChain.shared.getToken() }
         catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
-        self.imageCache = AutoPurgingImageCache(
-            memoryCapacity: 100_000_000,
-            preferredMemoryUsageAfterPurge: 60_000_000
-        )
     }
     
     func getData(url: String, offset: Int16 = 0, completion: @escaping (Result<([DiskItem]?, Int16?), Error>) -> Void) {
@@ -137,27 +128,6 @@ class NetworkService: NetworkServiceProtocol {
             debugPrint("Error while converting data string to dictionary")
         }
         return [:]
-    }
-    
-    func imageDownload(urlString: String, completion: @escaping (Result<UIImage?, Error>) -> Void) {
-//        if let cachedImage = imageCache.image(withIdentifier: urlString) {
-//            print("returning cached image")
-//            completion(.success(cachedImage))
-//            return
-//        }
-        let headers: HTTPHeaders = [
-                "Authorization": "OAuth \(token)"
-            ]
-        AF.request(urlString, headers: headers).responseImage { response in
-            switch response.result {
-            case .success(let image):
-                self.imageCache.add(image, withIdentifier: urlString)
-                completion(.success(image))
-            case .failure(let error):
-                print(String(data: response.data!, encoding: .utf8))
-                completion(.failure(error))
-            }
-        }
     }
     
     func fileDownload(urlString: String, completion: @escaping (Result<Data?, Error>) -> Void) {
@@ -262,5 +232,20 @@ class NetworkService: NetworkServiceProtocol {
                 }
             }
         }.resume()
+    }
+}
+
+extension NetworkService.NetworkError: CustomStringConvertible {
+    var description: String {
+        switch self {
+        case .noInternetConnection:
+            return "No internet connection at the moment."
+        case .responseStatus:
+            return "Bad response status."
+        case .wrongURL:
+            return "Can not use this string to convert to URL."
+        case .wrongURLString:
+            return "Bad URL."
+        }
     }
 }

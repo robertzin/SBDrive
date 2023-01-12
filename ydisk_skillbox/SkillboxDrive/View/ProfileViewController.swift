@@ -49,12 +49,69 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private lazy var noConnectionLabel: UILabel = {
+        let label = UILabel()
+        label.text = Constants.Text.noInternet
+        label.font = Constants.Fonts.small
+        label.textColor = .white
+        label.textAlignment = .center
+        label.center = view.center
+        return label
+    }()
+    
+    private lazy var noConnectionView: UIView = {
+        let view = UIView()
+        view.alpha = 0
+        view.backgroundColor = Constants.Colors.noConnection
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
+        NotificationCenter.default.addObserver(self, selector: #selector(handleConnectionLabel(notification:)), name: NSNotification.Name(rawValue:  "connectivityStatusChanged"), object: nil)
         view.backgroundColor = .white
         presenter.getDiskInfo()
         setupViews()
     }
+    
+    @objc func handleConnectionLabel(notification: Notification) {
+            if NetworkMonitor.shared.isConnected {
+//                debugPrint("Connected")
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 1, delay: 0.15) {
+                        self.viewDissapear(view: self.noConnectionView)
+                    } completion: { _ in
+                        self.noConnectionLabel.removeFromSuperview()
+                        self.noConnectionView.removeFromSuperview()
+                    }
+                }
+            } else {
+//                debugPrint("Not connected")
+                DispatchQueue.main.async {
+                    self.view.addSubview(self.noConnectionView)
+                    self.noConnectionView.snp.makeConstraints { make in
+                        make.width.equalToSuperview()
+                        make.height.equalTo(40)
+                        make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+                    }
+                    
+                    self.noConnectionView.addSubview(self.noConnectionLabel)
+                    self.noConnectionLabel.snp.makeConstraints { make in
+                        make.width.equalTo(self.noConnectionView)
+                        make.height.equalTo(self.noConnectionView)
+                        make.centerX.equalTo(self.noConnectionView.snp.centerX)
+                    }
+                    UIView.animate(withDuration: 1, delay: 0.15) {
+                        self.viewAppear(view: self.noConnectionView)
+                    }
+                }
+            }
+        }
+    
+    private func viewDissapear(view: UIView) { view.alpha = 0 }
+    
+    private func viewAppear(view: UIView) { view.alpha = 1 }
     
     func configureButton() {
         view.addSubview(button)
@@ -175,6 +232,7 @@ extension ProfileViewController: ProfileProtocol {
     }
     
     func success(dict: [String:AnyObject]) {
+        handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
         DispatchQueue.main.async { [weak self] in
             self?.totalSpace = dict["total_space"] as? Double
             self?.usedSpace = dict["used_space"] as? Double

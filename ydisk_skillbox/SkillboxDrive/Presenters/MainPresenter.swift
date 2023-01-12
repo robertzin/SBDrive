@@ -13,12 +13,12 @@ protocol MainProtocol {
     func failure()
     func imageDownloadingSuccess()
     func imageDownloadingFailure()
-    func openDiskItemView(vc: UIViewController)
+    func openDiskItemView(vc: UIViewController, isDirectory: Bool)
     func presentAlert(alert: UIAlertController)
 }
 
 protocol MainPresenterProtocol {
-    init(view: MainProtocol, comment: String)
+    init(view: MainProtocol, comment: String, sortDescriptors: [NSSortDescriptor])
     
     func getDiskItems(url: String)
     func getImageForCell(diskItem: YDiskItem) -> UIImage
@@ -52,7 +52,7 @@ class MainPresenter: MainPresenterProtocol {
     var currentOffset: Int16 = 0
     var comment: String
     
-    required init(view: MainProtocol, comment: String = "") {
+    required init(view: MainProtocol, comment: String = "", sortDescriptors: [NSSortDescriptor]) {
         self.view = view
         self.networkService = NetworkService.shared
         self.coreDataManager = CoreDataManager.shared
@@ -61,7 +61,7 @@ class MainPresenter: MainPresenterProtocol {
         self.maxLimitExceeded = false
         
         self.comment = comment
-        self.fetchResultController = coreDataManager.fetchResultController(comment: comment)
+        self.fetchResultController = coreDataManager.fetchResultController(comment: comment, sortDescriptors: sortDescriptors)
         self.isConnected = NetworkMonitor.shared.isConnected
     }
     
@@ -87,7 +87,7 @@ class MainPresenter: MainPresenterProtocol {
 //                            print("\(YdiskItem.name) - \(YdiskItem.public_key)")
 //                        }
                     })
-//                    self.coreDataManager.deleteAllEntities()
+                    self.coreDataManager.deleteAllEntities()
                     self.view?.success()
                 case .failure(let error):
                     debugPrint("getDiskItems failure: \(error.localizedDescription)")
@@ -98,10 +98,20 @@ class MainPresenter: MainPresenterProtocol {
     }
     
     func getMoreData(url: String, offset: Int16) {
-        if maxLimitExceeded == true || currentOffset == offset { return }
+        if !NetworkMonitor.shared.isConnected {
+            self.view?.failure()
+            return
+        }
+        if maxLimitExceeded == true || currentOffset == offset {
+            self.view?.failure()
+            return
+        }
         currentOffset = offset
         networkService.getData(url: url, offset: offset, completion: { [weak self] result in
-            guard let self = self else { return }
+            guard let self = self else {
+                print("self problem")
+                return
+            }
             DispatchQueue.main.async {
                 switch result {
                 case .success(let tuple):
@@ -156,6 +166,7 @@ class MainPresenter: MainPresenterProtocol {
                 debugPrint("image downloading failure: \(error.localizedDescription)")
                 self.view?.imageDownloadingFailure()
             }
+            // TODO: change placeholder, add to Assets
         }, placeholderImage: UIImage(named: "tb_person"))
         return retImage
     }
@@ -188,8 +199,9 @@ class MainPresenter: MainPresenterProtocol {
             let header = String(path[path.index(idx, offsetBy: 1)...])
             
             let vc = MainViewController(requestURLstring: urlString, header: header)
-            vc.presenter = MainPresenter(view: vc, comment: path)
-            view?.openDiskItemView(vc: vc)
+            let sortDescriptors = NSSortDescriptor(key: "name", ascending: true)
+            vc.presenter = MainPresenter(view: vc, comment: path, sortDescriptors: [sortDescriptors])
+            view?.openDiskItemView(vc: vc, isDirectory: true)
             return
         }
         
@@ -197,15 +209,15 @@ class MainPresenter: MainPresenterProtocol {
         case let str where str!.contains("document"):
             let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.document)
             vc.presenter = DetailsPresenter(view: vc)
-            view?.openDiskItemView(vc: vc)
+            view?.openDiskItemView(vc: vc, isDirectory: false)
         case let str where str!.contains("pdf"):
             let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.pdf)
             vc.presenter = DetailsPresenter(view: vc)
-            view?.openDiskItemView(vc: vc)
+            view?.openDiskItemView(vc: vc, isDirectory: false)
         case let str where str!.contains("image"):
             let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.image)
             vc.presenter = DetailsPresenter(view: vc)
-            view?.openDiskItemView(vc: vc)
+            view?.openDiskItemView(vc: vc, isDirectory: false)
         default:
             let alert = UIAlertController(title: Constants.Text.error, message: Constants.Text.unsupportedType, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Constants.Text.dismiss, style: .cancel))
@@ -218,12 +230,8 @@ class MainPresenter: MainPresenterProtocol {
         let offset = Int16(sections[0].numberOfObjects)
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
             if !self.maxLimitExceeded {
-                //            debugPrint("getting more data")
+                debugPrint("getting more data")
                 self.getMoreData(url: url, offset: offset)
-            }
-            else {
-                print("no items left")
-                self.view?.failure()
             }
         }
     }

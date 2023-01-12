@@ -36,14 +36,16 @@ class PresenterManager {
     func createAllFilesViewController(image: UIImage) -> UIViewController {
         
         let vc = MainViewController(requestURLstring: Constants.urlStringAllFiles, header: Constants.Text.allFiles)
-        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataAllFiles)
+        let sortDescriptors = NSSortDescriptor(key: "name", ascending: true)
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataAllFiles, sortDescriptors: [sortDescriptors])
         return createNavController(for: vc, image: image)
     }
     
     func createRecentsViewController(image: UIImage) -> UIViewController {
         
         let vc = MainViewController(requestURLstring: Constants.urlStringRecents, header: Constants.Text.recents)
-        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataRecents)
+        let sortDescriptors = NSSortDescriptor(key: "modified", ascending: false)
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataRecents, sortDescriptors: [sortDescriptors])
         return createNavController(for: vc, image: image)
     }
     

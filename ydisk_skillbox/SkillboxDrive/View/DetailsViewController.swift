@@ -27,6 +27,22 @@ final class DetailsViewController: UIViewController, PDFViewDelegate, WKUIDelega
         webView.navigationDelegate = self
         return webView
     }()
+    private lazy var noConnectionLabel: UILabel = {
+        let label = UILabel()
+        label.text = Constants.Text.noInternet
+        label.font = Constants.Fonts.small
+        label.textColor = .white
+        label.textAlignment = .center
+        label.center = view.center
+        return label
+    }()
+    
+    private lazy var noConnectionView: UIView = {
+        let view = UIView()
+        view.alpha = 0
+        view.backgroundColor = Constants.Colors.noConnection
+        return view
+    }()
     private var pdfView = PDFView()
     private var diskItem: YDiskItem
     
@@ -43,10 +59,49 @@ final class DetailsViewController: UIViewController, PDFViewDelegate, WKUIDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
+        NotificationCenter.default.addObserver(self, selector: #selector(handleConnectionLabel(notification:)), name: NSNotification.Name(rawValue:  "connectivityStatusChanged"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(performAfter), name: NSNotification.Name(rawValue:  "PeformAfterPresenting"), object: nil)
-        presenter.getToken()
         setupViews()
     }
+    
+    @objc func handleConnectionLabel(notification: Notification) {
+            if NetworkMonitor.shared.isConnected {
+//                debugPrint("Connected")
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 1, delay: 0.15) {
+                        self.viewDissapear(view: self.noConnectionView)
+                    } completion: { _ in
+                        self.noConnectionLabel.removeFromSuperview()
+                        self.noConnectionView.removeFromSuperview()
+                    }
+                }
+            } else {
+//                debugPrint("Not connected")
+                DispatchQueue.main.async {
+                    self.view.addSubview(self.noConnectionView)
+                    self.noConnectionView.snp.makeConstraints { make in
+                        make.width.equalToSuperview()
+                        make.height.equalTo(40)
+                        make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+                    }
+                    
+                    self.noConnectionView.addSubview(self.noConnectionLabel)
+                    self.noConnectionLabel.snp.makeConstraints { make in
+                        make.width.equalTo(self.noConnectionView)
+                        make.height.equalTo(self.noConnectionView)
+                        make.centerX.equalTo(self.noConnectionView.snp.centerX)
+                    }
+                    UIView.animate(withDuration: 1, delay: 0.15) {
+                        self.viewAppear(view: self.noConnectionView)
+                    }
+                }
+            }
+        }
+    
+    private func viewDissapear(view: UIView) { view.alpha = 0 }
+    
+    private func viewAppear(view: UIView) { view.alpha = 1 }
 
     @objc func performAfter(_ notification: Notification) {
         let name = notification.userInfo?["name"] as! String
@@ -198,14 +253,6 @@ final class DetailsViewController: UIViewController, PDFViewDelegate, WKUIDelega
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController!.view.backgroundColor = .white
-        navigationController?.toolbar.isHidden = true
-        navigationController?.toolbar.backgroundColor = .clear
-        navigationController?.setToolbarHidden(true, animated: false)
-        tabBarController?.tabBar.layer.zPosition = 0
-        tabBarController?.tabBar.isHidden = false
-
         if self.fileType == .pdf {
             pdfView.removeFromSuperview()
             } else if self.fileType == .document {

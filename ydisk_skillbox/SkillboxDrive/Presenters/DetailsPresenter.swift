@@ -19,10 +19,8 @@ protocol DetailsProtocol: AnyObject {
 protocol DetailsPresenterProtocol: AnyObject {
     
     init(view: DetailsProtocol)
+    var imageCache: NSCache<NSString, UIImage>? { get set }
     
-    var token: String { get }
-    
-    func getToken()
     func downloadImage(urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void)
     func deleteFile(diskItem: YDiskItem)
     func getTitleForItem(name: String, modified: String, fileType: CoreDataManager.elementType) -> UILabel
@@ -38,34 +36,45 @@ protocol DetailsPresenterProtocol: AnyObject {
 
 class DetailsPresenter: DetailsPresenterProtocol {
 
-    var view: DetailsProtocol?
-    var networkService: NetworkServiceProtocol!
-    var imageDownloader: ImageDownloader!
-    var token = ""
+    private var view: DetailsProtocol?
+    private var networkService: NetworkServiceProtocol!
+    private var imageDownloader: ImageDownloader!
+    private var networkMonitor: NetworkMonitor?
+    private var token = ""
+    var imageCache: NSCache<NSString, UIImage>?
     
     required init(view: DetailsProtocol) {
         self.view = view
         self.imageDownloader = ImageDownloader.shared
         self.networkService = NetworkService.shared
-    }
-    
-    func getToken() {
+        self.networkMonitor = NetworkMonitor.shared
+        self.imageCache = imageDownloader.cachedImages
         do { self.token = try KeyChain.shared.getToken() }
         catch { print("error while getting token in RecentImageVC: \(error.localizedDescription)") }
     }
-    
+
     func downloadImage(urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
-        imageDownloader.downloadImage(with: urlString, completion: { [weak self] result in
+        if let image = imageCache?.object(forKey: NSString(string: urlString)) {
+            completion(.success(image))
+            return
+        }
+        if !NetworkMonitor.shared.isConnected {
+            completion(.failure(NetworkService.NetworkError.noInternetConnection))
+            return
+        }
+        imageDownloader.downloadImage(with: urlString, completion: { result in
                 switch result {
                 case .success(let image):
+                    self.imageCache?.setObject(image, forKey: NSString(string: urlString))
                     completion(.success(image))
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    completion(.failure(error))
                 }
         }, placeholderImage: UIImage(named: "tb_person"))
     }
 
     func deleteFile(diskItem: YDiskItem) {
+        if !NetworkMonitor.shared.isConnected { return }
         guard let path = diskItem.path else { return }
         NetworkService.shared.fileDelete(path: path) { [weak self] result in
             switch result {
@@ -111,6 +120,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
     }
     
     func loadPDF(pdfView: PDFView, urlString: String) {
+        if !NetworkMonitor.shared.isConnected { return }
         guard let url = URL(string: urlString) else { return }
         DispatchQueue.main.async { [weak self] in
             guard let doc = PDFDocument(url: url) else { return }
@@ -119,6 +129,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
     }
     
     func loadWebView(webView: WKWebView, urlString: String) {
+        if !NetworkMonitor.shared.isConnected { return }
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
@@ -128,6 +139,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
     }
 
     func shareFile(diskItem: YDiskItem, fileType: CoreDataManager.elementType, pdfView: PDFView) {
+        if !NetworkMonitor.shared.isConnected { return }
         if fileType == .image {
             guard let image = ImageDownloader.shared.cachedImages.object(forKey: NSString(string: diskItem.file!)) else { return }
             DispatchQueue.main.async { [weak self] in
@@ -162,6 +174,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
     }
         
     func shareLink(diskItem: YDiskItem, fileType: CoreDataManager.elementType, pdfView: PDFView) {
+        if !NetworkMonitor.shared.isConnected { return }
         guard let link = diskItem.file else { return }
         DispatchQueue.main.async { [weak self] in
             let shareSheetVC = UIActivityViewController(activityItems: [link], applicationActivities: nil)
@@ -170,6 +183,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
     }
     
     func renameFile(diskItem: YDiskItem) {
+        if !NetworkMonitor.shared.isConnected { return }
         let vc = RenameViewController(diskItem: diskItem)
         let presenter = RenamePresenter(view: vc, networkService: NetworkService.shared)
         vc.presenter = presenter

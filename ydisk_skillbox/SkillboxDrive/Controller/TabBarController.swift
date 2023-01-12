@@ -24,6 +24,7 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        delegate = self
         tabBar.tintColor = Constants.Colors.accent1
         tabBar.unselectedItemTintColor = Constants.Colors.details
         self.selectedIndex = 1
@@ -36,12 +37,25 @@ class TabBarController: UITabBarController {
 //        return navController
 //    }
 
-    // TODO: move create logic to PresenterManager
     func setupViews() {
         viewControllers = [
             presenterManager.createProfileViewController(image: UIImage(named: "tb_person")!),
             presenterManager.createRecentsViewController(image: UIImage(named: "tb_file")!),
             presenterManager.createAllFilesViewController(image: UIImage(named: "tb_archive")!)
         ]
+    }
+}
+
+extension TabBarController: UITabBarControllerDelegate  {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+
+        guard let fromView = selectedViewController?.view, let toView = viewController.view else {
+          return false
+        }
+
+        if fromView != toView {
+          UIView.transition(from: fromView, to: toView, duration: 0.3, options: [.transitionCrossDissolve], completion: nil)
+        }
+        return true
     }
 }

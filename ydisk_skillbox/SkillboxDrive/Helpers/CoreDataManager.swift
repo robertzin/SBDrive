@@ -25,41 +25,11 @@ class CoreDataManager {
         persistentContainer.viewContext
     }()
     
-    lazy var fetchAllFilesResultController: NSFetchedResultsController<NSFetchRequestResult> = {
+    func fetchResultController(comment: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchedResultsController<NSFetchRequestResult> {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
-        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
-        let predicate = NSPredicate(format: "comment == %@", Constants.coreDataAllFiles)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        fetchRequest.predicate = predicate
-        let fetchPublishedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchPublishedResultController
-    }()
-    
-    lazy var fetchPublishedResultController: NSFetchedResultsController<NSFetchRequestResult> = {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
-        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
-        let predicate = NSPredicate(format: "comment == %@", Constants.coreDataPublished)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        fetchRequest.predicate = predicate
-        let fetchPublishedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchPublishedResultController
-    }()
-    
-    lazy var fetchRecentsResultController: NSFetchedResultsController<NSFetchRequestResult> = {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
-        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
-        let predicate = NSPredicate(format: "comment == %@", Constants.coreDataRecents)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        fetchRequest.predicate = predicate
-        let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchResultController
-    }()
-    
-    func fetchResultController(comment: String) -> NSFetchedResultsController<NSFetchRequestResult> {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
-        let sortDescriptor = NSSortDescriptor(key: "modified", ascending: false)
+//        let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
         let predicate = NSPredicate(format: "comment == %@", comment)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
         let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         return fetchResultController

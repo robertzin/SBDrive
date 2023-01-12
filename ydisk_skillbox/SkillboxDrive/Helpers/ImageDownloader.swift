@@ -34,12 +34,12 @@ final class ImageDownloader {
                        completion: @escaping (Result<UIImage, Error>) -> Void,
                        placeholderImage: UIImage?) {
         guard let imageUrlString = imageUrlString else {
-            completion(.failure(ImageDownloaderError.wrongURLString))
+            completion(.failure(NetworkService.NetworkError.wrongURLString))
             return
         }
         guard let url = URL(string: imageUrlString) else {
             print("url: \(imageUrlString)")
-            completion(.failure(ImageDownloaderError.wrongURL))
+            completion(.failure(NetworkService.NetworkError.wrongURL))
             return
         }
         if let _ = getDataTaskFrom(urlString: imageUrlString) {
@@ -49,7 +49,6 @@ final class ImageDownloader {
             completion(.success(image))
             return
         }
-        
         var request = URLRequest(url: url)
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -99,7 +98,5 @@ final class ImageDownloader {
 }
 
 enum ImageDownloaderError: Error {
-    case wrongURLString // = "ImageDownloader error: wrong URL String"
-    case wrongURL // = "ImageDownloader error: wrong URL"
     case UIImageError // = "ImageDownloader error: UIImage converting error"
 }

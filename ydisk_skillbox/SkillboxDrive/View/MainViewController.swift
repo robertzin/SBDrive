@@ -22,6 +22,41 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         return tv
     }()
     
+    private lazy var noDataImageView: UIImageView = {
+        let imageVIew = UIImageView()
+        imageVIew.image = UIImage(named: "emptyPublished")
+        return imageVIew
+    }()
+    
+    private lazy var noDataInDirectoryLabel: UILabel = {
+        let textLabel = UILabel()
+        textLabel.font = Constants.Fonts.header2
+        textLabel.text = Constants.Text.emptyDir
+        textLabel.textAlignment = .center
+        textLabel.numberOfLines = 2
+        return textLabel
+    }()
+    
+    private lazy var noDataLabel: UILabel = {
+        let textLabel = UILabel()
+        textLabel.font = Constants.Fonts.header2
+        textLabel.text = Constants.Text.noUploadedFiles
+        textLabel.textAlignment = .center
+        textLabel.numberOfLines = 2
+        return textLabel
+    }()
+    
+    private lazy var refreshButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = Constants.Colors.accent2
+        button.setTitle(Constants.Text.refresh, for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = Constants.Fonts.button!
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(refreshDataOnButtonTap), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var noConnectionLabel: UILabel = {
         let label = UILabel()
         label.text = Constants.Text.noInternet
@@ -65,6 +100,13 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     
     override func viewWillAppear(_ animated: Bool) {
         hidesBottomBarWhenPushed = false
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController!.view.backgroundColor = .white
+        navigationController?.toolbar.isHidden = true
+        navigationController?.toolbar.backgroundColor = .clear
+        navigationController?.setToolbarHidden(true, animated: false)
+        tabBarController?.tabBar.layer.zPosition = 0
+        tabBarController?.tabBar.isHidden = false
     }
     
     override func viewDidLoad() {
@@ -97,7 +139,7 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 1, delay: 0.15) {
                         self.viewDissapear(view: self.noConnectionView)
-                    } completion: { void in
+                    } completion: { _ in
                         self.noConnectionLabel.removeFromSuperview()
                         self.noConnectionView.removeFromSuperview()
                     }
@@ -130,8 +172,24 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     private func viewAppear(view: UIView) { view.alpha = 1 }
     
     private func setupViewsIfSomethingToDisplay() {
-        view.subviews.forEach({ $0.removeFromSuperview() })
-        view.subviews.map({ $0.removeFromSuperview() })
+        noDataInDirectoryLabel.removeFromSuperview()
+        UIView.animate(withDuration: 0.35, delay: 0.2) {
+            self.viewDissapear(view: self.refreshButton)
+        } completion: { _ in
+            self.refreshButton.removeFromSuperview()
+        }
+
+        UIView.animate(withDuration: 0.35, delay: 0.2) {
+            self.viewDissapear(view: self.noDataLabel)
+        } completion: { _ in
+            self.noDataLabel.removeFromSuperview()
+        }
+
+        UIView.animate(withDuration: 0.35, delay: 0.2) {
+            self.viewDissapear(view: self.noDataImageView)
+        } completion: { _ in
+            self.noDataImageView.removeFromSuperview()
+        }
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
@@ -143,53 +201,52 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     private func setupViewsIfNothingToDisplay() {
-//        view.subviews.forEach({ $0.removeFromSuperview() })
-//        view.subviews.map({ $0.removeFromSuperview() })
-        
         self.tableView.removeFromSuperview()
+                
+        if header != Constants.Text.allFiles && header != Constants.Text.recents && header != Constants.Text.uploadedFiles {
+            view.addSubview(noDataInDirectoryLabel)
+            noDataInDirectoryLabel.snp.makeConstraints { make in
+                make.centerX.centerY.equalToSuperview()
+                make.width.equalTo(270)
+                make.height.equalTo(40)
+            }
+            return
+        }
         
-        let imageVIew = UIImageView()
-        imageVIew.image = UIImage(named: "emptyPublished")
-        
-        view.addSubview(imageVIew)
-        imageVIew.snp.makeConstraints { make in
+        view.addSubview(noDataImageView)
+        noDataImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(159)
             make.height.equalTo(162)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(133)
         }
         
-        let textLabel = UILabel()
-        view.addSubview(textLabel)
-        textLabel.font = Constants.Fonts.header2
-        textLabel.text = Constants.Text.noUploadedFiles
-        textLabel.textAlignment = .center
-        textLabel.numberOfLines = 2
-        
-        textLabel.snp.makeConstraints { make in
+        view.addSubview(noDataLabel)
+        noDataLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(262)
             make.height.equalTo(38)
-            make.top.equalTo(imageVIew.snp.bottom).offset(35)
+            make.top.equalTo(noDataImageView.snp.bottom).offset(35)
         }
         
-        let button = UIButton()
-        view.addSubview(button)
-        button.backgroundColor = Constants.Colors.accent2
-        button.setTitle(Constants.Text.refresh, for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = Constants.Fonts.button!
-        button.layer.cornerRadius = 10
-        button.snp.makeConstraints { make in
+        view.addSubview(refreshButton)
+        refreshButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(320)
             make.height.equalTo(50)
-            make.top.equalTo(textLabel.snp.bottom).offset(218)
+            make.top.equalTo(noDataLabel.snp.bottom).offset(218)
         }
-        button.addTarget(self, action: #selector(refreshData), for: .touchUpInside)
     }
-    
-    @objc private func refreshData() {
+
+    @objc private func refreshDataOnButtonTap() {
+        UIView.animate(withDuration: 0.1, animations: {
+            self.refreshButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.refreshButton.transform = CGAffineTransform.identity
+            }
+        })
+        activityIndicator.startAnimating()
         presenter.getDiskItems(url: requestURLstring!)
     }
     
@@ -273,18 +330,12 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        hidesBottomBarWhenPushed = true
         presenter.didSelectDiskItemAt(indexPath)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return presenter.numberOfRowsInSection(at: section)
     }
-    
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        self.tableView.tableFooterView = createFooterSpinner()
-//        presenter.rowToPaginate(indexPath)
-//    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if header == Constants.Text.recents { return }
@@ -299,7 +350,9 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
 extension MainViewController: MainProtocol {
     func success() {
 //        debugPrint("success in Controller")
-        DispatchQueue.main.async { self.tableView.tableFooterView = nil }
+        if self.tableView.tableFooterView != nil {
+            DispatchQueue.main.async { self.tableView.tableFooterView = nil }
+        }
         presenter.coreDataManager.saveContext()
         try! presenter.fetchResultController.performFetch()
 //        print(presenter.coreDataManager.count())
@@ -309,18 +362,20 @@ extension MainViewController: MainProtocol {
         } else {
             setupViewsIfNothingToDisplay()
         }
+        handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
         activityIndicator.stopAnimating()
         tableView.reloadData()
     }
     
     func failure() {
-        debugPrint("failure in Controller")
+//        debugPrint("failure in Controller")
         if self.tableView.tableFooterView != nil {
             DispatchQueue.main.async { self.tableView.tableFooterView = nil }
         }
         if activityIndicator.isAnimating {
             activityIndicator.stopAnimating()
         }
+        handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
 //        tableView.reloadData()
     }
     
@@ -333,7 +388,10 @@ extension MainViewController: MainProtocol {
         debugPrint("downloading image failure in Controller")
     }
     
-    func openDiskItemView(vc: UIViewController) {
+    func openDiskItemView(vc: UIViewController, isDirectory: Bool = false) {
+        if isDirectory == false {
+            hidesBottomBarWhenPushed = true
+        }
         navigationController?.pushViewController(vc, animated: true)
     }
     
