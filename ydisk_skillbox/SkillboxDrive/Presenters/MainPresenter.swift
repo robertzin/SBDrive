@@ -48,9 +48,12 @@ class MainPresenter: MainPresenterProtocol {
     var coreDataManager: CoreDataManager!
     var fetchResultController: NSFetchedResultsController<NSFetchRequestResult>
     
-    var maxLimitExceeded: Bool
-    var currentOffset: Int16 = 0
-    var comment: String
+    private var maxLimitExceeded: Bool
+    private var currentOffset: Int16 = 0
+    private var currentCoreDataOffset: Int16 = 0
+    private var comment: String
+    private var isFetchInProgress = false
+    private var receivedAPIelements = 0
     
     required init(view: MainProtocol, comment: String = "", sortDescriptors: [NSSortDescriptor]) {
         self.view = view
@@ -75,7 +78,8 @@ class MainPresenter: MainPresenterProtocol {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let tuple):
-//                    debugPrint("getDiskItems success: \(tuple.0?.count)")
+                    self.receivedAPIelements = tuple.0?.count ?? 0
+//                    debugPrint("receivedAPIelements: \(self.receivedAPIelements)")
 //                    coreDataManager.deleteIfNotPresented(diskItemArray: diskItems!)
                     tuple.0?.forEach({ diskItem in
 //                        debugPrint("downloaded element: \(diskItem.name!)")
@@ -87,7 +91,7 @@ class MainPresenter: MainPresenterProtocol {
 //                            print("\(YdiskItem.name) - \(YdiskItem.public_key)")
 //                        }
                     })
-                    self.coreDataManager.deleteAllEntities()
+//                    self.coreDataManager.deleteAllEntities()
                     self.view?.success()
                 case .failure(let error):
                     debugPrint("getDiskItems failure: \(error.localizedDescription)")
@@ -98,40 +102,34 @@ class MainPresenter: MainPresenterProtocol {
     }
     
     func getMoreData(url: String, offset: Int16) {
-        if !NetworkMonitor.shared.isConnected {
-            self.view?.failure()
-            return
-        }
-        if maxLimitExceeded == true || currentOffset == offset {
+        if !NetworkMonitor.shared.isConnected || maxLimitExceeded == true || currentOffset == offset || isFetchInProgress {
             self.view?.failure()
             return
         }
         currentOffset = offset
         networkService.getData(url: url, offset: offset, completion: { [weak self] result in
-            guard let self = self else {
-                print("self problem")
-                return
-            }
-            DispatchQueue.main.async {
+            guard let self = self else { return }
+            self.isFetchInProgress = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
                 switch result {
                 case .success(let tuple):
 //                    debugPrint("get more disk items success")
-//                    CoreDataManager.shared.deleteIfNotPresented(diskItemArray: diskItems!)
                     tuple.0?.forEach({ diskItem in
-//                        if self.coreDataManager.isUnique(diskItem: diskItem) {
                             diskItem.offset = tuple.1
                             let YdiskItem = YDiskItem()
                             YdiskItem.set(diskItem: diskItem, comment: self.comment)
 //                            print("\(YdiskItem.name) - \(YdiskItem.public_key)")
-//                        }
                     })
                     if tuple.0?.count == 0 {
                         self.maxLimitExceeded = true
+                        self.isFetchInProgress = false
                         self.view?.failure()
                     }
+                    self.isFetchInProgress = false
                     self.view?.success()
                 case .failure(let error):
                     debugPrint("getDiskItems failure: \(error.localizedDescription)")
+                    self.isFetchInProgress = false
                     self.view?.failure()
                 }
             }
@@ -151,7 +149,7 @@ class MainPresenter: MainPresenterProtocol {
                 debugPrint("image downloading failure: \(error.localizedDescription)")
                 self.view?.imageDownloadingFailure()
             }
-        }, placeholderImage: UIImage(named: "tb_person"))
+        })
     }
     
     func getImageForCell(diskItem: YDiskItem) -> UIImage {
@@ -166,8 +164,7 @@ class MainPresenter: MainPresenterProtocol {
                 debugPrint("image downloading failure: \(error.localizedDescription)")
                 self.view?.imageDownloadingFailure()
             }
-            // TODO: change placeholder, add to Assets
-        }, placeholderImage: UIImage(named: "tb_person"))
+        })
         return retImage
     }
 
@@ -204,9 +201,8 @@ class MainPresenter: MainPresenterProtocol {
             view?.openDiskItemView(vc: vc, isDirectory: true)
             return
         }
-        
         switch diskItem.mime_type {
-        case let str where str!.contains("document"):
+        case let str where str!.contains("document") || str!.contains("application/msword"):
             let vc = DetailsViewController(diskItem: diskItem, type: CoreDataManager.elementType.document)
             vc.presenter = DetailsPresenter(view: vc)
             view?.openDiskItemView(vc: vc, isDirectory: false)
@@ -224,16 +220,46 @@ class MainPresenter: MainPresenterProtocol {
             view?.presentAlert(alert: alert)
         }
     }
+
+    func paginateFromCoreData() {
+        debugPrint("paginating from CoreData")
+        if isFetchInProgress {
+            //            debugPrint("still paginating")
+            self.view?.failure()
+            return
+        }
+        self.isFetchInProgress = true
+        self.fetchResultController.fetchRequest.fetchLimit += 20
+        self.view?.success()
+        self.isFetchInProgress = false
+    }
     
     func performPaginate(url: String) {
-        guard let sections = self.fetchResultController.sections else { return }
-        let offset = Int16(sections[0].numberOfObjects)
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-            if !self.maxLimitExceeded {
-                debugPrint("getting more data")
-                self.getMoreData(url: url, offset: offset)
+        if isFetchInProgress {
+            debugPrint("still paginating")
+            self.view?.failure()
+            return
+        }
+        guard let sections = self.fetchResultController.sections else {
+            self.view?.failure()
+            return
+        }
+        if self.fetchResultController.sections![0].numberOfObjects == self.fetchResultController.fetchRequest.fetchLimit {
+            paginateFromCoreData()
+            return
+        }
+        if self.comment != Constants.coreDataRecents {
+            let offset = Int16(sections[0].numberOfObjects)
+            print("offset: \(offset)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                if !self.maxLimitExceeded {
+                    debugPrint("paginating from web")
+                    self.getMoreData(url: url, offset: offset)
+                }
             }
         }
+        self.isFetchInProgress = false
+        self.view?.failure()
     }
 
     func alert(indexPath: IndexPath) {

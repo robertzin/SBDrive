@@ -29,7 +29,6 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     private var token = ""
-    private let limit = 15
     private var task: URLSessionDataTask!
     static var shared = NetworkService()
     
@@ -51,7 +50,7 @@ class NetworkService: NetworkServiceProtocol {
             components?.queryItems?.append(URLQueryItem(name: "path", value: path))
         }
 
-        components?.queryItems?.append(URLQueryItem(name: "limit", value: "\(limit)"))
+        components?.queryItems?.append(URLQueryItem(name: "limit", value: "\(Constants.receivingAPIelemetsLimit)"))
         components?.queryItems?.append(URLQueryItem(name: "preview_crop", value: "true"))
         components?.queryItems?.append(URLQueryItem(name: "preview_size", value: "55x55"))
         
@@ -62,7 +61,7 @@ class NetworkService: NetworkServiceProtocol {
         guard let url = components?.url else { return }
         
         var request = URLRequest(url: url)
-        debugPrint("request: \(request)")
+//        debugPrint("request: \(request)")
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -81,8 +80,7 @@ class NetworkService: NetworkServiceProtocol {
                         }
                         
                         let diskResponse = try JSONDecoder().decode(DiskResponse.self, from: data)
-//                        debugPrint("success in networkService")
-//                        debugPrint("diskItems count: \(diskResponse.items?.count)")
+                        debugPrint("success in networkService. diskItems count: \(diskResponse.items?.count)")
                         completion(.success((diskResponse.items, diskResponse.offset)))
                     } catch {
                         completion(.failure(error))

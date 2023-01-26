@@ -275,16 +275,17 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let diskItem = presenter.dataForDiskItemAt(indexPath)
+        let cellActivityIndicator = UIActivityIndicatorView()
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         cell.contentView.layoutIfNeeded()
         
         // cell activity indicator
-        let cellActivityIndicator = UIActivityIndicatorView()
-        cell.addSubview(cellActivityIndicator)
+        cell.contentView.addSubview(cellActivityIndicator)
         cellActivityIndicator.snp.makeConstraints { make in
-            make.left.equalTo(cell.contentView.safeAreaLayoutGuide.snp.left).offset(37.5)
+            make.left.equalToSuperview().inset(37.5)
             make.centerY.equalToSuperview()
         }
+        cellActivityIndicator.hidesWhenStopped = true
         cellActivityIndicator.startAnimating()
         
         // cell button
@@ -338,8 +339,7 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if header == Constants.Text.recents { return }
-        let position = scrollView.contentOffset.y
+        var position = scrollView.contentOffset.y
         if position > tableView.contentSize.height - scrollView.frame.size.height {
             self.tableView.tableFooterView = createFooterSpinner()
             presenter.performPaginate(url: requestURLstring!)
@@ -354,6 +354,7 @@ extension MainViewController: MainProtocol {
             DispatchQueue.main.async { self.tableView.tableFooterView = nil }
         }
         presenter.coreDataManager.saveContext()
+//        presenter.fetchResultController.fetchRequest.fetchOffset = 5
         try! presenter.fetchResultController.performFetch()
 //        print(presenter.coreDataManager.count())
 //        presenter.coreDataManager.printData()
@@ -376,7 +377,6 @@ extension MainViewController: MainProtocol {
             activityIndicator.stopAnimating()
         }
         handleConnectionLabel(notification: Notification(name: NSNotification.Name(rawValue:  "connectivityStatusChanged")))
-//        tableView.reloadData()
     }
     
     func imageDownloadingSuccess() {

@@ -10,6 +10,7 @@ import UIKit
 enum Constants {
     
     static var loadingDelay = 1.0
+    static var receivingAPIelemetsLimit = 100
     static let clientId = "8633c79e9a564a2a9839ccc47f3582f8"
     static let clientSecret = "8c1a5eec9c2542a18939e3218ed529da"
     

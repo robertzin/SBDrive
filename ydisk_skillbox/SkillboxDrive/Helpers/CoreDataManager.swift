@@ -17,9 +17,12 @@ class CoreDataManager {
         case pdf
     }
     
+    var fetchOffset: Int?
     static let shared = CoreDataManager()
     
-    private init() {}
+    private init() {
+        fetchOffset = 0
+    }
     
     lazy var context: NSManagedObjectContext = {
         persistentContainer.viewContext
@@ -27,10 +30,10 @@ class CoreDataManager {
     
     func fetchResultController(comment: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchedResultsController<NSFetchRequestResult> {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
-//        let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
         let predicate = NSPredicate(format: "comment == %@", comment)
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
+        fetchRequest.fetchLimit = 20
         let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         return fetchResultController
     }

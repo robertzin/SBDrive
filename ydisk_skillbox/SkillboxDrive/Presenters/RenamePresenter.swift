@@ -50,7 +50,7 @@ final class RenamePresenter: RenamePresenterProtocol {
             case .failure(let error):
                 print(error.localizedDescription)
             }
-        }, placeholderImage: UIImage(named: "tb_person"))
+        })
     }
     
     func renameFile(diskItem: YDiskItem, newTitle: String) {

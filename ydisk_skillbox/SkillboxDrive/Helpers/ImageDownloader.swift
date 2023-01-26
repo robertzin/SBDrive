@@ -31,8 +31,7 @@ final class ImageDownloader {
     }
 
     func downloadImage(with imageUrlString: String?,
-                       completion: @escaping (Result<UIImage, Error>) -> Void,
-                       placeholderImage: UIImage?) {
+                       completion: @escaping (Result<UIImage, Error>) -> Void) {
         guard let imageUrlString = imageUrlString else {
             completion(.failure(NetworkService.NetworkError.wrongURLString))
             return

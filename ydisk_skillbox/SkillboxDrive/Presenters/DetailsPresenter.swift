@@ -70,7 +70,7 @@ class DetailsPresenter: DetailsPresenterProtocol {
                 case .failure(let error):
                     completion(.failure(error))
                 }
-        }, placeholderImage: UIImage(named: "tb_person"))
+        })
     }
 
     func deleteFile(diskItem: YDiskItem) {
