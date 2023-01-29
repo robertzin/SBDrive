@@ -23,7 +23,7 @@ enum Constants {
     static let urlStringToken = "https://oauth.yandex.ru/authorize"
     static let urlStringRecents = "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded"
     static let urlStringPublished = "https://cloud-api.yandex.net/v1/disk/resources/public"
-    static let urlStringAllFiles = "https://cloud-api.yandex.net/v1/disk/resources/files"
+    static let urlStringAllFiles = "https://cloud-api.yandex.net/v1/disk/resources?path=disk:/"
     static let urlStringFileDelete = "https://cloud-api.yandex.net/v1/disk/resources"
     static let urlStringDirContent = "https://cloud-api.yandex.net/v1/disk/resources?path="
     static let urlStringFileRename = "https://cloud-api.yandex.net/v1/disk/resources/move"

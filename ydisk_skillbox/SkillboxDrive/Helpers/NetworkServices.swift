@@ -80,7 +80,7 @@ class NetworkService: NetworkServiceProtocol {
                         }
                         
                         let diskResponse = try JSONDecoder().decode(DiskResponse.self, from: data)
-                        debugPrint("success in networkService. diskItems count: \(diskResponse.items?.count)")
+//                        debugPrint("success in networkService. diskItems count: \(diskResponse.items?.count)")
                         completion(.success((diskResponse.items, diskResponse.offset)))
                     } catch {
                         completion(.failure(error))

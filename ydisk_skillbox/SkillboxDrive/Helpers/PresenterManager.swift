@@ -36,8 +36,11 @@ class PresenterManager {
     func createAllFilesViewController(image: UIImage) -> UIViewController {
         
         let vc = MainViewController(requestURLstring: Constants.urlStringAllFiles, header: Constants.Text.allFiles)
-        let sortDescriptors = NSSortDescriptor(key: "name", ascending: true)
-        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataAllFiles, sortDescriptors: [sortDescriptors])
+        let sortDescriptors = [
+            NSSortDescriptor(key: "type", ascending: true),
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataAllFiles, sortDescriptors: sortDescriptors)
         return createNavController(for: vc, image: image)
     }
     

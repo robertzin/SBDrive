@@ -339,7 +339,7 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        var position = scrollView.contentOffset.y
+        let position = scrollView.contentOffset.y
         if position > tableView.contentSize.height - scrollView.frame.size.height {
             self.tableView.tableFooterView = createFooterSpinner()
             presenter.performPaginate(url: requestURLstring!)
@@ -354,7 +354,6 @@ extension MainViewController: MainProtocol {
             DispatchQueue.main.async { self.tableView.tableFooterView = nil }
         }
         presenter.coreDataManager.saveContext()
-//        presenter.fetchResultController.fetchRequest.fetchOffset = 5
         try! presenter.fetchResultController.performFetch()
 //        print(presenter.coreDataManager.count())
 //        presenter.coreDataManager.printData()

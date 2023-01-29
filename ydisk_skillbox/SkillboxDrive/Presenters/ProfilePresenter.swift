@@ -57,8 +57,11 @@ class ProfilePresenter: ProfilePresenterPrototol {
     
     func pushVC() {
         let vc = MainViewController(requestURLstring: Constants.urlStringPublished, header: Constants.Text.uploadedFiles)
-        let sortDescriptors = NSSortDescriptor(key: "name", ascending: true)
-        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataPublished, sortDescriptors: [sortDescriptors])
+        let sortDescriptors = [
+            NSSortDescriptor(key: "type", ascending: true),
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        vc.presenter = MainPresenter(view: vc, comment: Constants.coreDataPublished, sortDescriptors: sortDescriptors)
         view?.pushVC(vc: vc)
     }
     

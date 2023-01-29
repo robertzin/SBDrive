@@ -17,20 +17,18 @@ class CoreDataManager {
         case pdf
     }
     
-    var fetchOffset: Int?
     static let shared = CoreDataManager()
-    
-    private init() {
-        fetchOffset = 0
-    }
+    private init() {}
     
     lazy var context: NSManagedObjectContext = {
         persistentContainer.viewContext
     }()
-    
-    func fetchResultController(comment: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchedResultsController<NSFetchRequestResult> {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+
+    func fetchResultController(comment: String) -> NSFetchedResultsController<YDiskItem> {
+        let fetchRequest = NSFetchRequest<YDiskItem>(entityName: Constants.coreDataEntityName)
         let predicate = NSPredicate(format: "comment == %@", comment)
+        let sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        print("comment: \(comment), predicate: \(predicate)")
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
         fetchRequest.fetchLimit = 20
@@ -38,8 +36,31 @@ class CoreDataManager {
         return fetchResultController
     }
     
+    func fetchResultsController(type: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchedResultsController<YDiskItem> {
+        let fetchRequest = NSFetchRequest<YDiskItem>(entityName: Constants.coreDataEntityName)
+        let predicate = NSPredicate(format: "\(type) == YES")
+        fetchRequest.sortDescriptors = sortDescriptors
+        fetchRequest.predicate = predicate
+        fetchRequest.fetchLimit = 20
+        let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchResultController
+    }
+    
+    func getFetchResultsController(comment: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchedResultsController<YDiskItem> {
+        switch comment {
+        case Constants.coreDataRecents:
+            return fetchResultsController(type: "recents", sortDescriptors: sortDescriptors)
+        case Constants.coreDataPublished:
+            return fetchResultsController(type: "published", sortDescriptors: sortDescriptors)
+        case Constants.coreDataAllFiles:
+            return fetchResultsController(type: "allFiles", sortDescriptors: sortDescriptors)
+        default:
+            return fetchResultController(comment: comment)
+        }
+    }
+    
     func count() -> Int {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        let fetchRequest = NSFetchRequest<YDiskItem>(entityName: Constants.coreDataEntityName)
         do {
             let count = try context.count(for: fetchRequest)
             return count
@@ -47,20 +68,27 @@ class CoreDataManager {
         return -1
     }
     
-    func isUnique(diskItem: DiskItem) -> Bool {
-        var isUnique = true
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+    func isOnFewViews(diskItem: YDiskItem) {
+        let fetchRequest = NSFetchRequest<YDiskItem>(entityName: Constants.coreDataEntityName)
         do {
-            let allData = try context.fetch(fetchRequest) as! [YDiskItem]
-            if allData.first(where: { $0.name == diskItem.name }) != nil {
-//                debugPrint("is not unique: \(diskItem.name!): \(diskItem.public_key)")
-                isUnique = false
+            let allData = try context.fetch(fetchRequest)
+            guard let coreDataElement = allData.first(where: { $0.name == diskItem.name }) else { return }
+            if diskItem.recents == true && coreDataElement.recents == false {
+                //                    debugPrint("recents is true now at \(String(describing: diskItem.name))")
+                coreDataElement.recents = diskItem.recents
+            } else if diskItem.published == true && coreDataElement.published == false {
+                //                    debugPrint("pubished is true now at \(String(describing: diskItem.name))")
+                coreDataElement.published = diskItem.published
+            } else if diskItem.allFiles == true && coreDataElement.allFiles == false {
+                //                    debugPrint("allFiles is true now from \(diskItem.name!) to \(coreDataElement.name!)")
+                coreDataElement.allFiles = diskItem.allFiles
+            } else if diskItem.comment != nil && diskItem.comment != coreDataElement.comment {
+                //                    debugPrint("comment \(String(describing: diskItem.comment)) is assigned now at \(String(describing: diskItem.name))")
+                coreDataElement.comment = diskItem.comment
             }
         } catch {
-            print("error while isUnique is checked: \(error.localizedDescription)")
+            print("error while isOnFewViews is checked: \(error.localizedDescription)")
         }
-        
-        return isUnique
     }
     
     func deleteIfNotPresented(diskItemArray: [DiskItem]) {
@@ -70,7 +98,7 @@ class CoreDataManager {
             let allData = try context.fetch(fetchRequest) as! [YDiskItem]
             allData.forEach { yDiskItem in
                 if !idsArray.contains(yDiskItem.name) {
-                    debugPrint("deleted from CoreData when not presented: \(yDiskItem.name)")
+                    debugPrint("deleted from CoreData when not presented: \(String(describing: yDiskItem.name))")
                     context.delete(yDiskItem)
                 }
             }
@@ -79,13 +107,27 @@ class CoreDataManager {
         }
     }
     
+    func printElement(diskItem: YDiskItem) {
+        print("""
+            - name: \(diskItem.name!)
+            - recents: \(diskItem.recents)
+            - published: \(diskItem.published)
+            - allfiles: \(diskItem.allFiles)
+            - comment: \(String(describing: diskItem.comment))
+            """)
+    }
+    
     func printData() {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+        let fetchRequest = YDiskItem.fetchRequest()
         do {
             let allData = try context.fetch(fetchRequest)
-            for object in allData as! [YDiskItem] {
-                print("\(object.name) - \(object.comment)")
-            }
+            for object in allData { print("""
+                - name: \(object.name!)
+                - recents: \(object.recents)
+                - published: \(object.published)
+                - allfiles: \(object.allFiles)
+                - comment: \(String(describing: object.comment))
+                """) }
         } catch {
             print("error while printing IDs: \(error.localizedDescription)")
         }

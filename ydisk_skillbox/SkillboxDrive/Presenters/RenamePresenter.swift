@@ -73,8 +73,8 @@ final class RenamePresenter: RenamePresenterProtocol {
     
     func setNewValuesToFile(oldDiskItem: YDiskItem, newDiskItem: DiskItem) {
         let diskItemToChange = CoreDataManager.shared.context.object(with: oldDiskItem.objectID) as! YDiskItem
-        guard let comment = oldDiskItem.comment else { return }
-        diskItemToChange.set(diskItem: newDiskItem, comment: comment)
+//        guard let comment = oldDiskItem.comment else { return }
+        diskItemToChange.set(diskItem: newDiskItem)
         CoreDataManager.shared.saveContext()
     }
     

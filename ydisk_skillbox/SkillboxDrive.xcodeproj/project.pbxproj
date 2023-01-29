@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4704DE292918EF7300B43157 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4704DE282918EF7300B43157 /* AppDelegate.swift */; };
 		4704DE2B2918EF7300B43157 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4704DE2A2918EF7300B43157 /* SceneDelegate.swift */; };
+		4712D819298674700039510E /* YDiskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4712D817298674700039510E /* YDiskItem+CoreDataClass.swift */; };
+		4712D81A298674700039510E /* YDiskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4712D818298674700039510E /* YDiskItem+CoreDataProperties.swift */; };
 		47175D96291B8C320036D9E6 /* ModalTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175D95291B8C310036D9E6 /* ModalTransition.swift */; };
 		47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175D97291B8C3B0036D9E6 /* PushTransition.swift */; };
 		47175D9A291B8C450036D9E6 /* EmptyTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47175D99291B8C450036D9E6 /* EmptyTransition.swift */; };
@@ -44,8 +46,6 @@
 		478361112918F11A001A6552 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361102918F11A001A6552 /* Router.swift */; };
 		478361142918F19E001A6552 /* Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361132918F19E001A6552 /* Transition.swift */; };
 		478361162918F276001A6552 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478361152918F276001A6552 /* Constants.swift */; };
-		47D6F037296C0234003539E7 /* YDiskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F035296C0234003539E7 /* YDiskItem+CoreDataClass.swift */; };
-		47D6F038296C0234003539E7 /* YDiskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F036296C0234003539E7 /* YDiskItem+CoreDataProperties.swift */; };
 		47D6F03E296C11EF003539E7 /* MainPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F03D296C11EF003539E7 /* MainPresenter.swift */; };
 		47D6F040296C1CAB003539E7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F03F296C1CAB003539E7 /* MainViewController.swift */; };
 		47D6F044296D9669003539E7 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D6F043296D9669003539E7 /* NetworkMonitor.swift */; };
@@ -70,6 +70,8 @@
 		4704DE282918EF7300B43157 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4704DE2A2918EF7300B43157 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4704DE362918EF7600B43157 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4712D817298674700039510E /* YDiskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		4712D818298674700039510E /* YDiskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		47175D95291B8C310036D9E6 /* ModalTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTransition.swift; sourceTree = "<group>"; };
 		47175D97291B8C3B0036D9E6 /* PushTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTransition.swift; sourceTree = "<group>"; };
 		47175D99291B8C450036D9E6 /* EmptyTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTransition.swift; sourceTree = "<group>"; };
@@ -105,8 +107,6 @@
 		478361102918F11A001A6552 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		478361132918F19E001A6552 /* Transition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transition.swift; sourceTree = "<group>"; };
 		478361152918F276001A6552 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		47D6F035296C0234003539E7 /* YDiskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		47D6F036296C0234003539E7 /* YDiskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YDiskItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		47D6F03D296C11EF003539E7 /* MainPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPresenter.swift; sourceTree = "<group>"; };
 		47D6F03F296C1CAB003539E7 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		47D6F043296D9669003539E7 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
@@ -225,8 +225,8 @@
 		47ECB3FC291916A7007DE862 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				47D6F035296C0234003539E7 /* YDiskItem+CoreDataClass.swift */,
-				47D6F036296C0234003539E7 /* YDiskItem+CoreDataProperties.swift */,
+				4712D817298674700039510E /* YDiskItem+CoreDataClass.swift */,
+				4712D818298674700039510E /* YDiskItem+CoreDataProperties.swift */,
 				473284B0292D3F6D003A200A /* YDiskResponse.swift */,
 				47175DB3291BA3E70036D9E6 /* LoadingViewModel.swift */,
 				47175DAF291B9F8C0036D9E6 /* OnboardingViewModel.swift */,
@@ -448,13 +448,12 @@
 			files = (
 				472C9AB2291E58CD00FBEB55 /* TabBarViewModel.swift in Sources */,
 				473284B1292D3F6D003A200A /* YDiskResponse.swift in Sources */,
-				47D6F037296C0234003539E7 /* YDiskItem+CoreDataClass.swift in Sources */,
 				47175D98291B8C3B0036D9E6 /* PushTransition.swift in Sources */,
+				4712D819298674700039510E /* YDiskItem+CoreDataClass.swift in Sources */,
 				472C9AB0291E58AA00FBEB55 /* TabBarController.swift in Sources */,
 				473284AF292BD53A003A200A /* PresenterManager.swift in Sources */,
 				4766B68E2938B48F0058EF73 /* KeyChain.swift in Sources */,
 				47D6F044296D9669003539E7 /* NetworkMonitor.swift in Sources */,
-				47D6F038296C0234003539E7 /* YDiskItem+CoreDataProperties.swift in Sources */,
 				47175D96291B8C320036D9E6 /* ModalTransition.swift in Sources */,
 				47F7572D293F513100B98281 /* ProfilePresenter.swift in Sources */,
 				47175DA8291B9D4F0036D9E6 /* OnboardingRoute.swift in Sources */,
@@ -469,6 +468,7 @@
 				478361112918F11A001A6552 /* Router.swift in Sources */,
 				47175DBB291BCBAE0036D9E6 /* FadeAnimatedTransitioning.swift in Sources */,
 				473284972927F899003A200A /* ProfileViewController.swift in Sources */,
+				4712D81A298674700039510E /* YDiskItem+CoreDataProperties.swift in Sources */,
 				47175D9C291B91220036D9E6 /* DefaultRouter.swift in Sources */,
 				4766B66A293610C90058EF73 /* Model.xcdatamodeld in Sources */,
 				4766B68C293756B60058EF73 /* RenameViewController.swift in Sources */,
