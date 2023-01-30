@@ -107,6 +107,7 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         navigationController?.setToolbarHidden(true, animated: false)
         tabBarController?.tabBar.layer.zPosition = 0
         tabBarController?.tabBar.isHidden = false
+//        tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: CGRectGetHeight((self.tabBarController?.tabBar.frame)!), right: 0)
     }
     
     override func viewDidLoad() {
@@ -252,8 +253,8 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     
     @objc func handleRefreshControl() {
         presenter.getDiskItems(url: requestURLstring!)
-        DispatchQueue.main.async {
-            self.refreshControl.endRefreshing()
+        DispatchQueue.main.async { [weak self] in
+            self?.refreshControl.endRefreshing()
         }
     }
     
@@ -266,7 +267,6 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     
     func createFooterSpinner() -> UIView {
         let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100))
-        
         footerActivityIndicator.center = footerView.center
         footerView.addSubview(footerActivityIndicator)
         footerActivityIndicator.startAnimating()
@@ -277,7 +277,6 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         let diskItem = presenter.dataForDiskItemAt(indexPath)
         let cellActivityIndicator = UIActivityIndicatorView()
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-        cell.contentView.layoutIfNeeded()
         
         // cell activity indicator
         cell.contentView.addSubview(cellActivityIndicator)
@@ -295,7 +294,6 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
             cellButton.tintColor = Constants.Colors.details
             cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
             cell.contentView.addSubview(cellButton)
-            cell.contentView.layoutIfNeeded()
             cellButton.snp.makeConstraints { make in
                 make.width.equalTo(35)
                 make.height.equalTo(25)
@@ -319,14 +317,11 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
         content.secondaryTextProperties.numberOfLines = 1
         content.secondaryTextProperties.font = Constants.Fonts.small!
         content.image = presenter.getImageForCell(diskItem: diskItem)
-        cellActivityIndicator.stopAnimating()
         
         content.imageProperties.reservedLayoutSize = CGSize(width: 55, height: 55)
         content.imageProperties.maximumSize = CGSize(width: 55, height: 55)
         cell.contentConfiguration = content
-        
-        cell.contentView.setNeedsLayout()
-        cell.contentView.layoutIfNeeded()
+        cellActivityIndicator.stopAnimating()
         return cell
     }
     
@@ -340,23 +335,22 @@ final class MainViewController: UIViewController, UITableViewDataSource, UITable
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let position = scrollView.contentOffset.y
-        if position > tableView.contentSize.height - scrollView.frame.size.height {
+        if position > tableView.contentSize.height - scrollView.frame.size.height + 250 {
             self.tableView.tableFooterView = createFooterSpinner()
-            presenter.performPaginate(url: requestURLstring!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(750)) { [weak self] in
+                self?.presenter.performPaginate(url: (self?.requestURLstring)!)
+            }
         }
     }
 }
 
 extension MainViewController: MainProtocol {
     func success() {
-//        debugPrint("success in Controller")
         if self.tableView.tableFooterView != nil {
-            DispatchQueue.main.async { self.tableView.tableFooterView = nil }
+            DispatchQueue.main.async { [weak self] in self?.tableView.tableFooterView = nil }
         }
         presenter.coreDataManager.saveContext()
         try! presenter.fetchResultController.performFetch()
-//        print(presenter.coreDataManager.count())
-//        presenter.coreDataManager.printData()
         if presenter.fetchResultController.fetchedObjects!.count > 0 {
             self.setupViewsIfSomethingToDisplay()
         } else {
@@ -419,9 +413,7 @@ extension MainViewController: NSFetchedResultsControllerDelegate {
 //            print("update")
             if let indexPath = indexPath {
                 let diskItem = presenter.dataForDiskItemAt(indexPath)
-                
                 let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-                cell.contentView.layoutIfNeeded()
                 
                 // cell button
                 if header != Constants.coreDataRecents {
@@ -430,7 +422,6 @@ extension MainViewController: NSFetchedResultsControllerDelegate {
                     cellButton.tintColor = Constants.Colors.details
                     cellButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
                     cell.contentView.addSubview(cellButton)
-                    cell.contentView.layoutIfNeeded()
                     cellButton.snp.makeConstraints { make in
                         make.width.equalTo(35)
                         make.height.equalTo(25)
@@ -458,9 +449,6 @@ extension MainViewController: NSFetchedResultsControllerDelegate {
                 content.imageProperties.reservedLayoutSize = CGSize(width: 55, height: 55)
                 content.imageProperties.maximumSize = CGSize(width: 55, height: 55)
                 cell.contentConfiguration = content
-                
-                cell.contentView.setNeedsLayout()
-                cell.contentView.layoutIfNeeded()
             }
         case .move:
             if let indexPath = indexPath {

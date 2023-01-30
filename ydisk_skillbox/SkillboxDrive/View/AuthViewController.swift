@@ -36,8 +36,8 @@ class AuthViewController: UIViewController {
         }
         
         guard let request = request else { return }
-        DispatchQueue.main.async {
-            self.webView.load(request)
+        DispatchQueue.main.async { [weak self] in
+            self?.webView.load(request)
         }
     }
     

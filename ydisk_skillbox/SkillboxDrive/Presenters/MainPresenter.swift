@@ -38,10 +38,6 @@ protocol MainPresenterProtocol {
 }
 
 class MainPresenter: MainPresenterProtocol {
-
-    let lock = NSLock()
-    let queue = DispatchQueue.main
-    let semaphore = DispatchSemaphore(value: 1)
     
     var view: MainProtocol?
     var networkService: NetworkServiceProtocol!
@@ -79,23 +75,26 @@ class MainPresenter: MainPresenterProtocol {
         }
         networkService.getData(url: url, offset: 0, completion: { [weak self] result in
             guard let self = self else { return }
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
                 switch result {
                 case .success(let tuple):
-                    self.receivedAPIelements = tuple.0?.count ?? 0
-//                    coreDataManager.deleteIfNotPresented(diskItemArray: diskItems!)
-//                    self.coreDataManager.deleteAllEntities()
-                    self.handleCoreDataElements(diskItems: tuple.0!)
-                    self.view?.success()
+                    guard let comment = self?.comment else { return }
+                    self?.receivedAPIelements = tuple.0?.count ?? 0
+//                    self?.coreDataManager.deleteAllEntities()
+                    let yDiskItemsArray = self?.handleCoreDataElements(diskItems: tuple.0!)
+                    self?.coreDataManager.deleteIfNotPresented(diskItemArray: yDiskItemsArray ?? [YDiskItem](), type: comment)
+                    self?.view?.success()
                 case .failure(let error):
                     debugPrint("getDiskItems failure: \(error.localizedDescription)")
-                    self.view?.failure()
+                    self?.view?.failure()
                 }
             }
         })
     }
     
-    func handleCoreDataElements(diskItems: [DiskItem]) {
+    func handleCoreDataElements(diskItems: [DiskItem]) -> [YDiskItem] {
+        var yDiskItemsArray = [YDiskItem]()
+        
         diskItems.forEach { diskItem in
             let yDiskItem = YDiskItem()
             yDiskItem.set(diskItem: diskItem)
@@ -112,7 +111,9 @@ class MainPresenter: MainPresenterProtocol {
                 yDiskItem.comment = comment
             }
             coreDataManager.isOnFewViews(diskItem: yDiskItem)
+            yDiskItemsArray.append(yDiskItem)
         }
+        return yDiskItemsArray
     }
     
     func getMoreData(url: String, offset: Int16) {
@@ -124,21 +125,21 @@ class MainPresenter: MainPresenterProtocol {
         networkService.getData(url: url, offset: offset, completion: { [weak self] result in
             guard let self = self else { return }
             self.isFetchInProgress = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
                 switch result {
                 case .success(let tuple):
                     if tuple.0?.count == 0 {
-                        self.maxLimitExceeded = true
-                        self.isFetchInProgress = false
-                        self.view?.failure()
+                        self?.maxLimitExceeded = true
+                        self?.isFetchInProgress = false
+                        self?.view?.failure()
                     }
-                    self.handleCoreDataElements(diskItems: tuple.0!)
-                    self.isFetchInProgress = false
-                    self.view?.success()
+                    self?.handleCoreDataElements(diskItems: tuple.0!)
+                    self?.isFetchInProgress = false
+                    self?.view?.success()
                 case .failure(let error):
                     debugPrint("getDiskItems failure: \(error.localizedDescription)")
-                    self.isFetchInProgress = false
-                    self.view?.failure()
+                    self?.isFetchInProgress = false
+                    self?.view?.failure()
                 }
             }
         })
@@ -198,7 +199,6 @@ class MainPresenter: MainPresenterProtocol {
         if diskItem.type == "dir" {
             guard let path = diskItem.path else { return }
             let urlString = Constants.urlStringDirContent.appending(path)
-            print(urlString)
             
             let idx = path.lastIndex(of: "/")!
             let header = String(path[path.index(idx, offsetBy: 1)...])

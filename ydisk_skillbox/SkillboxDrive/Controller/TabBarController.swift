@@ -29,13 +29,6 @@ class TabBarController: UITabBarController {
         tabBar.unselectedItemTintColor = Constants.Colors.details
         self.selectedIndex = 1
     }
-    
-//    private func createNavController(for rootViewController: UIViewController, image: UIImage) -> UIViewController {
-//        let navController = UINavigationController(rootViewController: rootViewController)
-//        navController.tabBarItem.image = image
-//        navController .navigationBar.prefersLargeTitles = false
-//        return navController
-//    }
 
     func setupViews() {
         viewControllers = [

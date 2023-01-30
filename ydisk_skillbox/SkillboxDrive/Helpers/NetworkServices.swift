@@ -32,9 +32,9 @@ class NetworkService: NetworkServiceProtocol {
     private var task: URLSessionDataTask!
     static var shared = NetworkService()
     
-    init() {
-        do { token = try KeyChain.shared.getToken() }
-        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+    private init() {
+//        do { token = try KeyChain.shared.getToken() }
+//        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
     }
     
     func getData(url: String, offset: Int16 = 0, completion: @escaping (Result<([DiskItem]?, Int16?), Error>) -> Void) {
@@ -61,7 +61,10 @@ class NetworkService: NetworkServiceProtocol {
         guard let url = components?.url else { return }
         
         var request = URLRequest(url: url)
-//        debugPrint("request: \(request)")
+        
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+        
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -80,7 +83,6 @@ class NetworkService: NetworkServiceProtocol {
                         }
                         
                         let diskResponse = try JSONDecoder().decode(DiskResponse.self, from: data)
-//                        debugPrint("success in networkService. diskItems count: \(diskResponse.items?.count)")
                         completion(.success((diskResponse.items, diskResponse.offset)))
                     } catch {
                         completion(.failure(error))
@@ -98,6 +100,10 @@ class NetworkService: NetworkServiceProtocol {
         guard let url = URL(string: urlString) else { return }
         
         var request = URLRequest(url: url)
+        
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "GET"
         
@@ -131,7 +137,7 @@ class NetworkService: NetworkServiceProtocol {
     func fileDownload(urlString: String, completion: @escaping (Result<Data?, Error>) -> Void) {
         guard let url = URL(string: urlString) else { return }
         
-        do { self.token = try KeyChain.shared.getToken() }
+        do { token = try KeyChain.shared.getToken() }
         catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
         
         var request = URLRequest(url: url)
@@ -163,6 +169,11 @@ class NetworkService: NetworkServiceProtocol {
         ]
         guard let url = components?.url else { return }
         var request = URLRequest(url: url)
+
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+
+        
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "DELETE"
         
@@ -170,10 +181,9 @@ class NetworkService: NetworkServiceProtocol {
             if let response = response as? HTTPURLResponse {
                 switch response.statusCode {
                 case 200..<300:
-                    print("image deleting success")
                     completion(.success(data))
                 default:
-                    print("image deleting failure")
+                    debugPrint("image deleting failure in NetworkServices")
                     completion(.failure(NetworkError.responseStatus))
                 }
             }
@@ -189,6 +199,10 @@ class NetworkService: NetworkServiceProtocol {
         ]
         guard let url = components?.url else { return }
         var request = URLRequest(url: url)
+
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+
         request.setValue("OAuth \(token)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
         
@@ -199,7 +213,6 @@ class NetworkService: NetworkServiceProtocol {
             self?.makeGETrequest(urlString: urlString, completion: { result in
                 switch result {
                 case .success(let diskItem):
-                    print("success")
                     completion(.success(diskItem))
                 case .failure(let error):
                     print("failure")
@@ -215,6 +228,9 @@ class NetworkService: NetworkServiceProtocol {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
+        do { token = try KeyChain.shared.getToken() }
+        catch { print("error while getting token in NetworkService: \(error.localizedDescription)") }
+        
         let dataString = "access_token=\(token)&client_id=\(Constants.clientId)&client_secret=\(Constants.clientSecret)"
         let data : Data = dataString.data(using: .utf8)!
         request.httpBody = data
@@ -224,9 +240,9 @@ class NetworkService: NetworkServiceProtocol {
             if let response = response as? HTTPURLResponse {
                 switch response.statusCode {
                 case 200..<300:
-                    print("Success")
+                    debugPrint("Success revoking token")
                 default:
-                    print("Status: \(response.statusCode)")
+                    debugPrint("Failure revoking token. Status: \(response.statusCode)")
                 }
             }
         }.resume()

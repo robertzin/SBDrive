@@ -69,9 +69,8 @@ final class LoginViewController: UIViewController {
         var token = ""
         
         do { token = try KeyChain.shared.getToken() }
-        catch { print("error while geting token in LoginVC: \(error.localizedDescription)") }
+        catch { }
         
-        print("get token: \(token)")
         guard !token.isEmpty else {
             let requestTokenViewController = AuthViewController()
             requestTokenViewController.delegate = self
@@ -85,7 +84,6 @@ final class LoginViewController: UIViewController {
 
 extension LoginViewController: AuthViewControllerDelegate {
     func handleTokenChanged(token: String) {
-        print("save token: \(token)")
         do { try KeyChain.shared.saveToken(token: token) }
         catch { print("error while saving token in LoginVC: \(error.localizedDescription)") }
         updateData()

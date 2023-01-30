@@ -65,17 +65,20 @@ class ProfilePresenter: ProfilePresenterPrototol {
         view?.pushVC(vc: vc)
     }
     
-    func clearTmpDirectory() {
+    func clearAppDirectories() {
         let fm = FileManager()
         fm.clearTmpDirectory()
+        fm.clearCacheDirectory()
+        fm.clearCookiesDirectory()
     }
     
     func performLogOut() {
         if !NetworkMonitor.shared.isConnected { return }
         do { try KeyChain.shared.deleteToken() }
         catch { print("error while getting token in RecentImageVC: \(error.localizedDescription)") }
+        HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
         networkService.revokeToken()
-        clearTmpDirectory()
+        clearAppDirectories()
         coreDataManager.deleteAllEntities()
         imageDownloader.clearCache()
         presenterManager.show(vc: .login)
@@ -92,7 +95,26 @@ extension FileManager {
                 try removeItem(atPath: fileUrl.path)
             }
         } catch {
-           // TODO: catch any errors
+            debugPrint(error.localizedDescription)
+        }
+    }
+    
+    func clearCacheDirectory() {
+        do {
+            let cacheDirURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: "")
+            try removeItem(at: cacheDirURL)
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
+    }
+    
+    func clearCookiesDirectory() {
+        do {
+            let libraryDirURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: "")
+            let cookiesDirURL = libraryDirURL.appending(path: "Cookies/")
+            try removeItem(at: cookiesDirURL)
+        } catch {
+            debugPrint(error.localizedDescription)
         }
     }
 }

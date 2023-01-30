@@ -213,15 +213,7 @@ final class DetailsViewController: UIViewController, PDFViewDelegate, WKUIDelega
         navigationController?.toolbar.isHidden = false
         navigationController?.toolbar.backgroundColor = .white
         navigationController?.setToolbarHidden(false, animated: false)
-        //
-        //        pdfView.snp.makeConstraints { make in
-        //            make.centerX.equalToSuperview()
-        //            make.top.equalToSuperview().offset(105)
-        //            make.bottom.equalToSuperview().inset(145)
-        //            make.width.equalToSuperview()
-        //        }
-        //
-
+        
         guard let urlString = diskItem.file else { return }
         self.presenter.loadPDF(pdfView: self.pdfView, urlString: urlString)
     }

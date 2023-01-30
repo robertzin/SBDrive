@@ -28,7 +28,6 @@ class CoreDataManager {
         let fetchRequest = NSFetchRequest<YDiskItem>(entityName: Constants.coreDataEntityName)
         let predicate = NSPredicate(format: "comment == %@", comment)
         let sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        print("comment: \(comment), predicate: \(predicate)")
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.predicate = predicate
         fetchRequest.fetchLimit = 20
@@ -91,17 +90,29 @@ class CoreDataManager {
         }
     }
     
-    func deleteIfNotPresented(diskItemArray: [DiskItem]) {
-        let idsArray = diskItemArray.map { $0.name }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.coreDataEntityName)
+    func deleteIfNotPresented(diskItemArray: [YDiskItem], type: String) {
+        let namesArray = diskItemArray.map { $0.name }
+        let fetchRequest = YDiskItem.fetchRequest()
+        
+        if type == Constants.coreDataRecents
+            || type == Constants.coreDataPublished
+            || type == Constants.coreDataAllFiles {
+            let predicate = NSPredicate(format: "\(type) == YES")
+            fetchRequest.predicate = predicate
+        } else {
+            let predicate = NSPredicate(format: "comment == %@", type)
+            fetchRequest.predicate = predicate
+        }
+        
         do {
-            let allData = try context.fetch(fetchRequest) as! [YDiskItem]
+            let allData = try context.fetch(fetchRequest)
             allData.forEach { yDiskItem in
-                if !idsArray.contains(yDiskItem.name) {
-                    debugPrint("deleted from CoreData when not presented: \(String(describing: yDiskItem.name))")
+                if !namesArray.contains(yDiskItem.name) {
+//                    debugPrint("deleted from CoreData when not presented: \(String(describing: yDiskItem.name))")
                     context.delete(yDiskItem)
                 }
             }
+            saveContext()
         } catch {
             print("error performing deletion and inserting: \(error.localizedDescription)")
         }
@@ -138,7 +149,7 @@ class CoreDataManager {
         do {
             let allData = try context.fetch(deleteRequest)
             for object in allData as! [YDiskItem] {
-                print("deleting from CoreData: \(object.name)")
+//                print("deleting from CoreData: \(String(describing: object.name))")
                 context.delete(object)
             }
         } catch {

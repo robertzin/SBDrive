@@ -61,7 +61,7 @@ final class RenamePresenter: RenamePresenterProtocol {
         networkService.fileRename(oldPath: oldPath, newPath: newPath) { [weak self] result in
             switch result {
             case .success(let newDiskItem):
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
                     self?.setNewValuesToFile(oldDiskItem: diskItem, newDiskItem: newDiskItem!)
                     self?.makeNotification(diskItem: newDiskItem!)
                 }
@@ -73,7 +73,6 @@ final class RenamePresenter: RenamePresenterProtocol {
     
     func setNewValuesToFile(oldDiskItem: YDiskItem, newDiskItem: DiskItem) {
         let diskItemToChange = CoreDataManager.shared.context.object(with: oldDiskItem.objectID) as! YDiskItem
-//        guard let comment = oldDiskItem.comment else { return }
         diskItemToChange.set(diskItem: newDiskItem)
         CoreDataManager.shared.saveContext()
     }
