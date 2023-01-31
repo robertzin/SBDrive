@@ -15,4 +15,4 @@ You can share, rename and delete each file with appropriate format.
 
 The app is localized for two languages: russian and english.
 
-![SBDrive](https://user-images.githubusercontent.com/60647627/215700436-79a7c425-0835-4600-8246-6f1746017ef0.jpg)
+![SBDrive](https://user-images.githubusercontent.com/60647627/215716869-e28b93bb-97c2-46ff-8ac8-715d67c6b62f.jpg)
