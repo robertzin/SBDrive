@@ -140,7 +140,7 @@ final class ProfileViewController: UIViewController {
         
         var entries: [ChartDataEntry] = []
         entries.append(PieChartDataEntry(value: usedSpace!, label: "\(Constants.Text.occupied) - \(usedSpaceString) \(Constants.Text.gb)"))
-        entries.append(PieChartDataEntry(value: totalSpace!, label: "\(Constants.Text.left) - \(leftSpaceString) \(Constants.Text.gb)"))
+        entries.append(PieChartDataEntry(value: totalSpace! - usedSpace!, label: "\(Constants.Text.left) - \(leftSpaceString) \(Constants.Text.gb)"))
         let set = PieChartDataSet(entries: entries, label: "")
         set.selectionShift = 0
         
